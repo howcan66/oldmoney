@@ -1,9 +1,17 @@
 // Auto-generate timestamp on page load
 document.addEventListener('DOMContentLoaded', function() {
-    // Set timestamp
+    const timestamp = new Date().toLocaleString();
+    
+    // Set metadata timestamp
     const timestampElement = document.getElementById('timestamp');
     if (timestampElement) {
-        timestampElement.textContent = new Date().toLocaleString();
+        timestampElement.textContent = timestamp;
+    }
+    
+    // Set footer timestamp
+    const footerTimestampElement = document.getElementById('footer-timestamp');
+    if (footerTimestampElement) {
+        footerTimestampElement.textContent = timestamp;
     }
     
     // Set dynamic filename
