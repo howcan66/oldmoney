@@ -1,4 +1,4 @@
-PROJECT: Old Money – Interest-on-Interest Calculator
+﻿PROJECT: Old Money â€“ Interest-on-Interest Calculator
 FORMAT: Minimalistic Functional Specification
 
 ---------------------------------------------------------
@@ -7,12 +7,15 @@ FORMAT: Minimalistic Functional Specification
 - Input A: "Saving Start Amount"
   - Type: numeric text field
   - Validation: positive number
+  - Calculation trigger: ON BLUR (when field loses focus)
 
 - Input B: "Yearly Average Interest (%)"
   - Type: numeric text field
   - Validation: positive number, decimals allowed
+  - Calculation trigger: ON BLUR (when field loses focus)
 
-- Calculation triggers automatically when any input changes.
+- Calculation triggers automatically when input blurs.
+- No real-time keystroke calculation (improves performance).
 
 ---------------------------------------------------------
 2. CALCULATION LOGIC
@@ -22,19 +25,19 @@ FORMAT: Minimalistic Functional Specification
 - Interest compounded yearly.
 - Values rounded to 2 decimals.
 - Monthly Equivalent = End-of-Year Amount / 12
-- Yearly Increase = End-of-Year(N) – End-of-Year(N-1)
+- Yearly Increase = End-of-Year(N) â€“ End-of-Year(N-1)
 
 ---------------------------------------------------------
 3. OUTPUT TABLE GROUPS (TOGGLED)
 ---------------------------------------------------------
-Group 1: Years 1–10  
-Group 2: Years 11–30  
-Group 3: Years 31–40  
+Group 1: Years 1â€“10  
+Group 2: Years 11â€“30  
+Group 3: Years 31â€“40  
 
 Each group is collapsible.
 
 Each table row contains:
-- Year Index (1, 2, 3…)
+- Year Index (1, 2, 3â€¦)
 - Start-of-Year Amount
 - Interest Earned That Year
 - End-of-Year Amount
@@ -143,7 +146,7 @@ Fixed footer at bottom of page:
 [HORIZONTAL LINE - 1px solid #C8C8C8]
 
 Footer Content:
-- Copyright text: "© CoolPortals"
+- Copyright text: "Â© CoolPortals"
 - Auto-generated timestamp
 - Centered, minimal styling
 - Background: #D7D5C9 (matches header)
@@ -152,7 +155,7 @@ Footer Content:
 - Text color: #6A6A6A
 
 Footer Format Example:
-  © CoolPortals | Last updated: [timestamp]
+  Â© CoolPortals | Last updated: [timestamp]
 
 -------------------------------------------------
 13. HORIZONTAL LINE SPECIFICATION
@@ -169,3 +172,34 @@ Purpose: Visual separation between content and footer
 -------------------------------------------------
 END OF FUNCTIONAL SPECIFICATION
 ---------------------------------------------------------
+
+---------------------------------------------------------
+14. HORIZONTAL LINE REQUIREMENT (ALL PAGES)
+-----------------------------------------
+MANDATORY: All pages MUST have a horizontal line separator above the footer.
+
+Placement:
+- Between main content and footer
+- Separates page content from copyright/timestamp footer
+
+Style:
+- 1px solid border
+- Color: #C8C8C8 (matches button borders)
+- Width: Full page width
+- Margin: 20px 0 (top and bottom spacing)
+- Opacity: Subtle, non-dominating
+
+Purpose:
+- Visual hierarchy and page structure
+- Clear separation between content and footer
+- Consistent across all Old Money pages
+- Part of "old money" minimalistic design
+
+Implementation:
+- HTML: <hr class="footer-divider">
+- CSS: 
+  .footer-divider {
+    border: none;
+    border-top: 1px solid #C8C8C8;
+    margin: 20px 0;
+  }
