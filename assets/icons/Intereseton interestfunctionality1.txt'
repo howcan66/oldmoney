@@ -28,23 +28,41 @@ FORMAT: Minimalistic Functional Specification
 - Yearly Increase = End-of-Year(N) â€“ End-of-Year(N-1)
 
 ---------------------------------------------------------
-3. OUTPUT TABLE GROUPS (TOGGLED)
+3. OUTPUT TABLE GROUPS (COLLAPSIBLE/TOGGLABLE)
 ---------------------------------------------------------
-Group 1: Years 1â€“10  
-Group 2: Years 11â€“30  
-Group 3: Years 31â€“40  
+Group 1: Years 1–10
+Group 2: Years 11–30
+Group 3: Years 31–40
 
-Each group is collapsible.
+Each group is COLLAPSIBLE:
+- Desktop: Groups open by default (all visible on load)
+- Tablet (iPad Pro): Groups collapsed by default (user expands as needed)
+- Mobile (iPhone 17 Max + others): Groups collapsed by default
+
+Collapsible means: Click group header to expand/collapse content
+Purpose: Better performance on mobile, less scrolling
+Toggle behavior: Smooth collapse/expand animation (0.3s)
 
 Each table row contains:
 - Year Index (1, 2, 3â€¦)
-- Start-of-Year Amount
-- Interest Earned That Year
-- End-of-Year Amount
-- Monthly Equivalent (End-of-Year / 12)
-- Yearly Increase
+- Start-of-Yea & ALIGNMENT
+-------------------------------------------------
+General Alignment Rules:
+- DEFAULT: Always align LEFT when nothing else is specified
+- Text labels: LEFT-aligned
+- Headers: LEFT-aligned
+- Year index: LEFT-aligned
+- Numeric values: RIGHT-aligned (for easy reading)
 
----------------------------------------------------------
+Row Spacing:
+- Row height: 28-32px (mobile), 32-36px (desktop/tablet)
+- Cell padding: 8px horizontal, 6px vertical
+- Row borders: Thin, 1px solid #C8C8C8
+
+Header row: Sticky (fixed when scrolling)
+Groups: Visually separated with thin borders
+Numeric values: Right-aligned for alignment
+Year index: Left-aligned-----------
 4. TABLE RULES
 ---------------------------------------------------------
 - Tight row spacing, minimal padding.
@@ -54,20 +72,32 @@ Each table row contains:
 - Groups visually separated with thin borders.
 
 ---------------------------------------------------------
-5. SUMMARY SECTION
----------------------------------------------------------
-Show after all tables:
-- Total increase after 10 years
-- Total increase after 30 years
-- Total increase after 40 years
-- Final accumulated amount
-- Total interest earned overall
-- Percentage growth (added per your answer)
+5. SUMMARY SECTION - BEST PRACTICES FOR ALL TERMINALS
+-----------------------------------------
 
----------------------------------------------------------
-6. RESPONSIVE BEHAVIOR
----------------------------------------------------------
-Desktop:
+DESKTOP (standard widths 1024px+):
+- Tables full width
+- Groups OPEN by default (all visible)
+- Two-column layout possible
+- Full feature visibility
+- No truncation
+
+TABLET / iPAD PRO (768px - 1024px):
+- Tables full width, responsive padding
+- Groups COLLAPSED by default (user expands)
+- Single-column layout
+- Touch-friendly button sizing (48px minimum)
+- Maintain readability
+
+MOBILE / iPHONE 17 MAX & OTHERS (< 768px):
+- Tables scroll horizontally (if needed)
+- Groups COLLAPSED by default (user expands)
+- Single-column layout
+- Vertical stacking for columns
+- Monthly + Yearly columns may stack vertically OR use abbreviations
+- Font sizes reduced but readable (14px minimum)
+- Full-width inputs and buttons
+- Vertical margin increased for tap targets (44px minimum)
 - Tables full width.
 - Groups open by default.
 
@@ -76,10 +106,66 @@ Tablet (iPad Pro):
 - Groups collapsed by default.
 
 Mobile (iPhone 17 Max + others):
-- Tables scroll horizontally.
-- Groups collapsed by default.
-- Monthly + yearly columns may stack vertically.
+- Tables scroll h & USER ALERTS
+-----------------------------------------
 
+Export to CSV:
+- Format: Plain numbers, comma-separated
+- Include headers: Year, Start Amount, Interest, End Amount, Monthly Equiv, Yearly Increase
+- Filename: oldmoney_calculator_export.csv
+- Downloads immediately to user device
+
+Copy-to-Clipboard:
+- Copies table data as plain text
+- Tab-separated for Excel compatibility
+- Shows success alert message
+- Alert always displays to confirm action
+
+Error Alerts:
+- Empty inputs: Show inline alert "Please enter values"
+- Invalid inputs: Show inline alert "Invalid number - enter positive values only"
+- Interest = 0: Allo & BEST PRACTICES FOR ALL TERMINALS
+-----------------------------------------
+
+Number Formatting:
+- Plain numbers only
+- No currency symbols
+- No thousand separators
+- Always 2 decimal places (e.g., 1234.56)
+
+BEST PRACTICES FOR ALL TERMINALS:
+
+PERFORMANCE:
+- Calculation on BLUR, not keystroke (reduces processing)
+- Limit table display to 3 groups (years 1-40) - manageable size
+- Lazy load tables only when groups expand
+
+ACCESSIBILITY:
+- All inputs have associated labels
+- Buttons have title attributes (tooltips)
+- Keyboard navigation: Tab through fields, Enter to confirm
+- Screen reader support: ARIA labels on tables
+- Color not only indicator (use text labels for alerts)
+
+USABILITY:
+- DEFAULT left alignment for all elements unless specified otherwise
+- Collapsible groups improve mobile experience
+- Copy/Export always provide feedback (toast alert)
+- Inputs validated on blur, not during typing
+- Clear error messages, minimal jargon
+
+CONSISTENCY:
+- Use "old money" color palette throughout
+- Typography: Georgia serif, consistent sizing
+- Spacing: 8px grid for margins/padding
+- Buttons: Icon-first design with tooltips
+- Borders: 1px solid #C8C8C8 throughout
+
+RESULT: Collapsible groups + blur triggers + left-align default
+Works seamlessly on all devices, optimal performancetification
+- Non-blocking, fades after 3 seconds
+- Shows success/error status
+- Works on all terminals (desktop, tablet, mobile)
 ---------------------------------------------------------
 7. ERROR HANDLING
 ---------------------------------------------------------
