@@ -7,3 +7,7 @@ This file is NOT the entry point.
 
 If content appears missing here, use design_style_guide.txt
 and the specific files listed in instruction_guide.txt.
+
+WARNING:
+This file is NOT for building HTML pages.
+For HTML creation, use instruction_guide.txt and html_structure_guide.txt.
