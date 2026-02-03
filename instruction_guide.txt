@@ -17,7 +17,7 @@ HOW TO USE (READ ORDER)
    - TOOLTIP_REQUIREMENT.txt   → Tooltip rules for buttons
 3) Use design_style_guide.txt for the full consolidated implementation details.
 4) Use general_ui_standards.txt only for broad principles and extra standards.
-5) Use abbreviation_guide.txt for command behavior.
+5) Use abbreviation_guide.txt for command behavior (only command-instruction file).
 
 =============================================================
 TASK-TO-FILE MAP
