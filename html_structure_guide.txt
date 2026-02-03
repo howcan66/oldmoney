@@ -161,6 +161,37 @@ LINK FORMATTING RULES:
 6. Generic test links: Label as "Test URL1", "Test URL2", etc.
 7. Ensure all URLs are valid and accessible
 
+LINK BEHAVIOR (target="_blank"):
+────────────────────────────────────────────────────
+When to use target="_blank":
+✓ External links (links to other websites)
+✓ Links that navigate away from the application
+✓ PDF or document downloads
+✓ Links that might interrupt user workflow
+
+When NOT to use target="_blank":
+✗ Internal navigation (same-site pages)
+✗ Links within the application
+✗ Navigation that's part of normal user flow
+
+SECURITY (CRITICAL):
+For all external links using target="_blank", add:
+  rel="noopener noreferrer"
+
+This prevents:
+- window.opener exploit (security vulnerability)
+- Performance issues in separate browsing context
+- Referrer information leakage
+
+Example:
+  <a href="https://example.com" target="_blank" rel="noopener noreferrer">Link Text</a>
+
+ACCESSIBILITY:
+- Use descriptive link text that makes sense out of context
+- Avoid "click here" or "read more" without context
+- Consider adding visual indicator for external links
+- Screen readers should understand link opens in new window
+
 Default Test URLs (7 links):
   1. https://www.dn.se (Test URL1)
   2. https://www.avanza.com (Test URL2)
@@ -179,13 +210,13 @@ HTML Structure:
       </div>
       <div class="links-content" id="linksContent">
           <ul class="links-list">
-              <li><a href="https://www.dn.se" target="_blank">Test URL1</a></li>
-              <li><a href="https://www.avanza.com" target="_blank">Test URL2</a></li>
-              <li><a href="https://www.avanza.com" target="_blank">Test URL3</a></li>
-              <li><a href="https://www.lysa.com" target="_blank">Test URL4</a></li>
-              <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank">Test URL5</a></li>
-              <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank">Test URL6</a></li>
-              <li><a href="https://www.dn.se" target="_blank">Test URL7</a></li>
+              <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL1</a></li>
+              <li><a href="https://www.avanza.com" target="_blank" rel="noopener noreferrer">Test URL2</a></li>
+              <li><a href="https://www.avanza.com" target="_blank" rel="noopener noreferrer">Test URL3</a></li>
+              <li><a href="https://www.lysa.com" target="_blank" rel="noopener noreferrer">Test URL4</a></li>
+              <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank" rel="noopener noreferrer">Test URL5</a></li>
+              <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener noreferrer">Test URL6</a></li>
+              <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL7</a></li>
           </ul>
       </div>
   </div>
