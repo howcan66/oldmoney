@@ -1,0 +1,111 @@
+PROJECT: Old Money – Interest-on-Interest Calculator
+FORMAT: Minimalistic Functional Specification
+
+---------------------------------------------------------
+1. INPUT FIELDS
+---------------------------------------------------------
+- Input A: "Saving Start Amount"
+  - Type: numeric text field
+  - Validation: positive number
+
+- Input B: "Yearly Average Interest (%)"
+  - Type: numeric text field
+  - Validation: positive number, decimals allowed
+
+- Calculation triggers automatically when any input changes.
+
+---------------------------------------------------------
+2. CALCULATION LOGIC
+---------------------------------------------------------
+- Year 0 = Start Amount
+- Year N = Year(N-1) * (1 + interest/100)
+- Interest compounded yearly.
+- Values rounded to 2 decimals.
+- Monthly Equivalent = End-of-Year Amount / 12
+- Yearly Increase = End-of-Year(N) – End-of-Year(N-1)
+
+---------------------------------------------------------
+3. OUTPUT TABLE GROUPS (TOGGLED)
+---------------------------------------------------------
+Group 1: Years 1–10  
+Group 2: Years 11–30  
+Group 3: Years 31–40  
+
+Each group is collapsible.
+
+Each table row contains:
+- Year Index (1, 2, 3…)
+- Start-of-Year Amount
+- Interest Earned That Year
+- End-of-Year Amount
+- Monthly Equivalent (End-of-Year / 12)
+- Yearly Increase
+
+---------------------------------------------------------
+4. TABLE RULES
+---------------------------------------------------------
+- Tight row spacing, minimal padding.
+- Numeric values right-aligned.
+- Year index left-aligned.
+- Header row fixed when scrolling.
+- Groups visually separated with thin borders.
+
+---------------------------------------------------------
+5. SUMMARY SECTION
+---------------------------------------------------------
+Show after all tables:
+- Total increase after 10 years
+- Total increase after 30 years
+- Total increase after 40 years
+- Final accumulated amount
+- Total interest earned overall
+- Percentage growth (added per your answer)
+
+---------------------------------------------------------
+6. RESPONSIVE BEHAVIOR
+---------------------------------------------------------
+Desktop:
+- Tables full width.
+- Groups open by default.
+
+Tablet (iPad Pro):
+- Tables full width.
+- Groups collapsed by default.
+
+Mobile (iPhone 17 Max + others):
+- Tables scroll horizontally.
+- Groups collapsed by default.
+- Monthly + yearly columns may stack vertically.
+
+---------------------------------------------------------
+7. ERROR HANDLING
+---------------------------------------------------------
+- Empty inputs: disable calculation.
+- Invalid inputs: minimal inline warning.
+- Interest = 0: show table with no growth.
+
+---------------------------------------------------------
+8. EXPORT OPTIONS
+---------------------------------------------------------
+- Export to CSV.
+- Copy-to-clipboard (plain numbers, no currency formatting).
+
+---------------------------------------------------------
+9. NUMBER FORMATTING
+---------------------------------------------------------
+- Plain numbers only.
+- No currency symbols.
+- No thousand separators.
+
+---------------------------------------------------------
+10. IMPROVEMENTS ADDED
+---------------------------------------------------------
+- Automatic recalculation on input change.
+- Percentage growth added to summary.
+- Export options included.
+- Monthly equivalent clarified.
+- Long-term grouping extended to 40 years.
+
+---------------------------------------------------------
+END OF FUNCTIONAL SPECIFICATION
+---------------------------------------------------------
