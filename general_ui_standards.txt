@@ -486,6 +486,28 @@ Color Palette (Old Money Theme):
 - Error: #D32F2F (red)
 - Warning: #FF9800 (orange)
 
+ALTERNATIVE COLOR PALETTE - MODERN:
+Use this if you want more "modern app" feel without losing seriousness.
+
+- Background main: #F5F5FA (cool light gray-blue)
+- Header/footer: #283046 (deep blue-slate)
+- Cards/boxes: #FFFFFF (white)
+- Primary text: #1F2430 (dark blue-gray)
+- Secondary text: #6B7280 (medium gray)
+- Primary buttons: #2563EB (blue)
+- Button hover: #1D4ED8 (darker blue)
+- Accent (links, highlights): #10B981 (green)
+- Borders: #D1D5DB (light gray)
+- Error text: #DC2626 (red)
+- Success: #10B981 (green)
+- Warning: #F59E0B (amber)
+
+PALETTE SELECTION:
+- Old Money: Classic, elegant, vintage aesthetic
+- Modern: Contemporary, professional, controlled energy
+- Same palette used on all terminals (desktop/tablet/mobile)
+- Layout and font sizing change per device, colors remain consistent
+
 Typography:
 - Font family: Georgia, 'Playfair Display', 'Times New Roman', serif
 - Headers: Font-weight 600
