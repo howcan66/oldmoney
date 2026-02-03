@@ -21,17 +21,11 @@ document.addEventListener('DOMContentLoaded', function() {
         filenameElement.textContent = filename;
     }
 
-    // Set default state for links section based on device width
+    // Set default state for links section - COLLAPSED on all devices
     const linksContent = document.getElementById('linksContent');
     const linksToggle = document.getElementById('linksToggle');
-    if (linksContent && linksToggle) {
-        if (window.innerWidth >= 1024) {
-            // Desktop: expanded by default
-            linksContent.classList.add('expanded');
-            linksToggle.classList.add('expanded');
-        }
-        // Tablet/Mobile: collapsed by default (no action needed)
-    }
+    // All devices: collapsed by default (no action needed)
+    // User can click to expand
 });
 
 // Refresh button handler
