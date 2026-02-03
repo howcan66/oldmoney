@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Money - Default Page</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="title">Old Money</div>
+        <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" 
+                        onclick="switchLanguage('sv')" 
+                        title="Byt till Svenska" 
+                        aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" 
+                        onclick="switchLanguage('en')" 
+                        title="Switch to English" 
+                        aria-pressed="false">EN</button>
+            </div>
+            <button class="refresh-btn" onclick="refreshPage()" 
+                    title="Refresh page">Refresh</button>
+            <button class="close-btn" onclick="closePage()" 
+                    title="Close window">Close</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <p class="description">Welcome to Old Money - your personal finance management application.</p>
+
+        <div class="links-section-container">
+            <div class="links-header" onclick="toggleLinks()" 
+                 title="Click to expand/collapse">
+                <h3>External Links</h3>
+                <span class="toggle-icon" id="linksToggle">▼</span>
+            </div>
+            <div class="links-content" id="linksContent">
+                <ul class="links-list">
+                    <li><a href="interesetoninterest.html">Interest Calculator</a></li>
+                    <li><a href="listing.html">Marketplace</a></li>
+                    <li><a href="oldmoneylinks.html">Resources</a></li>
+                </ul>
+            </div>
+        </div>
+    </main>
+
+    <!-- Horizontal Divider -->
+    <hr class="footer-divider">
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>&copy; CoolPortals | 
+              <span id="footer-filename">default4.html</span> | 
+              <span id="footer-timestamp"></span></span>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('footer-timestamp').textContent = generateTimestamp();
+    </script>
+</body>
+</html>
