@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Target Blank Demo - Old Money</title>
+    <title>Open Blank Demo</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="title">Target Blank Demo</div>
+        <div class="title">Open Blank Demo</div>
         <div class="nav-buttons">
             <div class="language-switcher">
                 <button class="lang-btn active" data-lang="sv" 
@@ -30,25 +30,26 @@
 
     <!-- Main Content -->
     <main class="content">
-        <p class="description">This page demonstrates how target="_blank" works. This page opened in a new tab/window because the link used target="_blank" attribute.</p>
+        <p class="description">Demo page with links that open in new tabs.</p>
 
-        <h3>How This Works:</h3>
-        <ul style="margin-top: 16px; line-height: 1.8;">
-            <li><strong>target="_blank"</strong> - Opens link in new tab/window</li>
-            <li><strong>rel="noopener noreferrer"</strong> - Security protection</li>
-            <li>Prevents window.opener exploit</li>
-            <li>Use for external links and workflow interruptions</li>
-        </ul>
-
-        <h3 style="margin-top: 24px;">Example Code:</h3>
-        <pre style="background: #F7F7F2; padding: 16px; border: 1px solid #C8C8C8; border-radius: 5px; overflow-x: auto; margin-top: 8px;">
-&lt;a href="open_blank_demo.html" 
-   target="_blank" 
-   rel="noopener noreferrer"&gt;
-   Open Blank Demo
-&lt;/a&gt;</pre>
-
-        <p style="margin-top: 24px;">You can close this tab/window to return to the previous page.</p>
+        <div class="links-section-container">
+            <div class="links-header" onclick="toggleLinks()" title="Click to expand/collapse">
+                <h3>External Links</h3>
+                <span class="toggle-icon" id="linksToggle">▼</span>
+            </div>
+            <div class="links-content" id="linksContent">
+                <ul class="links-list">
+                    <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">DN - News</a></li>
+                    <li><a href="https://www.avanza.se" target="_blank" rel="noopener noreferrer">Avanza - Investment</a></li>
+                    <li><a href="https://www.lysa.se/" target="_blank" rel="noopener noreferrer">Lysa - Robo-Advisor</a></li>
+                    <li><a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+                    <li><a href="https://www.google.com" target="_blank" rel="noopener noreferrer">Google</a></li>
+                    <li><a href="https://stackoverflow.com" target="_blank" rel="noopener noreferrer">Stack Overflow</a></li>
+                    <li><a href="https://www.wikipedia.org" target="_blank" rel="noopener noreferrer">Wikipedia</a></li>
+                    <li><a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer">YouTube</a></li>
+                </ul>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->
