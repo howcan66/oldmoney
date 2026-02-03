@@ -7,46 +7,60 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Header (Fixed Top) -->
+    <!-- Header -->
     <header class="header">
         <div class="title">Default Title</div>
         <div class="nav-buttons">
-            <!-- Language Switcher (RIGHT-aligned) -->
             <div class="language-switcher">
-                <button class="lang-btn active" data-lang="sv" onclick="switchLanguage('sv')" title="Byt till Svenska" aria-pressed="true">SV</button>
-                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')" title="Switch to English" aria-pressed="false">EN</button>
+                <button class="lang-btn active" data-lang="sv" 
+                        onclick="switchLanguage('sv')" 
+                        title="Byt till Svenska" 
+                        aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" 
+                        onclick="switchLanguage('en')" 
+                        title="Switch to English" 
+                        aria-pressed="false">EN</button>
             </div>
-            <!-- Refresh Button (RIGHT-aligned) -->
-            <button class="refresh-btn" onclick="refreshPage()" title="Refresh page">Refresh</button>
-            <!-- Close Button (RIGHT-aligned) -->
-            <button class="close-btn" onclick="closePage()" title="Close window">Close</button>
+            <button class="refresh-btn" onclick="refreshPage()" 
+                    title="Refresh page">Refresh</button>
+            <button class="close-btn" onclick="closePage()" 
+                    title="Close window">Close</button>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="content">
-        <!-- Description Section (Required) -->
         <p class="description">Default Body Text</p>
 
-        <!-- Links Section (Required, Collapsible) -->
-        <div class="links-section">
-            <h3>External Links</h3>
-            <ul>
-                <li><a href="interesetoninterest.html">Interest Calculator</a></li>
-                <li><a href="listing.html">Marketplace</a></li>
-                <li><a href="oldmoneylinks.html">Resources</a></li>
-            </ul>
+        <div class="links-section-container">
+            <div class="links-header" onclick="toggleLinks()" 
+                 title="Click to expand/collapse">
+                <h3>External Links</h3>
+                <span class="toggle-icon" id="linksToggle">▼</span>
+            </div>
+            <div class="links-content" id="linksContent">
+                <ul class="links-list">
+                    <li><a href="interesetoninterest.html">Interest Calculator</a></li>
+                    <li><a href="listing.html">Marketplace</a></li>
+                    <li><a href="oldmoneylinks.html">Resources</a></li>
+                </ul>
+            </div>
         </div>
     </main>
 
-    <!-- Footer (Fixed Bottom) -->
+    <!-- Horizontal Divider -->
+    <hr class="footer-divider">
+
+    <!-- Footer -->
     <footer class="footer">
-        <span>&copy; CoolPortals | default3.html | <span id="timestamp"></span></span>
+        <span>&copy; CoolPortals | 
+              <span id="footer-filename">default3.html</span> | 
+              <span id="footer-timestamp"></span></span>
     </footer>
 
     <script src="js/app.js"></script>
     <script>
-        document.getElementById('timestamp').textContent = generateTimestamp();
+        document.getElementById('footer-timestamp').textContent = generateTimestamp();
     </script>
 </body>
 </html>
