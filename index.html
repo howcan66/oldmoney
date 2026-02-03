@@ -4,171 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Old Money</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: Georgia, 'Times New Roman', serif;
-            background: #f8f8f8;
-            color: #333;
-        }
-
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: #fff;
-            border-bottom: 1px solid #ddd;
-            padding: 8px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #2c2c2c;
-        }
-
-        .nav-buttons {
-            display: flex;
-            gap: 6px;
-        }
-
-        .nav-btn {
-            padding: 6px 12px;
-            background: #fff;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            cursor: pointer;
-            font-family: inherit;
-        }
-
-        .nav-btn:hover {
-            background: #f5f5f5;
-        }
-
-        /* Body Content */
-        .content {
-            margin-top: 60px;
-            padding: 16px;
-            max-width: 900px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .description {
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        .metadata {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 12px;
-            margin-bottom: 20px;
-        }
-
-        .metadata-row {
-            display: flex;
-            margin-bottom: 6px;
-            font-size: 0.875rem;
-        }
-
-        .metadata-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .metadata-label {
-            font-weight: 600;
-            min-width: 100px;
-        }
-
-        .metadata-value {
-            color: #666;
-        }
-
-        /* Responsive - Tablet */
-        @media (min-width: 768px) and (max-width: 1024px) {
-            .header {
-                padding: 10px 16px;
-            }
-
-            .title {
-                font-size: 1.375rem;
-            }
-
-            .nav-btn {
-                padding: 8px 14px;
-                font-size: 0.9375rem;
-            }
-
-            .content {
-                padding: 20px;
-            }
-        }
-
-        /* Responsive - Mobile */
-        @media (max-width: 767px) {
-            .header {
-                padding: 6px 8px;
-            }
-
-            .title {
-                font-size: 1rem;
-            }
-
-            .nav-btn {
-                padding: 6px 10px;
-                font-size: 0.75rem;
-            }
-
-            .content {
-                margin-top: 50px;
-                padding: 12px;
-            }
-
-            .metadata-row {
-                flex-direction: column;
-            }
-
-            .metadata-label {
-                margin-bottom: 2px;
-            }
-        }
-
-        /* iPad Pro specific */
-        @media (min-width: 1024px) and (max-width: 1366px) {
-            .content {
-                padding: 24px;
-            }
-        }
-
-        /* iPhone 17 Max and similar */
-        @media (max-width: 430px) {
-            .nav-btn {
-                min-width: 36px;
-                padding: 6px 8px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
         <div class="title">Old Money</div>
         <div class="nav-buttons">
-            <button class="nav-btn" onclick="location.reload()">Refresh</button>
-            <button class="nav-btn" onclick="window.close()">Close</button>
+            <button class="nav-btn" onclick="refreshPage()">
+                <img src="assets/icons/refresh.svg" alt="Refresh">
+                <span class="btn-text">Refresh</span>
+            </button>
+            <button class="nav-btn" onclick="closePage()">
+                <img src="assets/icons/close.svg" alt="Close">
+                <span class="btn-text">Close</span>
+            </button>
         </div>
     </header>
 
@@ -192,12 +42,6 @@
         </div>
     </main>
 
-    <script>
-        // Auto-generate timestamp
-        document.getElementById('timestamp').textContent = new Date().toLocaleString();
-        
-        // Set dynamic filename
-        document.getElementById('filename').textContent = window.location.pathname.split('/').pop() || 'index.html';
-    </script>
+    <script src="js/app.js"></script>
 </body>
 </html>
