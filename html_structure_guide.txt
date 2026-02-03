@@ -256,13 +256,39 @@ BEST PRACTICE:
 DEMO FILE FOR target="_blank":
 ────────────────────────────────────────────────────
 File: open_blank_demo.html
-Purpose: Demonstrates how target="_blank" works in practice
+Purpose: Enhanced link navigator demonstrating target="_blank" with navigation controls
 
-This demo page:
-- Opens in a new tab/window when linked with target="_blank"
-- Shows example code for proper link implementation
-- Explains security and accessibility requirements
-- Can be used as a test/reference file
+ENHANCED FEATURES:
+- Link Navigator Section:
+  * Index display: "X of 8" showing current link position
+  * Previous button («): Navigate to previous link
+  * Next button (»): Navigate to next link
+  * Open Link button: Open current link in new tab + auto-advance to next
+  * Current link display: Shows active link text and URL preview
+  
+- All Links Section:
+  * Collapsible list of all 8 links
+  * Links open in new tabs with target="_blank"
+  * Proper security attributes (rel="noopener noreferrer")
+
+BEHAVIOR:
+1. User clicks « or » button → Navigate through links (index updates)
+2. User clicks "Open Link" button → Link opens in new tab AND index advances
+3. User clicks links in "All Links" section → Links open in new tabs
+4. Index wraps: Previous at index 1 disabled, Next at index 8 disabled
+
+TECHNICAL IMPLEMENTATION:
+- JavaScript array stores link data (text + URL)
+- currentIndex variable tracks position in array
+- updateCurrentLink() refreshes display with current link
+- openCurrentLink() opens link via window.open() and auto-advances
+- All navigation buttons use proper accessibility attributes
+
+USE CASE:
+- Testing target="_blank" functionality with user flow
+- Link carousel/browsing experience
+- Demonstration of sequential link opening pattern
+- Controlled environment for link testing
 
 Add as URL8 in default links section to demonstrate target="_blank"
 
