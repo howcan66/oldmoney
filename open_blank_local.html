@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local View</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 16px;
+            text-align: left;
+        }
+        h2 {
+            color: #283046;
+            margin-top: 0;
+        }
+        p {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <h2 id="pageTitle">Local View</h2>
+    <p>Local view displayed without browser UI.</p>
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const title = params.get('title');
+        if (title) {
+            document.getElementById('pageTitle').textContent = title;
+        }
+    </script>
+</body>
+</html>

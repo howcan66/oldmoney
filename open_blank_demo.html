@@ -58,6 +58,16 @@
             border: none;
             display: block;
         }
+
+        .embedded-note {
+            padding: 20px;
+            background-color: #F5F5FA;
+            border: 1px solid #283046;
+            border-radius: 4px;
+            text-align: left;
+            font-weight: 600;
+            color: #283046;
+        }
         
         @media (max-width: 768px) {
             .content-frame-container iframe {
@@ -121,25 +131,37 @@
 
     <script src="js/app.js"></script>
     <script>
-        // Content sources: index 0-9 (9 items total)
+        // Content sources: index 0-8 (9 items total)
         const contentSources = [
-            'open_blank_demo.html',
-            'https://www.dn.se',
-            'https://www.avanza.com',
-            'https://www.avanza.com',
-            'https://www.lysa.com',
-            'https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan',
-            'https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift',
-            'https://www.dn.se',
-            'index.html'
+            { label: 'Open Blank Demo', url: 'open_blank_demo.html', local: true },
+            { label: 'DN - News', url: 'https://www.dn.se', local: false },
+            { label: 'Avanza - Investment', url: 'https://www.avanza.com', local: false },
+            { label: 'Avanza - Investment (2)', url: 'https://www.avanza.com', local: false },
+            { label: 'Lysa - Robo-Advisor', url: 'https://www.lysa.com', local: false },
+            { label: 'Church Tax - Membership Info', url: 'https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan', local: false },
+            { label: 'Church Tax Calculator', url: 'https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift', local: false },
+            { label: 'DN - News (2)', url: 'https://www.dn.se', local: false },
+            { label: 'Home', url: 'index.html', local: true }
         ];
         
         let currentIndex = 0;
+        let fallbackTimer = null;
+        const supportsSrcdoc = 'srcdoc' in document.createElement('iframe');
+        const isEmbedded = window.self !== window.top;
         
         /**
          * Initialize on page load
          */
         document.addEventListener('DOMContentLoaded', function() {
+            if (isEmbedded) {
+                const container = document.querySelector('.content-frame-container');
+                if (container) {
+                    container.innerHTML = '<div class="embedded-note">Open Blank Demo (embedded view)</div>';
+                }
+                document.getElementById('footer-timestamp').textContent = generateTimestamp();
+                return;
+            }
+
             updateContentFrame();
             document.getElementById('footer-timestamp').textContent = generateTimestamp();
         });
@@ -172,16 +194,75 @@
             const indexDisplay = document.getElementById('currentIndex');
             const prevBtn = document.getElementById('prevBtn');
             const nextBtn = document.getElementById('nextBtn');
-            
-            // Set iframe source
-            contentFrame.src = contentSources[currentIndex];
-            
+
             // Update index display
             indexDisplay.textContent = currentIndex;
-            
+
             // Update button states
             prevBtn.disabled = currentIndex === 0;
             nextBtn.disabled = currentIndex === contentSources.length - 1;
+
+            // Load content with fallback chain A -> B -> C
+            loadContentWithFallback(contentSources[currentIndex]);
+        }
+
+        function loadContentWithFallback(item) {
+            const contentFrame = document.getElementById('contentFrame');
+
+            clearTimeout(fallbackTimer);
+            contentFrame.removeAttribute('srcdoc');
+
+            // A: Try to load the linked content directly
+            contentFrame.onload = function() {
+                clearTimeout(fallbackTimer);
+            };
+
+            contentFrame.onerror = function() {
+                clearTimeout(fallbackTimer);
+                fallbackToLocal(item);
+            };
+
+            contentFrame.src = item.url;
+
+            // If load seems blocked, fallback after timeout
+            fallbackTimer = setTimeout(function() {
+                fallbackToLocal(item);
+            }, 2500);
+        }
+
+        function fallbackToLocal(item) {
+            const contentFrame = document.getElementById('contentFrame');
+
+            // B: Show local content without browser UI using srcdoc
+            if (supportsSrcdoc) {
+                const localHtml = buildLocalHtml(item.label);
+                contentFrame.removeAttribute('src');
+                contentFrame.srcdoc = localHtml;
+                return;
+            }
+
+            // C: Fallback to local file if srcdoc not supported
+            contentFrame.src = 'open_blank_local.html?title=' + encodeURIComponent(item.label);
+        }
+
+        function buildLocalHtml(title) {
+            return `<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${title}</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 16px; text-align: left; }
+    h2 { color: #283046; margin-top: 0; }
+    p { color: #333; }
+  </style>
+</head>
+<body>
+  <h2>${title}</h2>
+  <p>Local view displayed without browser UI.</p>
+</body>
+</html>`;
         }
     </script>
 </body>

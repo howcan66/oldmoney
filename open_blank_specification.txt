@@ -87,6 +87,15 @@ NEXT BUTTON (»):
   - Updates iframe src
   - Updates header index display
 
+CONTENT LOAD FALLBACK (MANDATORY A → B → C):
+  A) Attempt to load external link directly in iframe
+    - If external site allows iframe, content displays
+  B) If A fails or is blocked, show local content without browser UI
+    - Use iframe srcdoc with minimal local HTML (no URL bar, no controls)
+  C) If srcdoc is unsupported, load local fallback file
+    - File: open_blank_local.html
+    - Shows minimal content using title parameter
+
 INDEX WRAPPING:
   - Previous at 0: Button disabled
   - Next at 8: Button disabled
@@ -124,6 +133,14 @@ updateContentFrame():
   - Set iframe.src = src
   - Update index display text
   - Update button disabled states
+
+loadContentWithFallback(item):
+  - Try iframe.src = item.url (A)
+  - If blocked/error or timeout, call fallbackToLocal(item)
+
+fallbackToLocal(item):
+  - If srcdoc supported, set iframe.srcdoc to local HTML (B)
+  - Else load open_blank_local.html?title=... (C)
 
 updateButtonStates():
   - Previous button: disabled if index === 0
@@ -218,6 +235,11 @@ LIMITATION 1: Same-Origin Policy
   - External URLs may be blocked by CORS
   - Workaround: Use local copies or proxy
   - Best practice: Test with actual deployment
+
+LIMITATION 4: Iframe Load Detection
+  - Some browsers do not provide reliable error events
+  - Timeout-based fallback is best-effort
+  - If external content appears, A succeeded
 
 LIMITATION 2: iframe Sandbox
   - Restricts JavaScript execution in external content
