@@ -329,27 +329,35 @@
             let currentPrincipal = principal;
 
             for (let year = 1; year <= years; year++) {
-                // Add monthly contributions for the year
-                const contributionsThisYear = monthlyContribution * 12;
+                const startingBalance = currentPrincipal;
+                let balance = currentPrincipal;
+                let totalContributionsThisYear = 0;
+                let totalInterestThisYear = 0;
                 
-                // Calculate compound interest for the year
-                const finalAmount = currentPrincipal * Math.pow(1 + rate / compound, compound);
-                
-                // Calculate interest earned this year (before adding contributions)
-                const interestEarned = finalAmount - currentPrincipal;
-                
-                // Add contributions at the end of the year
-                const totalWithContributions = finalAmount + contributionsThisYear;
+                // Calculate month by month for accurate compounding with contributions
+                for (let month = 1; month <= 12; month++) {
+                    // Add monthly contribution at the beginning of the month
+                    if (monthlyContribution > 0) {
+                        balance += monthlyContribution;
+                        totalContributionsThisYear += monthlyContribution;
+                    }
+                    
+                    // Apply interest for the month based on compound frequency
+                    const periodsInMonth = compound / 12;
+                    const balanceBeforeInterest = balance;
+                    balance = balance * Math.pow(1 + rate / compound, periodsInMonth);
+                    totalInterestThisYear += (balance - balanceBeforeInterest);
+                }
                 
                 yearlyData.push({
                     year: year,
-                    startingBalance: currentPrincipal,
-                    interestEarned: interestEarned,
-                    contributions: contributionsThisYear,
-                    endingBalance: totalWithContributions
+                    startingBalance: startingBalance,
+                    interestEarned: totalInterestThisYear,
+                    contributions: totalContributionsThisYear,
+                    endingBalance: balance
                 });
 
-                currentPrincipal = totalWithContributions;
+                currentPrincipal = balance;
             }
 
             // Calculate totals
