@@ -149,6 +149,24 @@ Accessibility Verification:
   • Interactive elements: Minimum 3:1 contrast
   • Test with: WebAIM Contrast Checker tool
 
+PALETTE MIGRATION & ROLLBACK:
+────────────────────────────────────────────────────
+
+If switching palettes:
+  1. Update CSS variables first
+  2. Test all pages systematically
+  3. Check contrast ratios on each page
+  4. Verify on all devices (desktop/tablet/mobile)
+  5. Test with accessibility tools
+  6. Update documentation
+  7. Communicate change to team
+
+Rollback procedure:
+  • Keep old color variables in a commented section
+  • Easy revert if issues arise
+  • Document reason for change
+  • Notify stakeholders
+
 =============================================================
 3. TYPOGRAPHY & FONTS
 =============================================================
