@@ -1,0 +1,130 @@
+PROJECT: Old Money – COLOR PALETTE GUIDE
+FORMAT: Color definitions and usage rules
+
+=============================================================
+PURPOSE
+=============================================================
+This file defines all color palettes and their usage rules.
+For implementation details, see design_style_guide.txt.
+
+=============================================================
+ACTIVE PALETTE: MODERN THEME (DEFAULT)
+=============================================================
+
+Primary Colors:
+────────────────────────────────────────────────────
+• Header/Footer background: #283046 (deep blue-slate)
+• Main background: #F5F5FA (cool light gray-blue)
+• Cards/Boxes: #FFFFFF (pure white)
+
+Text Colors:
+────────────────────────────────────────────────────
+• Primary text: #1F2430 (dark blue-gray)
+• Secondary text: #6B7280 (medium gray)
+• Muted text: #9CA3AF (light gray)
+
+Interactive Elements:
+────────────────────────────────────────────────────
+• Primary action buttons: #2563EB (vibrant blue)
+• Button hover: #1D4ED8 (darker blue)
+• Button active: #1E40AF (darkest blue)
+• Links (default): #1F2430 (dark text)
+• Links (hover): #10B981 (teal accent)
+• Links (visited): #6B7280 (muted)
+
+Semantic Colors:
+────────────────────────────────────────────────────
+• Success: #10B981 (teal green)
+• Error: #DC2626 (bright red)
+• Warning: #F59E0B (amber/orange)
+• Info: #3B82F6 (light blue)
+
+Borders & Dividers:
+────────────────────────────────────────────────────
+• Standard border: #D1D5DB (light gray)
+• Border on hover: #8b7355 (brown accent)
+• Disabled state: #F3F4F6 (very light gray)
+
+=============================================================
+ALTERNATIVE PALETTE: OLD MONEY THEME
+=============================================================
+
+Primary Colors:
+────────────────────────────────────────────────────
+• Header/Footer background: #D7D5C9 (muted olive-gray)
+• Main background: #F7F7F2 (off-white)
+• Cards/Boxes: #FAF8F2 (warm white)
+
+Text Colors:
+────────────────────────────────────────────────────
+• Primary text: #2A2A2A (charcoal)
+• Secondary text: #6A6A6A (medium gray)
+• Muted text: #999999 (light gray)
+
+Interactive Elements:
+────────────────────────────────────────────────────
+• Primary action buttons: #8b7355 (warm brown)
+• Button hover: #7a6349 (darker brown)
+• Button active: #69533d (darkest brown)
+• Links (default): #2A2A2A (charcoal)
+• Links (hover): #8b7355 (brown)
+• Links (visited): #6A6A6A (muted)
+
+Semantic Colors:
+────────────────────────────────────────────────────
+• Success: #4CAF50 (green)
+• Error: #D32F2F (red)
+• Warning: #FF9800 (orange)
+• Info: #2196F3 (blue)
+
+Borders & Dividers:
+────────────────────────────────────────────────────
+• Standard border: #E0DED8 (light gray-olive)
+• Border on hover: #8b7355 (brown)
+• Disabled state: #F0EFE8 (very light gray-olive)
+
+=============================================================
+PALETTE MIGRATION RULES
+=============================================================
+
+Switching from Modern to Old Money Theme:
+1. Update CSS variables in style.css
+2. Replace all Modern Theme hex codes with Old Money equivalents
+3. Test all pages for visual consistency
+4. Verify contrast ratios meet WCAG AA standards
+
+Rollback Procedure:
+1. Revert CSS variable changes
+2. Restore Modern Theme hex codes
+3. Clear browser cache
+4. Test all interactive elements
+
+=============================================================
+USAGE GUIDELINES
+=============================================================
+
+DO:
+• Use semantic color names in CSS (--color-primary, --color-success)
+• Maintain consistent contrast ratios (4.5:1 minimum for body text)
+• Test colors in both light and dark environments
+• Document any new color additions in this file first
+
+DON'T:
+• Hard-code hex values directly in HTML
+• Mix colors from Modern and Old Money themes
+• Use colors not defined in this palette
+• Override semantic colors for decorative purposes
+
+=============================================================
+COLOR ACCESSIBILITY
+=============================================================
+
+All color combinations in both themes meet WCAG 2.1 Level AA:
+• Normal text: 4.5:1 contrast ratio minimum
+• Large text (18pt+): 3:1 contrast ratio minimum
+• Interactive elements: clearly distinguishable states
+
+Test tools:
+• WebAIM Contrast Checker
+• Chrome DevTools Accessibility Panel
+• axe DevTools browser extension
