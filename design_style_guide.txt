@@ -457,6 +457,13 @@ Navigation Buttons Container:
 Button Specifications (ALL nav buttons):
 ────────────────────────────────────────────────────
 
+UNIFIED HEADER BUTTON STYLE RULE (MANDATORY):
+  • Refresh, Close, «, », and Index buttons MUST match style
+  • All must use bold text (font-weight: 600 or 700)
+  • Same background, border, padding, border-radius, and hover style
+  • Same height and visual weight across the header
+  • Applies to: refresh-btn, close-btn, nav-arrow-btn, nav-index-btn
+
 Language Switcher Buttons (SV/EN):
   • Background (inactive): #E0DED6 (Old Money style)
   • Background (active): #8b7355 (brown, active language)

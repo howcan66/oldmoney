@@ -1,8 +1,0 @@
-﻿Get-ChildItem -Path "c:\Git\oldmoney" -Force
-Get-Content "c:\Git\oldmoney\README.md"; Write-Host "
----
-"; Get-Content "c:\Git\oldmoney\oldmoneylinks.html"; Write-Host "
----
-"; Get-Content "c:\Git\oldmoney\listing.html"; Write-Host "
----
-"; Get-Content "c:\Git\oldmoney\styles.css"
