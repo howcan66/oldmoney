@@ -227,10 +227,13 @@ CSS Requirements for Links:
   }
 
 ---------------------------------------------------------
-4. HORIZONTAL DIVIDER (Optional but Recommended)
+4. HORIZONTAL DIVIDER (Optional - Not in Default)
 ---------------------------------------------------------
 
-HTML:
+NOTE: This is NOT included in the default template.
+Only add if specifically required for a page.
+
+HTML (if needed):
   <hr class="footer-divider">
 
 CSS:
@@ -385,9 +388,6 @@ Copy this template for new pages:
               </div>
           </div>
       </main>
-
-      <!-- Horizontal Divider -->
-      <hr class="footer-divider">
 
       <!-- Footer -->
       <footer class="footer">

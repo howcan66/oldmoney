@@ -98,9 +98,6 @@ Complete HTML Template (use for new pages):
       </div>
     </main>
 
-    <!-- Horizontal Divider -->
-    <hr class="footer-divider">
-
     <!-- Footer -->
     <footer class="footer">
       <span>&copy; CoolPortals | 
