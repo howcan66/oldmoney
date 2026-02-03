@@ -1,0 +1,266 @@
+PROJECT: Old Money – Color Palette Design Standards
+FORMAT: Color Design Specification
+
+---------------------------------------------------------
+PURPOSE
+---------------------------------------------------------
+This document defines all authorized color palettes for
+the Old Money application. Choose ONE palette per project
+and apply consistently across all pages and devices.
+
+All colors must follow WCAG 2.1 AA accessibility standards
+(minimum 4.5:1 contrast ratio for text).
+
+---------------------------------------------------------
+1. OLD MONEY THEME (CLASSIC)
+---------------------------------------------------------
+Use this palette for elegant, vintage, sophisticated aesthetic.
+Best for: Financial apps, luxury brands, heritage projects.
+
+PRIMARY COLORS:
+- Background: #F7F7F2 (off-white, slightly warm)
+- Header/Footer: #D7D5C9 (muted olive-gray)
+- Primary Action: #8b7355 (warm brown)
+
+SUPPORTING COLORS:
+- Primary text: #2A2A2A (charcoal)
+- Secondary text: #6A6A6A (medium gray)
+- Borders: #C8C8C8 (light gray)
+- Disabled: #E0DED6 (light beige)
+
+SEMANTIC COLORS:
+- Success: #4CAF50 (green)
+- Error: #D32F2F (red)
+- Warning: #FF9800 (orange)
+- Info: #2196F3 (blue)
+
+USAGE EXAMPLES:
+
+Backgrounds:
+- Page background: #F7F7F2
+- Card/box background: #FAF8F2
+- Input background: #FFFFFF
+- Hover state: #E0DED6
+
+Buttons:
+- Primary button: #8b7355 (brown)
+- Primary hover: #7a6349
+- Primary active: #69533d
+- Secondary button: #E0DED6 (light)
+- Secondary hover: #C9C7BF
+
+Links:
+- Default: #2A2A2A (charcoal)
+- Hover: #8b7355 (brown)
+- Visited: #6A6A6A (muted)
+
+---------------------------------------------------------
+2. MODERN THEME (CONTEMPORARY)
+---------------------------------------------------------
+Use this palette for clean, professional, modern app feel.
+Best for: SaaS products, fintech, contemporary applications.
+
+PRIMARY COLORS:
+- Background main: #F5F5FA (cool light gray-blue)
+- Header/Footer: #283046 (deep blue-slate)
+- Cards/Boxes: #FFFFFF (pure white)
+- Primary Action: #2563EB (vibrant blue)
+
+SUPPORTING COLORS:
+- Primary text: #1F2430 (dark blue-gray)
+- Secondary text: #6B7280 (medium gray)
+- Borders: #D1D5DB (light gray)
+- Disabled: #F3F4F6 (very light gray)
+
+SEMANTIC COLORS:
+- Success: #10B981 (teal green)
+- Error: #DC2626 (bright red)
+- Warning: #F59E0B (amber)
+- Info: #3B82F6 (light blue)
+
+USAGE EXAMPLES:
+
+Backgrounds:
+- Page background: #F5F5FA
+- Card/box background: #FFFFFF
+- Input background: #FFFFFF
+- Hover state: #F9FAFB
+
+Buttons:
+- Primary button: #2563EB (blue)
+- Primary hover: #1D4ED8
+- Primary active: #1E40AF
+- Secondary button: #F3F4F6 (light)
+- Secondary hover: #E5E7EB
+
+Links:
+- Default: #1F2430 (dark text)
+- Hover: #10B981 (teal accent)
+- Visited: #6B7280 (muted)
+
+---------------------------------------------------------
+3. PALETTE SELECTION GUIDELINES
+---------------------------------------------------------
+
+CHOOSE OLD MONEY IF:
+- Project targets affluent/heritage audience
+- Vintage or timeless aesthetic desired
+- Financial/wealth management focus
+- Classic elegance is brand requirement
+
+CHOOSE MODERN IF:
+- Project targets tech-savvy users
+- Contemporary/professional image needed
+- SaaS or fintech product
+- Minimalist aesthetic preferred
+- Broader audience appeal required
+
+IMPLEMENTATION RULES:
+1. Select ONE palette per project branch
+2. Document choice in project README
+3. Apply consistently across all pages
+4. Use same colors on desktop/tablet/mobile
+5. Only layout/typography changes per device
+6. Do NOT mix colors from different palettes
+
+---------------------------------------------------------
+4. ACCESSIBILITY REQUIREMENTS
+---------------------------------------------------------
+
+CONTRAST RATIOS:
+All text must meet WCAG 2.1 AA standards:
+- Normal text: Minimum 4.5:1 contrast ratio
+- Large text (18px+): Minimum 3:1 contrast ratio
+- UI components: Minimum 3:1 contrast ratio
+
+TESTING:
+- Use WebAIM Contrast Checker tool
+- Test on real devices with accessibility features
+- Verify dark mode compatibility (if applicable)
+- Test with color blindness simulators
+
+COMPLIANCE CHECKLIST:
+- Text vs background: ✓ 4.5:1+ (normal)
+- Buttons vs background: ✓ 3:1+ (UI)
+- Links vs text: ✓ Distinguishable
+- Error/success: ✓ Not color-only (use icons/text)
+
+---------------------------------------------------------
+5. COLOR VARIABLES FOR DEVELOPMENT
+---------------------------------------------------------
+
+CSS CUSTOM PROPERTIES (OLD MONEY):
+
+:root {
+  --color-bg-main: #F7F7F2;
+  --color-bg-card: #FAF8F2;
+  --color-bg-input: #FFFFFF;
+  --color-header-footer: #D7D5C9;
+  --color-text-primary: #2A2A2A;
+  --color-text-secondary: #6A6A6A;
+  --color-border: #C8C8C8;
+  --color-primary-action: #8b7355;
+  --color-primary-hover: #7a6349;
+  --color-success: #4CAF50;
+  --color-error: #D32F2F;
+  --color-warning: #FF9800;
+}
+
+CSS CUSTOM PROPERTIES (MODERN):
+
+:root {
+  --color-bg-main: #F5F5FA;
+  --color-bg-card: #FFFFFF;
+  --color-bg-input: #FFFFFF;
+  --color-header-footer: #283046;
+  --color-text-primary: #1F2430;
+  --color-text-secondary: #6B7280;
+  --color-border: #D1D5DB;
+  --color-primary-action: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-success: #10B981;
+  --color-error: #DC2626;
+  --color-warning: #F59E0B;
+}
+
+USAGE IN CSS:
+background: var(--color-bg-main);
+color: var(--color-text-primary);
+border: 1px solid var(--color-border);
+
+---------------------------------------------------------
+6. COLOR APPLICATION CHECKLIST
+---------------------------------------------------------
+
+HEADER:
+- ✓ Background: Header/footer color
+- ✓ Text: Primary text color
+- ✓ Buttons: Secondary button style
+- ✓ Borders: Border color
+
+MAIN CONTENT:
+- ✓ Background: Main background
+- ✓ Text: Primary text
+- ✓ Links: Link color (default/hover/visited)
+- ✓ Cards: Card background + border
+
+FORMS & INPUTS:
+- ✓ Background: Input background (white)
+- ✓ Border: Border color (default)
+- ✓ Border hover: Primary action color
+- ✓ Text: Primary text
+- ✓ Placeholder: Secondary text
+
+BUTTONS:
+- ✓ Primary: Primary action color
+- ✓ Primary hover: Darker shade
+- ✓ Secondary: Disabled/light color
+- ✓ Text: Appropriate contrast
+
+ALERTS & MESSAGES:
+- ✓ Success: Success color + background
+- ✓ Error: Error color + background
+- ✓ Warning: Warning color + background
+- ✓ Background: Semi-transparent + color tint
+
+FOOTER:
+- ✓ Background: Header/footer color
+- ✓ Text: Primary text
+- ✓ Links: Link color
+
+---------------------------------------------------------
+7. MIGRATION GUIDELINES
+---------------------------------------------------------
+
+IF SWITCHING PALETTES:
+
+1. Update CSS variables first
+2. Test all pages systematically
+3. Check contrast ratios on each page
+4. Verify on all devices (desktop/tablet/mobile)
+5. Test with accessibility tools
+6. Update documentation
+7. Communicate change to team
+
+ROLLBACK PROCEDURE:
+- Keep old color variables in commented section
+- Easy revert if issues arise
+- Document reason for change
+- Notify stakeholders
+
+---------------------------------------------------------
+8. FUTURE PALETTES
+---------------------------------------------------------
+
+Additional palettes can be added following this template:
+[Palette Name] THEME
+
+- PRIMARY COLORS (3-4 main colors)
+- SUPPORTING COLORS (text, borders, disabled)
+- SEMANTIC COLORS (success, error, warning, info)
+- USAGE EXAMPLES
+- CONTRAST VERIFICATION
+
+---------------------------------------------------------
+END OF COLOR PALETTE DESIGN STANDARDS
+---------------------------------------------------------
