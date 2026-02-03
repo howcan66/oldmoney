@@ -41,7 +41,7 @@
                 <input
                     type="number"
                     id="startAmount"
-                    placeholder="e.g., 10000"
+                    value="1000"                    value="1000"                    placeholder="e.g., 10000"
                     min="0"
                     max="999999999"
                     step="0.01"
@@ -54,7 +54,7 @@
                 <input
                     type="number"
                     id="interestRate"
-                    placeholder="e.g., 7.5"
+                    value="3"                    value="3"                    placeholder="e.g., 7.5"
                     min="0"
                     max="100"
                     step="0.01"
@@ -67,6 +67,8 @@
                 <input
                     type="number"
                     id="monthlySavings"
+                    value="100"
+                    value="100"
                     placeholder="e.g., 1000"
                     min="0"
                     max="999999999"
@@ -74,7 +76,19 @@
                     aria-required="false">
                 <span class="error-message" id="monthlySavingsError"></span>
             </div>
-
+              <div class="input-group">
+                <label for="yearlyDeposit">Yearly Deposit</label>
+                <input
+                    type="number"
+                    id="yearlyDeposit"
+                    value="1000"
+                    placeholder="e.g., 1000"
+                    min="0"
+                    max="999999999"
+                    step="0.01"
+                    aria-required="false">
+                <span class="error-message" id="yearlyDepositError"></span>
+              </div>
             <div class="action-buttons">
                 <button class="btn-primary" onclick="calculateInterest()" title="Calculate compound interest">
                     <span id="calculateBtnText">Calculate</span>

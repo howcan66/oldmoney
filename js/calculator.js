@@ -10,15 +10,19 @@ function calculateInterest() {
     const startAmount = parseFloat(document.getElementById('startAmount').value);
     const interestRate = parseFloat(document.getElementById('interestRate').value);
     let monthlySavings = parseFloat(document.getElementById('monthlySavings').value);
+    let yearlyDeposit = parseFloat(document.getElementById('yearlyDeposit').value);
     if (isNaN(monthlySavings)) {
         monthlySavings = 0;
+    }
+    if (isNaN(yearlyDeposit)) {
+        yearlyDeposit = 0;
     }
     
     // Clear previous errors
     clearErrors();
     
     // Validate inputs
-    if (!validateInputs(startAmount, interestRate, monthlySavings)) {
+    if (!validateInputs(startAmount, interestRate, monthlySavings, yearlyDeposit)) {
         return;
     }
     
@@ -39,7 +43,7 @@ function calculateInterest() {
             for (let year = 1; year <= 40; year++) {
                 const startBalance = currentAmount;
                 let totalInterest = 0;
-                let balance = startBalance;
+                let balance = startBalance + yearlyDeposit;
 
                 for (let month = 1; month <= 12; month++) {
                     balance += monthlySavings;
@@ -94,18 +98,17 @@ function calculateInterest() {
 /**
  * Validate input values
  */
-function validateInputs(startAmount, interestRate, monthlySavings) {
+function validateInputs(startAmount, interestRate, monthlySavings, yearlyDeposit) {
     let isValid = true;
-    
+
     const startAmountInput = document.getElementById('startAmount');
     const interestRateInput = document.getElementById('interestRate');
     const monthlySavingsInput = document.getElementById('monthlySavings');
+    const yearlyDepositInput = document.getElementById('yearlyDeposit');
     const startAmountError = document.getElementById('startAmountError');
     const interestRateError = document.getElementById('interestRateError');
     const monthlySavingsError = document.getElementById('monthlySavingsError');
-    
-    // Validate start amount
-    if (isNaN(startAmount) || startAmount < 0 || startAmount > 999999999) {
+    const yearlyDepositError = document.getElementById('yearlyDepositError');
         if (startAmountError) {
             startAmountError.textContent = 'Please enter a valid amount (0-999,999,999)';
         }
@@ -136,7 +139,18 @@ function validateInputs(startAmount, interestRate, monthlySavings) {
         }
         isValid = false;
     }
-    
+
+    // Validate yearly deposit
+    if (isNaN(yearlyDeposit) || yearlyDeposit < 0 || yearlyDeposit > 999999999) {
+        if (yearlyDepositError) {
+            yearlyDepositError.textContent = 'Please enter a valid yearly deposit amount (0-999,999,999)';
+        }
+        if (yearlyDepositInput) {
+            yearlyDepositInput.style.borderColor = '#e74c3c';
+        }
+        isValid = false;
+    }
+
     return isValid;
 }
 
@@ -243,13 +257,7 @@ function clearInputs() {
     document.getElementById('startAmount').value = '';
     document.getElementById('interestRate').value = '';
     document.getElementById('monthlySavings').value = '';
-    
-    const resultsSection = document.getElementById('resultsSection');
-    if (resultsSection) {
-        resultsSection.style.display = 'none';
-    }
-    
-    clearErrors();
+    document.getElementById('yearlyDeposit').value = '';
     showToast('Form cleared', 'success');
 }
 
