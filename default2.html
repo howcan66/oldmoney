@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Default Title</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <h1>Default Title</h1>
+        <div class="nav-buttons">
+            <button class="refresh-btn" onclick="refreshPage()">Refresh</button>
+            <button class="close-btn" onclick="closePage()">Close</button>
+            <select id="language-selector" onchange="switchLanguage(this.value)">
+                <option value="en">EN</option>
+                <option value="sv">SV</option>
+            </select>
+        </div>
+    </header>
+
+    <main>
+        <p>Default Body Text</p>
+        
+        <details>
+            <summary>Links</summary>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="interesetoninterest.html">Interest on Interest</a></li>
+                <li><a href="listing.html">Listing</a></li>
+                <li><a href="oldmoneylinks.html">Links</a></li>
+            </ul>
+        </details>
+    </main>
+
+    <footer>
+        <p>&copy; CoolPortals | default2.html | <span id="timestamp"></span></p>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('timestamp').textContent = generateTimestamp();
+    </script>
+</body>
+</html>
