@@ -417,12 +417,11 @@ Table Body Row Specifications:
 MANDATORY PAGE STRUCTURE (ALL PAGES):
 
 1. HEADER (Fixed Top):
-   - Title: "Old Money" or page-specific title
-   - Default Title text: "Default Title"
-   - Language switcher: EN/SV buttons
-   - Navigation buttons: Refresh, Close
-   - Background: #D7D5C9
+   - Title: "Default Title" (LEFT-aligned)
+   - Background: #283046 (Modern) or #D7D5C9 (Old Money)
    - Border-bottom: 1px solid #C8C8C8
+   - Navigation buttons: See section 1B (all RIGHT-aligned)
+   - Language switcher: See section 9 (RIGHT-aligned)
 
 2. DESCRIPTION SECTION (Required):
    - Brief description of page purpose
@@ -464,16 +463,6 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
        text-align: left;
    }
 
-TEXT ALIGNMENT RULES (CRITICAL):
-
-DEFAULT ALIGNMENT: LEFT
-- ALL body text: LEFT-aligned
-- Paragraphs: LEFT-aligned
-- Descriptions: LEFT-aligned
-- Labels: LEFT-aligned
-- Headers/Titles: LEFT-aligned
-- Lists: LEFT-aligned
-- FOOTER content: LEFT-aligned (unless explicitly specified otherwise)
 
 GLOBAL LAYOUT ALIGNMENT (MANDATORY - ALL PAGES):
 
@@ -500,14 +489,6 @@ CSS REQUIREMENT (MANDATORY):
 .footer { text-align: left; justify-content: flex-start; }
 .nav-buttons { margin-left: auto; justify-content: flex-end; }
 
-EXCEPTIONS (Only when specified in page requirements):
-- Numeric values in tables: RIGHT-aligned
-- Modal dialogs: CENTER-aligned (optional)
-- Page title/heading: LEFT-aligned (default)
-
-NEVER use center or right alignment for body text or footer content 
-unless NEVER use center or right alignment for body text unless
-explicitly specified in page-specific requirements.
 
 Color Palette (DEFAULT - MODERN THEME):
 - Background main: #F5F5FA (cool light gray-blue)
