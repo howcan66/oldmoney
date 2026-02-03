@@ -328,13 +328,17 @@
             const yearlyData = [];
             let currentPrincipal = principal;
 
+            // Calculate the effective monthly rate from annual rate and compounding frequency
+            // This uses the formula: (1 + r/n)^(n/12) - 1
+            const monthlyRate = Math.pow(1 + rate / compound, compound / 12) - 1;
+            
             for (let year = 1; year <= years; year++) {
                 const startingBalance = currentPrincipal;
                 let balance = currentPrincipal;
                 let totalContributionsThisYear = 0;
                 let totalInterestThisYear = 0;
                 
-                // Calculate month by month for accurate compounding with contributions
+                // Calculate month by month using effective monthly rate
                 for (let month = 1; month <= 12; month++) {
                     // Add monthly contribution at the beginning of the month
                     if (monthlyContribution > 0) {
@@ -342,10 +346,9 @@
                         totalContributionsThisYear += monthlyContribution;
                     }
                     
-                    // Apply interest for the month based on compound frequency
-                    const periodsInMonth = compound / 12;
+                    // Apply effective monthly interest rate
                     const balanceBeforeInterest = balance;
-                    balance = balance * Math.pow(1 + rate / compound, periodsInMonth);
+                    balance = balance * (1 + monthlyRate);
                     totalInterestThisYear += (balance - balanceBeforeInterest);
                 }
                 
