@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧭 Buttons Inventory - UI Components Documentation</title>
+    <link rel="icon" href="CoolPortals_2026.PNG" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f9fafb;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        h1 {
+            color: #1f2937;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #6b7280;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+        
+        .table-wrapper {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11px;
+        }
+        
+        thead {
+            background: #f3f4f6;
+        }
+        
+        th {
+            text-align: left;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            font-weight: 600;
+            color: #374151;
+        }
+        
+        td {
+            padding: 4px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        tr:hover {
+            background: #f9fafb;
+        }
+        
+        .status-used {
+            text-align: center;
+            color: #16a34a;
+            font-weight: bold;
+        }
+        
+        .status-available {
+            text-align: center;
+            color: #9ca3af;
+            font-style: italic;
+        }
+        
+        .row-available {
+            background: #fef3c7;
+        }
+        
+        .row-available:hover {
+            background: #fef08a;
+        }
+        
+        /* Button Size Classes - Same height, three fixed lengths */
+        .btn-size-1 {
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+            width: 88px !important;
+            height: 24px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 4px !important;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+        }
+        
+        .btn-size-2 {
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+            width: 104px !important;
+            height: 24px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 4px !important;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+        }
+        
+        .btn-size-3 {
+            padding: 6px 8px !important;
+            font-size: 12px !important;
+            width: 124px !important;
+            height: 24px !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            gap: 4px !important;
+            text-align: left !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+        }
+
+        .btn-icon {
+            display: inline-block !important;
+            min-width: 16px !important;
+            text-align: left !important;
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>🧭 Buttons Inventory</h1>
+                <p class="subtitle">Comprehensive UI components documentation for Desktop, Tablet, and Mobile platforms</p>
+            </div>
+        </div>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 2%;">1. #</th>
+                        <th style="width: 7%;">2. Desktop<br>Visual</th>
+                        <th style="width: 3%;">3. Icon</th>
+                        <th style="width: 9%;">4. Desktop</th>
+                        <th style="width: 8%;">5. Desktop<br>Tooltip</th>
+                        <th style="width: 14%;">6. Tablet<br>Visual</th>
+                        <th style="width: 9%;">7. Tablet</th>
+                        <th style="width: 8%;">8. Tablet<br>Tooltip</th>
+                        <th style="width: 7%;">9. Mobile<br>Visual</th>
+                        <th style="width: 9%;">10. Mobile</th>
+                        <th style="width: 8%;">11. Mobile<br>Tooltip (Tap)</th>
+                        <th style="width: 5%; text-align: center;">12. Mobile<br>Status</th>
+                        <th style="width: 6%;">13. New alt<br>icon</th>
+                        <th style="width: 10%;">14. New<br>comment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- SIZE 1 (88px) - 18 buttons -->
+                    <tr><td>1</td><td><span style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 4px;">Login</span></td><td>-</td><td>Login (text-btn)</td><td>Sign in to account</td><td><span class="btn-size-1" style="background: #3b82f6; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Sign in to account"><span class="btn-icon">🔑</span> Login</span></td><td>Login (text-btn)</td><td>Tap: Sign in to account</td><td>🔑</td><td>Login (text-btn)</td><td>Tap: Sign in to account</td><td class="status-used">Change Required</td><td>🔑</td><td>🔑 more intuitive than generic checkmark for authentication action</td></tr>
+                    <tr><td>2</td><td><span style="background: #10b981; color: white; padding: 6px 12px; border-radius: 4px;">Demo Mode</span></td><td>-</td><td>Demo Mode (text-btn)</td><td>Try without logging in</td><td><span class="btn-size-1" style="background: #10b981; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Try without logging in"><span class="btn-icon">👀</span> Demo</span></td><td>Demo Mode (text-btn)</td><td>Tap: Try without logging in</td><td>👀</td><td>Demo Mode (text-btn)</td><td>Tap: Try without logging in</td><td class="status-used">Change Required</td><td>👀</td><td>👀 conveys "preview/try it out" action more intuitively</td></tr>
+                    <tr><td>3</td><td><span style="background: #f59e0b; color: white; padding: 6px 12px; border-radius: 4px;">🔓 Reset Lockout</span></td><td>🔓</td><td>🔓 Reset Lockout (btn text+icon)</td><td>Reset failed login attempts</td><td><span class="btn-size-1" style="background: #f59e0b; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Reset failed login attempts"><span class="btn-icon">🔄</span> Reset</span></td><td>Reset Lockout (btn text+icon)</td><td>Tap: Reset failed login attempts</td><td>🔄</td><td>🔓 Reset Lockout (btn text+icon)</td><td>Tap: Reset failed login attempts</td><td class="status-used">Change Required</td><td>🔄</td><td>🔄 emphasizes 'retry' action more than unlock metaphor</td></tr>
+                    <tr><td>4</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">📖 Docs</span></td><td>📖</td><td>📖 Docs (btn text+icon)</td><td>Open documentation</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Docs"><span class="btn-icon">ℹ️</span> Docs</span></td><td>Docs (icon-btn)</td><td>Tap: Docs</td><td>ℹ️</td><td>📖 Docs (icon-btn)</td><td>Tap: Docs</td><td class="status-used">Change Required</td><td>ℹ️</td><td>ℹ️ more universally recognized for documentation/help</td></tr>
+                    <tr><td>5</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">🔐 Token</span></td><td>🔐</td><td>🔐 Token (btn text+icon)</td><td>Setup GitHub token</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Token"><span class="btn-icon">🔑</span> Token</span></td><td>Token (icon-btn)</td><td>Tap: Token</td><td>🔑</td><td>🔐 Token (icon-btn)</td><td>Tap: Token</td><td class="status-used">Change Required</td><td>🔑</td><td>Reuse key icon for token access consistency</td></tr>
+                    <tr><td>6</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">🔄 Sync</span></td><td>🔄</td><td>🔄 Sync (btn text+icon)</td><td>Sync with GitHub</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Sync"><span class="btn-icon">⇄</span> Sync</span></td><td>Sync (icon-btn)</td><td>Tap: Sync</td><td>⇄</td><td>🔄 Sync (icon-btn)</td><td>Tap: Sync</td><td class="status-used">Change Required</td><td>⇄</td><td>⇄ shows bidirectional sync more clearly</td></tr>
+                    <tr><td>7</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">⚙️ Admin</span></td><td>⚙️</td><td>⚙️ Admin (btn text+icon)</td><td>Admin panel</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Admin"><span class="btn-icon">🛠️</span> Admin</span></td><td>Admin (icon-btn)</td><td>Tap: Admin</td><td>🛠️</td><td>⚙️ Admin (icon-btn)</td><td>Tap: Admin</td><td class="status-used">Change Required</td><td>🛠️</td><td>-</td></tr>
+                    <tr><td>8</td><td>⋮</td><td>⋮</td><td>⋮ Collapse Menu (icon-btn)</td><td>Collapse/expand menu</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Collapse/expand menu"><span class="btn-icon">☰</span></span></td><td>Collapse Menu (icon-btn)</td><td>Tap: Collapse/expand menu</td><td>☰</td><td>⋮ Collapse Menu (icon-btn)</td><td>Tap: Collapse/expand menu</td><td class="status-used">Change Required</td><td>☰</td><td>Alt options: ≡ or ◤ (menu variants)</td></tr>
+                    <tr><td>9</td><td>🧩</td><td>🧩</td><td>🧩 Compact Mode (icon-btn)</td><td>Toggle compact view</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Toggle compact view"><span class="btn-icon">⊟</span></span></td><td>Compact Mode (icon-btn)</td><td>Tap: Toggle compact view</td><td>⊟</td><td>🧩 Compact Mode (icon-btn)</td><td>Tap: Toggle compact view</td><td class="status-used">Change Required</td><td>⊟</td><td>Alt option: 🧩 (puzzle) remains a recognizable compact-mode cue</td></tr>
+                    <tr><td>10</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">⬆️ Back to Top</span></td><td>⬆️</td><td>⬆️ Back to Top (btn text+icon)</td><td>Scroll to top</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Scroll to top"><span class="btn-icon">🔝</span> Top</span></td><td>Back to Top (btn text+icon)</td><td>Tap: Scroll to top</td><td>🔝</td><td>⬆️ Back to Top (btn text+icon)</td><td>Tap: Scroll to top</td><td class="status-used">Change Required</td><td>🔝</td><td>Alt: ⬆️ is also widely used for back-to-top</td></tr>
+                    <tr><td>11</td><td><span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 3px; font-size: 10px;">HIGH</span></td><td>-</td><td>Priority badge (text-badge)</td><td>-</td><td><span class="btn-size-1" style="background: #dc2626; color: white; border-radius: 3px; width: 64px !important;" title="High Priority"><span class="btn-icon">⚡</span> HIGH</span></td><td>Priority badge (text-badge)</td><td>Tap: N/A</td><td>⚡</td><td>Priority badge (text-badge)</td><td>Tap: N/A</td><td class="status-used">Change Required</td><td>⚡</td><td>⚡ conveys urgency/high priority</td></tr>
+                    <tr><td>12</td><td>🔽</td><td>🔽</td><td>🔽 Description Toggle (icon-btn)</td><td>Show/hide description</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Show/hide description"><span class="btn-icon">▼</span></span></td><td>Description Toggle (icon-btn)</td><td>Tap: Show/hide description</td><td>▼</td><td>🔽 Description Toggle (icon-btn)</td><td>Tap: Show/hide description</td><td class="status-used">Change Required</td><td>▼</td><td>Alt: 🔽 remains clear for toggle action</td></tr>
+                    <tr><td>13</td><td>▶️</td><td>▶️</td><td>▶️ Compact Toggle (icon-btn)</td><td>Expand compact card</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Expand compact card"><span class="btn-icon">►</span></span></td><td>Compact Toggle (icon-btn)</td><td>Tap: Expand compact card</td><td>►</td><td>▶️ Compact Toggle (icon-btn)</td><td>Tap: Expand compact card</td><td class="status-used">Change Required</td><td>►</td><td>Alt: ▶️ remains a clear expand indicator</td></tr>
+                    <tr><td>14</td><td>👁️</td><td>👁️</td><td>👁️ View Task (icon-btn)</td><td>View task details</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="View task details"><span class="btn-icon">👀</span></span></td><td>View Task (icon-btn)</td><td>Tap: View task details</td><td>👀</td><td>👁️ View Task (icon-btn)</td><td>Tap: View task details</td><td class="status-used">Change Required</td><td>👀</td><td>👀 emphasizes preview/view action</td></tr>
+                    <tr><td>15</td><td>📝</td><td>📝</td><td>📝 Edit Task (icon-btn)</td><td>Edit task</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Edit task"><span class="btn-icon">✏️</span></span></td><td>Edit Task (icon-btn)</td><td>Tap: Edit task</td><td>✏️</td><td>📝 Edit Task (icon-btn)</td><td>Tap: Edit task</td><td class="status-used">Change Required</td><td>✏️</td><td>✏️ is a standard edit symbol</td></tr>
+                    <tr><td>16</td><td>🗑️</td><td>🗑️</td><td>🗑️ Delete Task (icon-btn)</td><td>Delete task</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Delete task"><span class="btn-icon">🗑️</span></span></td><td>Delete Task (icon-btn)</td><td>Tap: Delete task</td><td>🗑️</td><td>🗑️ Delete Task (icon-btn)</td><td>Tap: Delete task</td><td class="status-used">✓ Used</td><td>🗑️</td><td>Alt: ✖ / × / ❌ for compact delete</td></tr>
+                    <tr><td>17</td><td><span style="background: #10b981; color: white; padding: 6px 12px; border-radius: 4px;">Add New User</span></td><td>-</td><td>Add New User (text-btn)</td><td>Create user account</td><td><span class="btn-size-1" style="background: #10b981; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Create user account"><span class="btn-icon">👤</span> User</span></td><td>Add New User (text-btn)</td><td>Tap: Create user account</td><td>👤</td><td>Add New User (text-btn)</td><td>Tap: Create user account</td><td class="status-used">Change Required</td><td>👤</td><td>👤 clearly indicates user/account</td></tr>
+                    <tr><td>18</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">✖ Close</span></td><td>✖</td><td>✖ Close (btn text+icon)</td><td>Close modal</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Close modal"><span class="btn-icon">×</span> Close</span></td><td>Close (btn text+icon)</td><td>Tap: Close modal</td><td>×</td><td>✖ Close (btn text+icon)</td><td>Tap: Close modal</td><td class="status-used">Change Required</td><td>×</td><td>Alt: ✖ / ❌ / ⨯</td></tr>
+                    <tr><td>19</td><td><span style="background: #f59e0b; color: white; padding: 6px 12px; border-radius: 4px;">Reset Defaults</span></td><td>-</td><td>Reset Defaults (text-btn)</td><td>Restore default settings</td><td><span class="btn-size-1" style="background: #f59e0b; color: white; border-radius: 4px; cursor: pointer; width: 64px !important;" title="Restore default settings"><span class="btn-icon">🔄</span> Reset</span></td><td>Reset Defaults (text-btn)</td><td>Tap: Restore default settings</td><td>🔄</td><td>Reset Defaults (text-btn)</td><td>Tap: Restore default settings</td><td class="status-used">Change Required</td><td>🔄</td><td>🔄 conveys reset/restore cycle</td></tr>
+                    <tr class="row-available"><td>20</td><td>🗂️</td><td>🗂️</td><td>🗂️ File Dividers (icon)</td><td>-</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="File Dividers"><span class="btn-icon">📂</span></span></td><td>File Dividers (icon)</td><td>Tap: N/A</td><td>📂</td><td>🗂️ File Dividers (icon)</td><td>Tap: N/A</td><td class="status-available">Change Required</td><td>📂</td><td>-</td></tr>
+                    <tr class="row-available"><td>21</td><td>⬜⬜⬜</td><td>⬜⬜⬜</td><td>⬜⬜⬜ Grid (icon)</td><td>-</td><td><span class="btn-size-1" style="cursor: pointer; width: 64px !important;" title="Grid"><span class="btn-icon">◼</span></span></td><td>Grid (icon)</td><td>Tap: N/A</td><td>◼</td><td>⬜⬜⬜ Grid (icon)</td><td>Tap: N/A</td><td class="status-available">Change Required</td><td>◼</td><td>-</td></tr>
+                    
+                    <!-- SIZE 2 (104px) - 6 buttons -->
+                    <tr><td>22</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">🚪 Logout</span></td><td>🚪</td><td>🚪 Logout (btn text+icon)</td><td>Sign out</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; font-size: 10px !important; width: 64px !important;" title="Logout"><span class="btn-icon">👋</span> Logout</span></td><td>Logout (icon-btn)</td><td>Tap: Logout</td><td>👋</td><td>🚪 Logout (icon-btn)</td><td>Tap: Logout</td><td class="status-used">Change Required</td><td>👋</td><td>👋 commonly understood as sign-out/leave</td></tr>
+                    <tr><td>23</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">📋 Export All</span></td><td>📋</td><td>📋 Export All (btn text+icon)</td><td>Export all data</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; font-size: 10px !important; width: 64px !important;" title="Export All"><span class="btn-icon">⬇️</span> Export</span></td><td>Export All (icon-btn)</td><td>Tap: Export All</td><td>⬇️</td><td>📋 Export All (icon-btn)</td><td>Tap: Export All</td><td class="status-used">Change Required</td><td>⬇️</td><td>⬇️ is the most common export/download symbol</td></tr>
+                    <tr><td>24</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">🔄 Refresh</span></td><td>🔄</td><td>🔄 Refresh (btn text+icon)</td><td>Reload kanban</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; font-size: 10px !important; width: 64px !important;" title="Refresh"><span class="btn-icon">↻</span> Refresh</span></td><td>Refresh (icon-btn)</td><td>Tap: Refresh</td><td>↻</td><td>🔄 Refresh (icon-btn)</td><td>Tap: Refresh</td><td class="status-used">Change Required</td><td>↻</td><td>↻ is standard refresh glyph; 🔄 remains a good alternate</td></tr>
+                    <tr><td>25</td><td><span style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 4px;">➕ Add Task</span></td><td>➕</td><td>➕ Add Task (btn text+icon)</td><td>Create new task</td><td><span class="btn-size-1" style="background: #3b82f6; color: white; border-radius: 4px; cursor: pointer; font-size: 10px !important; width: 64px !important;" title="Create new task"><span class="btn-icon">📝</span> Add Task</span></td><td>Add Task (icon-btn)</td><td>Tap: Create new task</td><td>📝</td><td>➕ Add Task (btn text+icon)</td><td>Tap: Create new task</td><td class="status-used">Change Required</td><td>📝</td><td>📝 implies creating a task; ➕ remains a clear alternate</td></tr>
+                    <tr><td>26</td><td><span style="background: #6b7280; color: white; padding: 6px 12px; border-radius: 4px;">➕ Project</span></td><td>➕</td><td>➕ Project (btn text+icon)</td><td>Add new project</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; font-size: 10px !important; width: 64px !important;" title="Project"><span class="btn-icon">📁</span> Project</span></td><td>Project (icon-btn)</td><td>Tap: Project</td><td>📁</td><td>➕ Project (icon-btn)</td><td>Tap: Project</td><td class="status-used">Change Required</td><td>📁</td><td>📁 conveys project/folder creation</td></tr>
+                    <tr><td>27</td><td><span style="background: #3b82f6; color: white; padding: 6px 12px; border-radius: 4px;">Send Invitation</span></td><td>-</td><td>Send Invitation (text-btn)</td><td>Send user invite</td><td><span class="btn-size-1" style="background: #3b82f6; color: white; border-radius: 4px; cursor: pointer; font-size: 10px !important; width: 64px !important;" title="Send user invite"><span class="btn-icon">💌</span> Invite</span></td><td>Send Invitation (text-btn)</td><td>Tap: Send user invite</td><td>💌</td><td>Send Invitation (text-btn)</td><td>Tap: Send user invite</td><td class="status-used">Change Required</td><td>💌</td><td>Alt options: ✉️ / 📧 / 📨</td></tr>
+                    
+                    <!-- SIZE 1 (88px) -->
+                    <tr><td>28</td><td>👁️</td><td>👁️</td><td>Show/Hide Password (icon-btn)</td><td>Toggle password visibility</td><td><span class="btn-size-1" style="background: #6b7280; color: white; border-radius: 4px; cursor: pointer; font-size: 8px !important; width: 64px !important;" title="Toggle password visibility"><span class="btn-icon">🙈</span> Show/Hide</span></td><td>Show/Hide Password (icon-btn)</td><td>Tap: Toggle password visibility</td><td>🙈</td><td>Show/Hide Password (icon-btn)</td><td>Tap: Toggle password visibility</td><td class="status-used">Change Required</td><td>🙈</td><td>Use 👁️🙈 toggle pair for password visibility on mobile</td></tr>
+                    <tr><td>29</td><td>? | ! | ✓</td><td>? | ! | ✓</td><td>Kanban Status (icon-status)</td><td>Task status indicator</td><td><span class="btn-size-1" style="background: #f3f4f6; color: #374151; border-radius: 4px; cursor: pointer; width: 64px !important; font-size: 10px !important;" title="Task status"><span class="btn-icon">?|!|✓</span></span></td><td>Kanban Status (icon-status)</td><td>Tap: N/A</td><td>?|!|✓</td><td>Kanban Status (icon-status)</td><td>Tap: N/A</td><td class="status-available">Available</td><td>?|!|✓</td><td>Compact kanban status: Question/Urgent/Done<br><div style="margin-top: 8px; padding: 8px; background: #f9fafb; border-radius: 8px; border: 2px solid #3b82f6;"><div style="display: inline-flex; gap: 8px; padding: 12px 20px; background: white; border-radius: 12px; align-items: center;"><span style="font-size: 32px; color: #fbbf24;">?</span><span style="width: 3px; height: 40px; background: #3b82f6; border-radius: 2px;"></span><span style="font-size: 32px; color: #ef4444;">!</span><span style="width: 3px; height: 40px; background: #3b82f6; border-radius: 2px;"></span><span style="font-size: 32px; color: #10b981;">✓</span></div></div></td></tr>
+                    <tr class="row-available"><td>30</td><td>📋 📊 📌 🎯 ⚡ 🔄 ✅</td><td>Kanban Icons</td><td>Kanban Board Icons (icon-set)</td><td>Various kanban actions</td><td><span class="btn-size-1" style="background: #f3f4f6; color: #374151; border-radius: 4px; cursor: pointer; width: 64px !important; font-size: 10px !important;" title="Kanban icons"><span class="btn-icon">📋</span></span></td><td>Kanban Icons</td><td>Tap: N/A</td><td>📋 📊 📌</td><td>Kanban Icons</td><td>Tap: N/A</td><td class="status-available">Available</td><td>📋 📊 📌 🎯 ⚡ 🔄 ✅</td><td>Board:📋 Stats:📊 Pin:📌 Target:🎯 Priority:⚡ Move:🔄 Done:✅</td></tr>
+                </tbody>
+            </table>
+            <p style="margin-top: 8px; font-size: 11px; color: #6b7280;">
+                Mobile note: tooltips are tap-to-toggle (no hover on phones).
+            </p>
+        </div>
+    </div>
+</body>
+</html>
