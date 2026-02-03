@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Money - Timeless Wealth & Heritage</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .hero {
+            text-align: center;
+            padding: clamp(40px, 8vw, 80px) 0;
+            border-bottom: 3px solid #8b7355;
+            margin-bottom: 60px;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 20px;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+            line-height: 1.8;
+        }
+
+        .hero-description {
+            font-size: clamp(1rem, 2.5vw, 1.125rem);
+            color: #555;
+            max-width: 600px;
+            margin: 30px auto;
+            line-height: 1.8;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+
+        .cta-button {
+            padding: 16px 32px;
+            font-size: clamp(1rem, 2.5vw, 1.125rem);
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            font-family: inherit;
+        }
+
+        .cta-button.primary {
+            background: #8b7355;
+            color: white;
+        }
+
+        .cta-button.primary:hover {
+            background: #6b5335;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(139, 115, 85, 0.3);
+        }
+
+        .cta-button.secondary {
+            background: transparent;
+            color: #8b7355;
+            border: 2px solid #8b7355;
+        }
+
+        .cta-button.secondary:hover {
+            background: #8b7355;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+
+        .feature-card {
+            background: #fafafa;
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid #e5e5e5;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            background: #fff;
+            border-color: #8b7355;
+            box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .feature-title {
+            font-size: clamp(1.125rem, 2.5vw, 1.375rem);
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+        }
+
+        .feature-description {
+            color: #666;
+            font-size: clamp(0.9375rem, 2vw, 1rem);
+            line-height: 1.6;
+        }
+
+        .quote-section {
+            background-color: #fafafa;
+            border-left: 4px solid #8b7355;
+            padding: 40px;
+            margin: 60px 0;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .quote {
+            font-size: clamp(1.125rem, 2.5vw, 1.5rem);
+            font-style: italic;
+            color: #333;
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+
+        .quote-author {
+            color: #666;
+            font-size: clamp(0.9375rem, 2vw, 1rem);
+        }
+
+        @media (max-width: 767px) {
+            .hero {
+                padding: 30px 0;
+                margin-bottom: 40px;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+            }
+
+            .cta-button {
+                width: 100%;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .quote-section {
+                padding: 25px 20px;
+                margin: 40px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero">
+            <h1>Old Money</h1>
+            <p class="hero-subtitle">The Art of Timeless Wealth & Heritage</p>
+            <p class="hero-description">
+                Discover the refined world of timeless elegance, curated collections, and the principle of sustainable wealth through compound growth.
+            </p>
+        </div>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Call to Action Buttons -->
+            <div class="cta-buttons">
+                <a href="oldmoneylinks.html" class="cta-button primary">Explore Resources</a>
+                <a href="listing.html" class="cta-button secondary">Browse Marketplace</a>
+            </div>
+
+            <!-- Features Section -->
+            <div class="links-section">
+                <h2>What We Offer</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-title">Curated Resources</div>
+                        <div class="feature-description">
+                            Access our comprehensive collection of links and guides covering style, lifestyle, arts, and culture.
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-title">Premium Marketplace</div>
+                        <div class="feature-description">
+                            Browse authenticated vintage and heritage items. Connect with sellers through our integrated chat system.
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-title">Timeless Design</div>
+                        <div class="feature-description">
+                            Experience elegant, responsive design optimized for all devices. Classic aesthetics meet modern technology.
+                        </div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-title">Heritage Values</div>
+                        <div class="feature-description">
+                            Learn about the compound effect of wealth, quality investments, and the true meaning of "old money."
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote Section -->
+            <div class="quote-section">
+                <p class="quote">"Old money is not about the size of your portfolio—it's about the depth of your wisdom and the quality of your choices."</p>
+                <p class="quote-author">— Old Money Philosophy</p>
+            </div>
+
+            <!-- Categories Section -->
+            <div class="links-section">
+                <h2>Explore Categories</h2>
+                <ul>
+                    <li>
+                        <a href="oldmoneylinks.html#style">Style & Fashion</a>
+                        <p class="description">Timeless wardrobe essentials and heritage brands with craftsmanship and history.</p>
+                    </li>
+                    <li>
+                        <a href="oldmoneylinks.html#lifestyle">Lifestyle & Culture</a>
+                        <p class="description">The art of hosting, classic literature, and refined cultural pursuits.</p>
+                    </li>
+                    <li>
+                        <a href="oldmoneylinks.html#home">Home & Living</a>
+                        <p class="description">Interior design principles, antiques, and classic garden design.</p>
+                    </li>
+                    <li>
+                        <a href="oldmoneylinks.html#arts">Arts & Pursuits</a>
+                        <p class="description">Classical music, fine art appreciation, and traditional craftsmanship.</p>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Featured Listings Preview -->
+            <div class="links-section">
+                <h2>Featured Marketplace Items</h2>
+                <ul>
+                    <li>
+                        <a href="listing.html">Swiss Mechanical Watch</a>
+                        <p class="description">1970s automatic movement timepiece, serviced and in excellent condition. $3,500</p>
+                    </li>
+                    <li>
+                        <a href="listing.html">Persian Silk Rug</a>
+                        <p class="description">Hand-knotted silk rug from Isfahan with traditional floral pattern. $4,800</p>
+                    </li>
+                    <li>
+                        <a href="listing.html">First Edition Books Set</a>
+                        <p class="description">Classic literature first editions: Hemingway, Fitzgerald, Joyce. $2,100</p>
+                    </li>
+                    <li>
+                        <a href="listing.html">View All Listings</a>
+                        <p class="description">Browse our complete marketplace of curated vintage and heritage items.</p>
+                    </li>
+                </ul>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <p>&copy; 2026 Old Money Collection. Curated with care and timeless elegance.</p>
+        </footer>
+    </div>
+</body>
+</html>
