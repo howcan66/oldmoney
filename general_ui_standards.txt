@@ -418,6 +418,7 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
 
 1. HEADER (Fixed Top):
    - Title: "Old Money" or page-specific title
+   - Default Title text: "Default Title"
    - Language switcher: EN/SV buttons
    - Navigation buttons: Refresh, Close
    - Background: #D7D5C9
@@ -425,6 +426,7 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
 
 2. DESCRIPTION SECTION (Required):
    - Brief description of page purpose
+   - Default Body Text: "Default Body Text"
    - Appears immediately after header
    - Background: #F7F7F2
    - Text alignment: LEFT (always)
@@ -441,15 +443,10 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
    - Positioned before footer
    - Default: Expanded (desktop), Collapsed (mobile/tablet)
 
-5. HORIZONTAL LINE (Conditional):
-   - 1px solid #C8C8C8
-   - Margin: 20px 0
-   - Position: ONLY above footer (separator between content and footer)
-   - NOT used around individual sections in body
-   - Use border/box styling instead for section separation
-
-6. FOOTER (Fixed Bottom - MANDATORY):
+5. FOOTER (Fixed Bottom - MANDATORY):
    - Format: © CoolPortals | filename | timestamp
+   - Default Footer text: "Default Footer"
+   - Default Footer includes: filename, CoolPortals, timestamp
    - Copyright: "© CoolPortals"
    - File name: Dynamic (from current page)
    - Timestamp: Auto-generated on page load
@@ -478,6 +475,18 @@ DEFAULT ALIGNMENT: LEFT
 - Lists: LEFT-aligned
 - FOOTER content: LEFT-aligned (unless explicitly specified otherwise)
 
+GLOBAL LAYOUT ALIGNMENT (MANDATORY):
+- Header: LEFT-aligned
+- Body content: LEFT-aligned
+- Footer: LEFT-aligned
+- Navigation buttons: RIGHT-aligned
+
+CSS REQUIREMENT (MANDATORY):
+.header { text-align: left; }
+.content { text-align: left; }
+.footer { text-align: left; justify-content: flex-start; }
+.nav-buttons { margin-left: auto; justify-content: flex-end; }
+
 EXCEPTIONS (Only when specified in page requirements):
 - Numeric values in tables: RIGHT-aligned
 - Modal dialogs: CENTER-aligned (optional)
@@ -487,19 +496,7 @@ NEVER use center or right alignment for body text or footer content
 unless NEVER use center or right alignment for body text unless
 explicitly specified in page-specific requirements.
 
-Color Palette (Old Money Theme):
-- Background: #F7F7F2 (off-white)
-- Header/Footer: #D7D5C9 (muted olive-gray)
-- Text: #2A2A2A (charcoal)
-- Primary: #8b7355 (brown)
-- Borders: #C8C8C8 (light gray)
-- Success: #4CAF50 (green)
-- Error: #D32F2F (red)
-- Warning: #FF9800 (orange)
-
-ALTERNATIVE COLOR PALETTE - MODERN:
-Use this if you want more "modern app" feel without losing seriousness.
-
+Color Palette (DEFAULT - MODERN THEME):
 - Background main: #F5F5FA (cool light gray-blue)
 - Header/footer: #283046 (deep blue-slate)
 - Cards/boxes: #FFFFFF (white)
@@ -513,9 +510,21 @@ Use this if you want more "modern app" feel without losing seriousness.
 - Success: #10B981 (green)
 - Warning: #F59E0B (amber)
 
+ALTERNATIVE COLOR PALETTE - OLD MONEY:
+Use this if you want classic, elegant, vintage aesthetic.
+
+- Background: #F7F7F2 (off-white)
+- Header/Footer: #D7D5C9 (muted olive-gray)
+- Text: #2A2A2A (charcoal)
+- Primary: #8b7355 (brown)
+- Borders: #C8C8C8 (light gray)
+- Success: #4CAF50 (green)
+- Error: #D32F2F (red)
+- Warning: #FF9800 (orange)
+
 PALETTE SELECTION:
+- Modern (DEFAULT): Contemporary, professional, controlled energy
 - Old Money: Classic, elegant, vintage aesthetic
-- Modern: Contemporary, professional, controlled energy
 - Same palette used on all terminals (desktop/tablet/mobile)
 - Layout and font sizing change per device, colors remain consistent
 
