@@ -9,12 +9,16 @@ function calculateInterest() {
     // Get input values
     const startAmount = parseFloat(document.getElementById('startAmount').value);
     const interestRate = parseFloat(document.getElementById('interestRate').value);
+    let monthlySavings = parseFloat(document.getElementById('monthlySavings').value);
+    if (isNaN(monthlySavings)) {
+        monthlySavings = 0;
+    }
     
     // Clear previous errors
     clearErrors();
     
     // Validate inputs
-    if (!validateInputs(startAmount, interestRate)) {
+    if (!validateInputs(startAmount, interestRate, monthlySavings)) {
         return;
     }
     
@@ -27,21 +31,31 @@ function calculateInterest() {
     // Simulate calculation delay
     setTimeout(() => {
         try {
-            // Calculate 40 years of compound interest
+            // Calculate 40 years of compound interest with monthly savings
             const results = [];
             let currentAmount = startAmount;
+            const monthlyRate = (interestRate / 100) / 12;
             
             for (let year = 1; year <= 40; year++) {
                 const startBalance = currentAmount;
-                const interest = startBalance * (interestRate / 100);
-                const endBalance = startBalance + interest;
+                let totalInterest = 0;
+                let balance = startBalance;
+
+                for (let month = 1; month <= 12; month++) {
+                    balance += monthlySavings;
+                    const interest = balance * monthlyRate;
+                    totalInterest += interest;
+                    balance += interest;
+                }
+
+                const endBalance = balance;
                 const monthlyEquiv = endBalance / 12;
                 const yearlyIncrease = endBalance - startBalance;
                 
                 results.push({
                     year: year,
                     startAmount: startBalance,
-                    interest: interest,
+                    interest: totalInterest,
                     endAmount: endBalance,
                     monthlyEquiv: monthlyEquiv,
                     yearlyIncrease: yearlyIncrease
@@ -80,13 +94,15 @@ function calculateInterest() {
 /**
  * Validate input values
  */
-function validateInputs(startAmount, interestRate) {
+function validateInputs(startAmount, interestRate, monthlySavings) {
     let isValid = true;
     
     const startAmountInput = document.getElementById('startAmount');
     const interestRateInput = document.getElementById('interestRate');
+    const monthlySavingsInput = document.getElementById('monthlySavings');
     const startAmountError = document.getElementById('startAmountError');
     const interestRateError = document.getElementById('interestRateError');
+    const monthlySavingsError = document.getElementById('monthlySavingsError');
     
     // Validate start amount
     if (isNaN(startAmount) || startAmount < 0 || startAmount > 999999999) {
@@ -106,6 +122,17 @@ function validateInputs(startAmount, interestRate) {
         }
         if (interestRateInput) {
             interestRateInput.style.borderColor = '#e74c3c';
+        }
+        isValid = false;
+    }
+
+    // Validate monthly savings
+    if (isNaN(monthlySavings) || monthlySavings < 0 || monthlySavings > 999999999) {
+        if (monthlySavingsError) {
+            monthlySavingsError.textContent = 'Please enter a valid monthly savings amount (0-999,999,999)';
+        }
+        if (monthlySavingsInput) {
+            monthlySavingsInput.style.borderColor = '#e74c3c';
         }
         isValid = false;
     }
@@ -215,6 +242,7 @@ function formatCurrency(value) {
 function clearInputs() {
     document.getElementById('startAmount').value = '';
     document.getElementById('interestRate').value = '';
+    document.getElementById('monthlySavings').value = '';
     
     const resultsSection = document.getElementById('resultsSection');
     if (resultsSection) {
