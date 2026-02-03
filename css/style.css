@@ -65,7 +65,7 @@ body {
 .nav-btn::after {
     content: attr(title);
     position: absolute;
-    bottom: -28px;
+    top: -32px;
     left: 50%;
     transform: translateX(-50%);
     background: #2A2A2A;
@@ -84,14 +84,14 @@ body {
 .nav-btn::before {
     content: '';
     position: absolute;
-    bottom: -4px;
+    top: -8px;
     left: 50%;
     transform: translateX(-50%);
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
-    border-bottom: 4px solid #2A2A2A;
+    border-top: 4px solid #2A2A2A;
     z-index: 1001;
     opacity: 0;
     transition: opacity 0.2s;

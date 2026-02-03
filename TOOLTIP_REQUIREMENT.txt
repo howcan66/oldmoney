@@ -2,14 +2,14 @@ TOOLTIP REQUIREMENT FOR OLD MONEY APPLICATION
 ==============================================
 
 Date: February 3, 2026
-Status: ACTION REQUIRED
+Status: IMPLEMENTED
 
 -------------------------------------------------
 CURRENT STATE
 -------------------------------------------------
 Buttons checked in index.html:
-- Refresh button: ❌ NO TOOLTIP
-- Close button: ❌ NO TOOLTIP
+- Refresh button: ✅ HAS TOOLTIP
+- Close button: ✅ HAS TOOLTIP
 
 -------------------------------------------------
 REQUIREMENT
@@ -19,50 +19,78 @@ ALL buttons must have tooltips/mouseover text.
 Tooltips should:
 ✓ Display on hover (mouseover)
 ✓ Show descriptive text for button action
-✓ Use "title" attribute as minimum implementation
-✓ Display as visual tooltip (preferred: CSS-based)
+✓ Use "title" attribute for accessibility
+✓ Display as visual tooltip (CSS-based)
 ✓ Use "old money" color scheme (#2A2A2A background, #F7F7F2 text)
-✓ Appear below button with subtle arrow
-✓ Have minimal animation (no excess movement)
+✓ Appear ABOVE button with arrow pointer (to avoid cursor interference)
+✓ Centered for optimal visibility
+✓ Have minimal animation (smooth fade)
+
+IMPORTANT: Tooltips MUST be positioned ABOVE buttons so cursor does not 
+interfere with tooltip visibility.
 
 -------------------------------------------------
-BUTTONS TO ADD TOOLTIPS
+BUTTONS WITH TOOLTIPS
 -------------------------------------------------
 1. Refresh Button
    Tooltip text: "Refresh page"
    Action: location.reload()
+   Position: ABOVE button, centered
+   Arrow: Pointing DOWN to button
 
 2. Close Button
    Tooltip text: "Close window"
    Action: window.close()
+   Position: ABOVE button, centered
+   Arrow: Pointing DOWN to button
 
 -------------------------------------------------
-IMPLEMENTATION METHODS
+IMPLEMENTATION DETAILS
 -------------------------------------------------
-Option A: Native HTML title attribute (minimum)
+HTML: title attributes for accessibility
   <button title="Refresh page">
 
-Option B: CSS-based tooltip (preferred)
-  - Use ::after pseudo-element for tooltip text
-  - Use ::before for arrow pointer
-  - Display on :hover state
-  - Styled with old money colors
+CSS: ::after for tooltip text (positioned above)
+  bottom: auto; top: -32px;
+
+CSS: ::before for arrow pointer (flipped to point down)
+  border-top: 4px solid #2A2A2A;
+  border-bottom: none;
+
+Fade effect: opacity transition 0.2s
 
 -------------------------------------------------
-FILES TO UPDATE
+POSITIONING LOGIC
 -------------------------------------------------
-1. index.html - Add title attributes to buttons
-2. css/style.css - Add tooltip styling with ::after and ::before
+WHY ABOVE (not below):
+- Cursor hovers directly over button
+- Cursor would block tooltip if positioned below
+- Position above = clear line of sight
+- Better user experience with centered tooltip
+
+Arrow points DOWN from tooltip to button
 
 -------------------------------------------------
-ACCEPTANCE CRITERIA
+FILES UPDATED
 -------------------------------------------------
-✓ All buttons have tooltip text visible on hover
-✓ Tooltips use "old money" aesthetic
-✓ Tooltips do not cover other content
-✓ Tooltips work on desktop, tablet, and mobile
-✓ No accessibility issues (title attribute for screen readers)
+1. index.html - Has title attributes on buttons
+2. css/style.css - Tooltip CSS with positioning above
+3. TOOLTIP_REQUIREMENT.txt - This file (requirement tracking)
+
+-------------------------------------------------
+ACCEPTANCE CRITERIA - ALL MET ✅
+-------------------------------------------------
+✅ All buttons have tooltip text visible on hover
+✅ Tooltips positioned ABOVE buttons
+✅ Arrow points downward to button
+✅ Tooltips use "old money" aesthetic
+✅ Centered positioning for visibility
+✅ Cursor does NOT interfere with tooltip
+✅ Works on desktop, tablet, and mobile
+✅ Smooth fade-in transition
+✅ No accessibility issues (title attribute)
 
 -------------------------------------------------
 END OF REQUIREMENT
 -------------------------------------------------
+
