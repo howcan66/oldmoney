@@ -1,0 +1,514 @@
+PROJECT: Old Money – General UI Standards
+FORMAT: Standard Specifications for All Pages
+
+---------------------------------------------------------
+PURPOSE
+---------------------------------------------------------
+This document defines UI/UX standards that apply to ALL
+pages in the Old Money application. Individual page specs
+(e.g., Intereseton interestfunctionality1.txt) can extend
+or override these standards when necessary.
+
+Use these standards to ensure consistency, accessibility,
+and quality across the entire application.
+
+---------------------------------------------------------
+1. INPUT VALIDATION STANDARDS
+---------------------------------------------------------
+
+ALL INPUT FIELDS MUST IMPLEMENT:
+
+Numeric Inputs:
+- Max value: 999,999,999 (prevents overflow)
+- Min value: 0 (unless negative explicitly needed)
+- Decimal precision: Max 2 decimals for currency
+- Real-time feedback: ON BLUR (not keystroke)
+- Invalid input: Red border + inline error message
+
+Text Inputs:
+- Max length: 255 characters (unless specified)
+- Trim whitespace on blur
+- No special characters (unless explicitly allowed)
+- HTML entity encoding (security)
+
+Validation Timing:
+- PRIMARY: ON BLUR (when field loses focus)
+- SECONDARY: ON SUBMIT (final check before processing)
+- NEVER: Real-time keystroke (performance issue)
+
+Error Display:
+- Inline below field: "Please enter a valid number"
+- Color: #D32F2F (error red)
+- Font size: 0.8125rem
+- Icon: ✗ before message
+- Clear error on re-focus
+
+---------------------------------------------------------
+2. LOADING STATES & FEEDBACK
+---------------------------------------------------------
+
+WHEN TO SHOW LOADING INDICATOR:
+- Operations taking >200ms
+- File exports/downloads
+- Form submissions
+- Data calculations (complex)
+- API calls (if applicable)
+
+LOADING UI ELEMENTS:
+
+Button Loading State:
+- Disable button during processing
+- Show spinner icon inside button
+- Text changes to "Processing..." or "Loading..."
+- Prevent multiple clicks
+- Cursor: not-allowed
+
+Page Loading State:
+- Semi-transparent overlay (#2A2A2A, 40% opacity)
+- Centered spinner (24px)
+- Message: "Calculating..." or "Exporting..."
+- Z-index: 9998
+
+Spinner Specification:
+- Size: 20px (button), 24px (page)
+- Color: #8b7355 (primary brown)
+- Animation: Smooth rotation (1s infinite)
+- Border: 3px solid, transparent bottom
+
+Timeout Handling:
+- Max wait: 30 seconds
+- After timeout: Show error toast
+- Provide "Retry" button
+- Re-enable UI elements
+
+---------------------------------------------------------
+3. TOAST/ALERT SPECIFICATIONS
+---------------------------------------------------------
+
+TOAST ALERT SYSTEM:
+
+Position:
+- Desktop: top-right corner
+- Tablet: top-right corner
+- Mobile: bottom-center (easier thumb reach)
+- Distance from edge: 16px
+
+Dimensions:
+- Max width: 320px
+- Min height: 60px
+- Padding: 12px 16px
+- Border-radius: 5px
+
+Types & Colors:
+SUCCESS:
+- Background: #E8F5E9 (light green)
+- Border: 1px solid #4CAF50 (green)
+- Icon: ✓
+- Duration: 3 seconds
+
+ERROR:
+- Background: #FFEBEE (light red)
+- Border: 1px solid #D32F2F (red)
+- Icon: ✗
+- Duration: 5 seconds
+
+WARNING:
+- Background: #FFF3E0 (light orange)
+- Border: 1px solid #FF9800 (orange)
+- Icon: ⚠
+- Duration: 4 seconds
+
+INFO:
+- Background: #E3F2FD (light blue)
+- Border: 1px solid #2196F3 (blue)
+- Icon: ℹ
+- Duration: 3 seconds
+
+CRITICAL (no auto-dismiss):
+- Background: #FFEBEE (light red)
+- Border: 2px solid #D32F2F (red)
+- Icon: ✗
+- Duration: Manual dismiss only
+
+Behavior:
+- Fade in: 0.3s ease-in
+- Fade out: 0.3s ease-out
+- Auto-dismiss: Yes (except critical)
+- Manual dismiss: X button (top-right)
+- Z-index: 9999
+- Multiple toasts: Stack vertically (max 3 visible)
+- Oldest toast removed if >3 active
+
+Content:
+- Title: Bold, 0.9375rem
+- Message: Regular, 0.875rem
+- Icon: 16px, left-aligned
+- Max lines: 3 (truncate with ...)
+
+Accessibility:
+- ARIA role: "alert"
+- Screen reader announces message
+- Keyboard dismissible (Escape key)
+
+---------------------------------------------------------
+4. KEYBOARD ACCESSIBILITY
+---------------------------------------------------------
+
+MANDATORY KEYBOARD NAVIGATION:
+
+Standard Keys:
+- Tab: Move focus forward
+- Shift+Tab: Move focus backward
+- Enter: Submit form / Activate button / Confirm action
+- Escape: Close modal / Cancel / Collapse expanded sections
+- Space: Toggle checkbox / radio / dropdown / collapsible
+
+Navigation in Tables:
+- Arrow Up/Down: Navigate rows
+- Arrow Left/Right: Navigate columns
+- Home: First row/cell
+- End: Last row/cell
+
+Application-Specific Shortcuts:
+- Ctrl+E: Export to CSV
+- Ctrl+C: Copy to clipboard (when focus on table)
+- Ctrl+R: Refresh page
+- Ctrl+S: Save (if applicable)
+
+Focus Indicators:
+- Outline: 2px solid #8b7355
+- Offset: 2px
+- Border-radius: 3px
+- Never remove outline (accessibility violation)
+- Focus visible on all interactive elements
+
+Focus Order:
+1. Header navigation buttons
+2. Main content (inputs, buttons)
+3. Links section
+4. Footer (if interactive)
+
+Skip Links (Accessibility):
+- "Skip to content" link at top
+- Visible on focus only
+- Jumps to main content area
+- Position: absolute, top: 0
+
+Tab Trapping:
+- Modals: Keep focus inside modal
+- Dropdowns: Escape to close and return focus
+- No infinite tab loops
+
+---------------------------------------------------------
+5. ERROR HANDLING PATTERNS
+---------------------------------------------------------
+
+THREE-LEVEL ERROR STRATEGY:
+
+1. FIELD-LEVEL (Inline Validation)
+- Show error immediately on blur
+- Red border on input field
+- Error message below field
+- Icon: ✗
+- Example: "Please enter a positive number"
+
+2. FORM-LEVEL (Summary Errors)
+- Show at top of form on submit attempt
+- List all errors in summary box
+- Red background (#FFEBEE)
+- Click error to jump to field
+- Example: "Please correct 3 errors before submitting"
+
+3. SYSTEM-LEVEL (Toast Alerts)
+- Network errors
+- Export failures
+- Unexpected errors
+- Provide retry mechanism
+
+Error Message Guidelines:
+- Be specific: "Amount must be less than 999,999,999"
+- Avoid jargon: "Invalid input" → "Please enter numbers only"
+- Provide solution: "Interest rate required. Please enter a value."
+- Polite tone: "Please" and "Thank you"
+
+Recovery Options:
+- Retry button for failed operations
+- Clear/Reset button for forms
+- Undo for destructive actions (if applicable)
+- Autosave drafts (if applicable)
+
+Logging & Debugging:
+- Console.error() for all errors
+- Include timestamp and context
+- Never expose sensitive data in logs
+- Helpful for development/debugging
+
+Fallback Mechanisms:
+- CSV export fails → Offer copy-to-clipboard
+- Clipboard API fails → Show text in modal to copy manually
+- Calculation error → Show last valid result + warning
+
+---------------------------------------------------------
+6. RESPONSIVE BREAKPOINTS
+---------------------------------------------------------
+
+STANDARD DEVICE BREAKPOINTS:
+
+Desktop (≥1024px):
+- Container max-width: 900px (centered)
+- Font size: 16-18px
+- Line height: 1.6
+- Padding: 16-24px
+- Button min-width: 80px
+- Button height: 36-40px
+- Table: Full width, all columns visible
+- Collapsible sections: OPEN by default
+- Navigation: Full menu visible
+- Images: Full resolution
+
+Tablet / iPad Pro (768px - 1024px):
+- Container max-width: 100% (with padding)
+- Font size: 17-19px
+- Line height: 1.65
+- Padding: 20px
+- Button min-width: 100px
+- Button height: 44px (touch-friendly)
+- Table: Full width, may scroll horizontally
+- Collapsible sections: COLLAPSED by default
+- Navigation: Full menu or hamburger
+- Images: Medium resolution
+
+Mobile / iPhone 17 Max (<768px):
+- Container max-width: 100%
+- Font size: 15-17px
+- Line height: 1.5
+- Padding: 12-16px
+- Button min-width: 100%
+- Button height: 48px (minimum touch target)
+- Table: Horizontal scroll or stacked columns
+- Collapsible sections: COLLAPSED by default
+- Navigation: Hamburger menu
+- Images: Optimized/compressed
+- Inputs: Full width
+- Vertical spacing: Increased (44px min tap targets)
+
+TOUCH TARGET SIZES (Mobile/Tablet):
+- Minimum: 44x44px (Apple HIG)
+- Recommended: 48x48px (Material Design)
+- Spacing between targets: 8px minimum
+
+RESPONSIVE BEHAVIOR RULES:
+
+Layout Changes:
+- Desktop: Multi-column layouts allowed
+- Tablet: 2-column max
+- Mobile: Single column only (vertical stacking)
+
+Typography Scaling:
+- Headers: Scale down 10-20% on mobile
+- Body text: Minimum 15px (readability)
+- Line length: Max 75 characters per line
+
+Images & Media:
+- Desktop: Max width 100%
+- Mobile: Compress images, lazy load
+- Icons: SVG preferred (scalable)
+
+Performance:
+- Mobile: Lazy load off-screen content
+- Mobile: Minimize animations
+- Mobile: Reduce JavaScript bundle size
+- All: Compress assets
+
+Testing Requirements:
+- Test on real devices when possible
+- Chrome DevTools device emulation
+- Test landscape + portrait orientations
+- Test with accessibility features enabled
+
+---------------------------------------------------------
+7. FORM STANDARDS (ADDITIONAL)
+---------------------------------------------------------
+
+Required Field Indicators:
+- Asterisk (*) after label
+- Color: #D32F2F (error red)
+- ARIA: aria-required="true"
+
+Optional Field Indicators:
+- "(optional)" text after label
+- Color: #6A6A6A (muted gray)
+
+Placeholder Text:
+- Use sparingly (not replacement for labels)
+- Example format: "e.g., 1000"
+- Color: #999 (light gray)
+- Disappears on focus
+
+Submit Buttons:
+- Position: Bottom-right (desktop), full-width (mobile)
+- Primary action: Prominent styling (#8b7355)
+- Secondary action: Outlined button
+- Disabled state: 50% opacity, cursor not-allowed
+
+---------------------------------------------------------
+8. CONSISTENCY RULES
+---------------------------------------------------------
+
+Color Palette (Old Money Theme):
+- Background: #F7F7F2 (off-white)
+- Header/Footer: #D7D5C9 (muted olive-gray)
+- Text: #2A2A2A (charcoal)
+- Primary: #8b7355 (brown)
+- Borders: #C8C8C8 (light gray)
+- Success: #4CAF50 (green)
+- Error: #D32F2F (red)
+- Warning: #FF9800 (orange)
+
+Typography:
+- Font family: Georgia, 'Playfair Display', 'Times New Roman', serif
+- Headers: Font-weight 600
+- Body: Font-weight 400
+- Line height: 1.6 (desktop), 1.5 (mobile)
+
+Spacing (8px Grid System):
+- Margins/Padding: Multiples of 8px (8, 16, 24, 32, 40)
+- Exception: Fine-tuning allowed (6px, 12px)
+- Consistent vertical rhythm
+
+Buttons:
+- Icon-first design (icon on left)
+- Padding: 8px 12px (desktop), 12px 16px (mobile)
+- Border-radius: 5px
+- Border: 1px solid #C8C8C8
+- Hover: Background #C9C7BF
+- Active: Background #B5B3AC
+- Tooltips: Always present on icon buttons
+
+Borders:
+- Standard: 1px solid #C8C8C8
+- Hover: 1px solid #8b7355
+- Focus: 2px solid #8b7355
+
+---------------------------------------------------------
+9. LANGUAGE SWITCHER (MANDATORY ON ALL PAGES)
+---------------------------------------------------------
+
+REQUIREMENT:
+ALL pages MUST include language switcher buttons in header
+to toggle between English (EN) and Swedish (SV).
+
+Position:
+- Header section, right side
+- Before Refresh and Close buttons
+- Or integrated into navigation area
+
+Button Specifications:
+- Two buttons: "EN" and "SV"
+- Active language: Highlighted (#8b7355 background, white text)
+- Inactive language: Standard button style (#E0DED6 background)
+- Size: Same as other nav buttons (consistent)
+- Tooltips: "Switch to English" / "Byt till Svenska"
+
+Behavior:
+- Click to switch language
+- Update all text content on page
+- Store preference in localStorage
+- Persist selection across pages
+- Default: Browser language or SV if not detected
+
+Implementation:
+- JavaScript: toggleLanguage() function
+- Language strings stored in language object
+- Update DOM text content on switch
+- No page reload (instant switch)
+
+Language Coverage:
+-1All UI text (labels, buttons, headings)
+- Error messages
+- Toast notifications
+- Placeholder text
+- Footer text
+- NOT data values (numbers stay numeric)
+
+Example Structure:
+<div class="language-switcher">
+  <button class="lang-btn active" data-lang="sv">SV</button>
+  <button class="lang-btn" data-lang="en">EN</button>
+</div>
+
+Accessibility:
+- ARIA label: "Language switcher"
+- aria-pressed="true" for active button
+- Keyboard accessible (Tab + Enter)
+
+---------------------------------------------------------
+10. ACCESSIBILITY REQUIREMENTS (WCAG 2.1 AA)
+---------------------------------------------------------
+
+Color Contrast:
+- Text: Minimum 4.5:1 ratio
+- Large text (18px+): Minimum 3:1 ratio
+- Interactive elements: Minimum 3:1 ratio
+- Test with WebAIM Contrast Checker
+
+ARIA Labels:
+- All interactive elements need accessible names
+- Form inputs: Associated <label> or aria-label
+- Buttons: Descriptive text or aria-label
+- Icons: aria-hidden="true" if decorative
+
+Screen Reader Support:
+- Semantic HTML (header, nav, main, footer)
+- ARIA landmarks when appropriate
+- Announce dynamic changes (aria-live)
+- Tables: <th> with scope attribute
+
+Alt Text:
+- All images: Descriptive alt text
+- Decorative images: alt=""
+- Complex images: Detailed description in text
+
+Keyboard-Only Navigation:
+- All functionality accessible via keyboard
+- Logical tab order
+- Focus indicators visible
+- No keyboard traps
+
+---------------------------------------------------------
+10. PERFORMANCE STANDARDS
+---------------------------------------------------------
+
+Page Load:
+- Target: <3 seconds on 3G connection
+- Optimize images (WebP format preferred)
+- Minify CSS/JS
+- Lazy load off-screen content
+
+Interactions:
+- Button click response: <100ms
+- Form validation: <200ms
+- Calculation/processing: Show loading if >200ms
+- Smooth animations: 60fps target
+
+Bundle Size:
+- Critical CSS: Inline in <head>
+- Non-critical CSS: Load async
+- JavaScript: Defer non-critical scripts
+- Total page weight: <500KB (initial load)
+
+Optimization Techniques:
+- ON BLUR validation (not keystroke)
+- Debounce search inputs (300ms)
+- Lazy load images
+- Code splitting (if applicable)
+- Compress assets (gzip/brotli)
+
+---------------------------------------------------------
+END OF GENERAL UI STANDARDS
+---------------------------------------------------------
+
+These standards apply to ALL pages unless explicitly
+overridden in page-specific specification files.
+
+When in doubt, follow these guidelines for consistency.
