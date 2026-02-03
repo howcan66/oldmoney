@@ -41,6 +41,17 @@ Command behavior (PA/OA/DA/etc.):
   - Read abbreviation_guide.txt
 
 =============================================================
+IGNORED FILES
+=============================================================
+The following files are NOT related to the Old Money project
+and should be completely ignored:
+- master_cmd.txt
+- master_cmd_defs.txt
+- commands.txt
+
+These belong to a different project ("vinst-p--lgh").
+
+=============================================================
 SINGLE SOURCE OF TRUTH (NAVIGATION)
 =============================================================
 Only this file defines the order and priority of all other
