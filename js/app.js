@@ -63,12 +63,12 @@ const translations = {
         linkResources: 'Old Money Resurser',
         linkMarketplace: 'Marknadsplats'
     },
-    en: {
-        homeDescription: 'Welcome to Old Money - your platform for financial planning and investment tools. Explore our resources to build long-term economic stability.',
-        linkCalculator: 'Interest Calculator',
-        linkResources: 'Old Money Resources',
-        linkMarketplace: 'Marketplace'
-    }
+    sv: {
+        homeDescription: 'Välkommen till Old Money - din plattform för finansiell planering och investeringsverktyg. Utforska våra resurser för att bygga långsiktig ekonomisk stabilitet.',
+        linkCalculator: 'Räntekalkylator - Interest Calculator',
+        linkResources: 'Old Money Resurser',
+        linkMarketplace: 'Marknadsplats'
+    },
 };
 
 // Switch language
