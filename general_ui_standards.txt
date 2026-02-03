@@ -475,11 +475,24 @@ DEFAULT ALIGNMENT: LEFT
 - Lists: LEFT-aligned
 - FOOTER content: LEFT-aligned (unless explicitly specified otherwise)
 
-GLOBAL LAYOUT ALIGNMENT (MANDATORY):
-- Header: LEFT-aligned
+GLOBAL LAYOUT ALIGNMENT (MANDATORY - ALL PAGES):
+
+DEFAULT ALIGNMENT: LEFT (ALL CONTENT)
+- Header title/content: LEFT-aligned
 - Body content: LEFT-aligned
-- Footer: LEFT-aligned
-- Navigation buttons: RIGHT-aligned
+- Footer content: LEFT-aligned
+- Links: LEFT-aligned
+- Text: LEFT-aligned
+- Lists: LEFT-aligned
+- Labels: LEFT-aligned
+
+EXCEPTION (ONLY):
+- Navigation buttons: RIGHT-aligned (always)
+- Language switcher: RIGHT-aligned (part of nav)
+- Refresh button: RIGHT-aligned
+- Close button: RIGHT-aligned
+
+NO OTHER EXCEPTIONS - If content is not a navigation button, it is LEFT-aligned.
 
 CSS REQUIREMENT (MANDATORY):
 .header { text-align: left; }
