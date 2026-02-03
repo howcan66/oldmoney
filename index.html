@@ -11,6 +11,10 @@
     <header class="header">
         <div class="title">Old Money</div>
         <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" onclick="switchLanguage('sv')" title="Byt till Svenska" aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')" title="Switch to English" aria-pressed="false">EN</button>
+            </div>
             <button class="nav-btn" onclick="refreshPage()" title="Refresh page">
                 <img src="assets/icons/refresh.svg" alt="Refresh">
                 <span class="btn-text">Refresh</span>
@@ -24,7 +28,7 @@
 
     <!-- Body Content -->
     <main class="content">
-        <p class="description">Hello world</p>
+        <p class="description" data-lang-key="homeDescription">Välkommen till Old Money - din plattform för finansiell planering och investeringsverktyg. Utforska våra resurser för att bygga långsiktig ekonomisk stabilitet.</p>
 
         <div class="metadata">
             <div class="metadata-row">
@@ -49,11 +53,12 @@
             </div>
             <div class="links-content" id="linksContent">
                 <ul class="links-list">
+                    <li><a href="calculator.html" data-lang-key="linkCalculator">Räntekalkylator - Interest Calculator</a></li>
                     <li><a href="https://www.avanza.se" target="_blank" rel="noopener">Avanza - Investment Platform</a></li>
                     <li><a href="https://www.lysa.se/" target="_blank" rel="noopener">Lysa - Robo-Advisor</a></li>
                     <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank" rel="noopener">Church Tax - Membership Info</a></li>
-                    <li><a href="oldmoneylinks.html">Old Money Resources</a></li>
-                    <li><a href="listing.html">Marketplace</a></li>
+                    <li><a href="oldmoneylinks.html" data-lang-key="linkResources">Old Money Resurser</a></li>
+                    <li><a href="listing.html" data-lang-key="linkMarketplace">Marknadsplats</a></li>
                 </ul>
             </div>
         </div>

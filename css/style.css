@@ -36,6 +36,43 @@ body {
 .nav-buttons {
     display: flex;
     gap: 6px;
+    align-items: center;
+}
+
+/* Language Switcher */
+.language-switcher {
+    display: flex;
+    gap: 4px;
+    margin-right: 8px;
+}
+
+.lang-btn {
+    padding: 4px 8px;
+    background: #E0DED6;
+    border: 1px solid #C8C8C8;
+    border-radius: 5px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    color: #2A2A2A;
+    transition: all 0.2s;
+    min-width: 36px;
+}
+
+.lang-btn:hover {
+    background: #C9C7BF;
+}
+
+.lang-btn.active {
+    background: #8b7355;
+    color: #FFFFFF;
+    border-color: #8b7355;
+}
+
+.lang-btn:focus {
+    outline: 2px solid #8b7355;
+    outline-offset: 2px;
 }
 
 .nav-btn {

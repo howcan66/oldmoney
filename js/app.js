@@ -54,3 +54,50 @@ function toggleLinks() {
         linksToggle.classList.toggle('expanded');
     }
 }
+
+// Language translations
+const translations = {
+    sv: {
+        homeDescription: 'Välkommen till Old Money - din plattform för finansiell planering och investeringsverktyg. Utforska våra resurser för att bygga långsiktig ekonomisk stabilitet.',
+        linkCalculator: 'Räntekalkylator - Interest Calculator',
+        linkResources: 'Old Money Resurser',
+        linkMarketplace: 'Marknadsplats'
+    },
+    en: {
+        homeDescription: 'Welcome to Old Money - your platform for financial planning and investment tools. Explore our resources to build long-term economic stability.',
+        linkCalculator: 'Interest Calculator',
+        linkResources: 'Old Money Resources',
+        linkMarketplace: 'Marketplace'
+    }
+};
+
+// Switch language
+function switchLanguage(lang) {
+    // Save preference
+    localStorage.setItem('preferredLanguage', lang);
+    
+    // Update button states
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        if (btn.dataset.lang === lang) {
+            btn.classList.add('active');
+            btn.setAttribute('aria-pressed', 'true');
+        } else {
+            btn.classList.remove('active');
+            btn.setAttribute('aria-pressed', 'false');
+        }
+    });
+    
+    // Update text content
+    document.querySelectorAll('[data-lang-key]').forEach(element => {
+        const key = element.dataset.langKey;
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+}
+
+// Initialize language on load
+document.addEventListener('DOMContentLoaded', function() {
+    const savedLang = localStorage.getItem('preferredLanguage') || 'sv';
+    switchLanguage(savedLang);
+});
