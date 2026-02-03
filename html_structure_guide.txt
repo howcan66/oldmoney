@@ -147,10 +147,28 @@ Links Section (REQUIRED, Collapsible):
 - List: <ul class="links-list">
 
 Behavior:
-- Desktop (≥1024px): OPEN by default
-- Tablet/Mobile (<1024px): CLOSED by default
+- ALL devices (Desktop/Tablet/Mobile): CLOSED by default
 - Click toggles open/closed state
 - Toggle icon rotates (90 degrees when closed, 0 degrees when open)
+
+LINK FORMATTING RULES:
+────────────────────────────────────────────────────
+1. Always use HTTPS protocol unless HTTP is explicitly required
+2. For URLs without protocol, add "https://" prefix
+3. Use descriptive link text (not "click here")
+4. External links: Full URL with protocol
+5. Internal links: Relative path (e.g., "page.html")
+6. Generic test links: Label as "Test URL1", "Test URL2", etc.
+7. Ensure all URLs are valid and accessible
+
+Default Test URLs (7 links):
+  1. https://www.dn.se (Test URL1)
+  2. https://www.avanza.com (Test URL2)
+  3. https://www.avanza.com (Test URL3)
+  4. https://www.lysa.com (Test URL4)
+  5. https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan (Test URL5)
+  6. https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift (Test URL6)
+  7. https://www.dn.se (Test URL7)
 
 HTML Structure:
   <div class="links-section-container">
@@ -161,9 +179,13 @@ HTML Structure:
       </div>
       <div class="links-content" id="linksContent">
           <ul class="links-list">
-              <li><a href="interesetoninterest.html">Interest Calculator</a></li>
-              <li><a href="listing.html">Marketplace</a></li>
-              <li><a href="oldmoneylinks.html">Resources</a></li>
+              <li><a href="https://www.dn.se" target="_blank">Test URL1</a></li>
+              <li><a href="https://www.avanza.com" target="_blank">Test URL2</a></li>
+              <li><a href="https://www.avanza.com" target="_blank">Test URL3</a></li>
+              <li><a href="https://www.lysa.com" target="_blank">Test URL4</a></li>
+              <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank">Test URL5</a></li>
+              <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank">Test URL6</a></li>
+              <li><a href="https://www.dn.se" target="_blank">Test URL7</a></li>
           </ul>
       </div>
   </div>
@@ -381,9 +403,13 @@ Copy this template for new pages:
               </div>
               <div class="links-content" id="linksContent">
                   <ul class="links-list">
-                      <li><a href="interesetoninterest.html">Interest Calculator</a></li>
-                      <li><a href="listing.html">Marketplace</a></li>
-                      <li><a href="oldmoneylinks.html">Resources</a></li>
+                      <li><a href="https://www.dn.se" target="_blank">Test URL1</a></li>
+                      <li><a href="https://www.avanza.com" target="_blank">Test URL2</a></li>
+                      <li><a href="https://www.avanza.com" target="_blank">Test URL3</a></li>
+                      <li><a href="https://www.lysa.com" target="_blank">Test URL4</a></li>
+                      <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank">Test URL5</a></li>
+                      <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank">Test URL6</a></li>
+                      <li><a href="https://www.dn.se" target="_blank">Test URL7</a></li>
                   </ul>
               </div>
           </div>

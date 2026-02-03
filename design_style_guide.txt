@@ -90,9 +90,13 @@ Complete HTML Template (use for new pages):
         </div>
         <div class="links-content" id="linksContent">
           <ul class="links-list">
-            <li><a href="interesetoninterest.html">Interest Calculator</a></li>
-            <li><a href="listing.html">Marketplace</a></li>
-            <li><a href="oldmoneylinks.html">Resources</a></li>
+            <li><a href="https://www.dn.se" target="_blank">Test URL1</a></li>
+            <li><a href="https://www.avanza.com" target="_blank">Test URL2</a></li>
+            <li><a href="https://www.avanza.com" target="_blank">Test URL3</a></li>
+            <li><a href="https://www.lysa.com" target="_blank">Test URL4</a></li>
+            <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank">Test URL5</a></li>
+            <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank">Test URL6</a></li>
+            <li><a href="https://www.dn.se" target="_blank">Test URL7</a></li>
           </ul>
         </div>
       </div>
