@@ -1,27 +1,27 @@
 ﻿---
--
-  → cmd.txt (this file - command reference)
-  → Contains: Header, Input card, Result card, Language support, Calculations
-  → Favicon and branding image
-  → lgh_profitcal__instr.txt (original spec)
-  → lgh_profitcal_changes.txt (feature tracker)
-  → Main calculator page (all HTML/CSS/JavaScript in one file)
-  → Password dialog for KÖP section access
-  → Project documentation
-  → Secret admin page (link in header)
-  → Separate file, opens in popup window
-  → Size: ~1670 lines
-  → stepbystep_test.txt (test plan)
-  → web_application_launch_improvements.txt (improvement guide)
-   → Update setLanguage() function if needed
+- 
+    â†’ cmd.txt (this file - command reference)
+    â†’ Contains: Header, Input card, Result card, Language support, Calculations
+    â†’ Favicon and branding image
+    â†’ lgh_profitcal__instr.txt (original spec)
+    â†’ lgh_profitcal_changes.txt (feature tracker)
+    â†’ Main calculator page (all HTML/CSS/JavaScript in one file)
+    â†’ Password dialog for KÃ–P section access
+    â†’ Project documentation
+    â†’ Secret admin page (link in header)
+    â†’ Separate file, opens in popup window
+    â†’ Size: ~1670 lines
+    â†’ stepbystep_test.txt (test plan)
+    â†’ web_application_launch_improvements.txt (improvement guide)
+   â†’ Update setLanguage() function if needed
   - Add comments for complex logic
-   AI will: Create password dialog → Add state management → Publish
-   AI will: Find code → Analyze issue → Fix → Test → Publish
-   AI will: Find CSS → Modify style → Test → Publish
-   AI will: Find inputs → Add calculation → Add output display → Publish
-   AI will: Find location → Add HTML → Add JavaScript calculation → Publish
-   AI will: Find section → Add state management → Add toggle button → Publish
-   AI will: Search → Replace text → Publish
+   AI will: Create password dialog â†’ Add state management â†’ Publish
+   AI will: Find code â†’ Analyze issue â†’ Fix â†’ Test â†’ Publish
+   AI will: Find CSS â†’ Modify style â†’ Test â†’ Publish
+   AI will: Find inputs â†’ Add calculation â†’ Add output display â†’ Publish
+   AI will: Find location â†’ Add HTML â†’ Add JavaScript calculation â†’ Publish
+   AI will: Find section â†’ Add state management â†’ Add toggle button â†’ Publish
+   AI will: Search â†’ Replace text â†’ Publish
   - Change translations without updating both SV and EN
   - Check for console errors
   - Commit broken code
@@ -35,7 +35,7 @@
   - Mix unrelated changes in one commit
   - Push without testing
   - Remove features without asking
-  replace_string_in_file to add new field + calculation → publish
+   replace_string_in_file to add new field + calculation â†’ publish
   - Test before pushing
   - Test on mobile view
   - Use meaningful variable/ID names
@@ -52,14 +52,14 @@
   "Change something"
   "Fix the thing"
   "Make it better"
-  "PA the toggle button for Allmänt section - is it working correctly?"
+  "PA the toggle button for AllmÃ¤nt section - is it working correctly?"
   *.txt files
-  [input field values]  → Auto-saved when user types
+  [input field values]  â†’ Auto-saved when user types
   ~1000      Language switching
   ~1200      Print/Email functionality
   ~1350      Sales Objects toggle
-  ~1400      KÖP section management
-  ~1500      Allmänt section management
+  ~1400      KÃ–P section management
+  ~1500      AllmÃ¤nt section management
   ~1600      Event listeners for buttons
   ~620       Translation strings (Swedish/English)
   ~800       Calculation functions
@@ -90,60 +90,60 @@
   5. Add calculation in JavaScript if needed
   5. Commit and push
   5. Test with sample values
-  500-650    Input card (Beräkningsdata)
+  500-650    Input card (BerÃ¤kningsdata)
   51-100     CSS styles (dark theme, layout)
   6. Commit and push
   650-700    Result card (Resultat)
   700+       JavaScript begins
-  ☐ All changes tested
-  ☐ Check console for errors (F12)
-  ☐ Check localStorage persistence (refresh page, values remain)
-  ☐ Hard refresh browser (Ctrl+F5)
-  ☐ Language toggle works
-  ☐ No console errors
-  ☐ Related features not broken
-  ☐ Responsive on mobile
-  ☐ Switch language (SV ↔ EN)
-  ☐ Test on mobile view (Ctrl+Shift+M)
-  ☐ Test relevant buttons/fields
-  ☐ Verify calculations work
-  → AI will implement and publish directly
-  → Analyse and present findings
-  → Ask AI with specific details
-  → Check current changes, staged files, branch status
-  → Commit staged changes with message
-  → Copy file or folder
-  → Describe what you want to happen
-  → Do NOT implement without asking
-  → If large change: suggest to add it to improvements file
-  → If small change: suggest to change directly
-  → List all files in directory
-  → Mention line numbers if relevant
-  → Only use after agreement on approach
-  → Proceed with change immediately
-  → Publish all staged changes
-  → Push commits to GitHub
-  → Read file contents in terminal
-  → Rename file
-  → Roll back to previous version
-  → Same as PA but include multiple solution options
-  → Show example/reference if possible
-  → Show last 10 commits
-  → Show what changed in unstaged files
-  → Stage all changed files for commit
-  → Stage specific file only
-  → Test specific feature on current version
-  → Undo last commit (keep changes)
-  → Use PA command to get analysis before deciding
-  → Used for small bugs or obvious corrections
+  â˜ All changes tested
+  â˜ Check console for errors (F12)
+  â˜ Check localStorage persistence (refresh page, values remain)
+  â˜ Hard refresh browser (Ctrl+F5)
+  â˜ Language toggle works
+  â˜ No console errors
+  â˜ Related features not broken
+  â˜ Responsive on mobile
+  â˜ Switch language (SV â†” EN)
+  â˜ Test on mobile view (Ctrl+Shift+M)
+  â˜ Test relevant buttons/fields
+  â˜ Verify calculations work
+  â†’ AI will implement and publish directly
+  â†’ Analyse and present findings
+  â†’ Ask AI with specific details
+  â†’ Check current changes, staged files, branch status
+  â†’ Commit staged changes with message
+  â†’ Copy file or folder
+  â†’ Describe what you want to happen
+  â†’ Do NOT implement without asking
+  â†’ If large change: suggest to add it to improvements file
+  â†’ If small change: suggest to change directly
+  â†’ List all files in directory
+  â†’ Mention line numbers if relevant
+  â†’ Only use after agreement on approach
+  â†’ Proceed with change immediately
+  â†’ Publish all staged changes
+  â†’ Push commits to GitHub
+  â†’ Read file contents in terminal
+  â†’ Rename file
+  â†’ Roll back to previous version
+  â†’ Same as PA but include multiple solution options
+  â†’ Show example/reference if possible
+  â†’ Show last 10 commits
+  â†’ Show what changed in unstaged files
+  â†’ Stage all changed files for commit
+  â†’ Stage specific file only
+  â†’ Test specific feature on current version
+  â†’ Undo last commit (keep changes)
+  â†’ Use PA command to get analysis before deciding
+  â†’ Used for small bugs or obvious corrections
   Ask: Questions about implementation
   Button: EN (top right)
   Button: SV (top right)
   CoolPortals.PNG
-  currentObjectIndex    → Which object is currently selected
+  currentObjectIndex    â†’ Which object is currently selected
   Describe: What you want to do
   Email: coolportals@hotmail.com
-  Example: "PA the KÖP password system" → AI analyzes and reports findings
+  Example: "PA the KÃ–P password system" â†’ AI analyzes and reports findings
   Example: git commit -m "Add Finans Netto calculation"
   file:///c:/Git/vinst-p--lgh/index.html
   GitHub Issues: https://github.com/howcan66/vinst-p--lgh/issues
@@ -154,18 +154,18 @@
   kop_password.html
   Language code: 'en'
   Language code: 'sv'
-  localStorage.clear()                    → Clear all data
-  localStorage.getItem('objInfoVisible')  → Check current value
-  localStorage.removeItem('key')          → Delete value
-  localStorage.setItem('key', 'value')    → Set value
-  obj1Visible           → Show/hide KÖP section
-  objInfoVisible        → Show/hide Allmänt section
+  localStorage.clear()                    â†’ Clear all data
+  localStorage.getItem('objInfoVisible')  â†’ Check current value
+  localStorage.removeItem('key')          â†’ Delete value
+  localStorage.setItem('key', 'value')    â†’ Set value
+  obj1Visible           â†’ Show/hide KÃ–P section
+  objInfoVisible        â†’ Show/hide AllmÃ¤nt section
   Provide: Line numbers or search terms if relevant
   README.md
-  resultsVisible        → Show/hide Results section
+  resultsVisible        â†’ Show/hide Results section
   S13.Passcode.html
-  salesObjects          → Array of URLs and prices
-  salesPriceVisible     → Show/hide SÄLJ section
+  salesObjects          â†’ Array of URLs and prices
+  salesPriceVisible     â†’ Show/hide SÃ„LJ section
   translations.en = { ... }
   translations.sv = { ... }
   Use PA: For analysis before making changes
@@ -243,10 +243,10 @@
 5. Verify changes live at https://howcan66.github.io/vinst-p--lgh/
 6. ADD CALCULATION
 7. CHANGE STYLING
-A: Add to translations.sv and translations.en → Add element with id="label-[key]"
+A: Add to translations.sv and translations.en â†’ Add element with id="label-[key]"
 A: git checkout HEAD -- [filename] to restore from last commit
 A: git revert [commit-hash] or git reset --hard HEAD~1 (ask AI for help)
-A: grep_search for similar field → read_file to see structure →
+A: grep_search for similar field â†’ read_file to see structure â†’ 
 A: Open c:\Git\vinst-p--lgh\index.html in browser (double-click or drag to browser)
 A: Use ngrok to tunnel localhost to public URL, then open on iPhone
 A: Visit https://github.com/howcan66/vinst-p--lgh/commits to see commit history
@@ -254,8 +254,8 @@ A: Yes, password dialog works same way locally as on GitHub Pages
 ADD NEW ROW/SECTION
 ADD TOGGLE/BUTTON
 After every change:
-✗ DON'T:
-✓ DO:
+âœ— DON'T:
+âœ“ DO:
 Before committing:
 BEST PRACTICES
 CHANGE CALCULATION
@@ -265,11 +265,11 @@ COMMON LINE NUMBER RANGES IN index.html
 COMMON QUESTIONS & ANSWERS
 COMMON USER REQUESTS & HOW TO DESCRIBE THEM
 Copy-Item "source" "destination"
-Ctrl+F5        → Hard refresh browser (clear cache)
-Ctrl+L         → Select address bar
-Ctrl+Shift+M   → Toggle mobile device view in browser
-Ctrl+Shift+Z   → Redo in editor
-Ctrl+Z         → Undo in editor
+Ctrl+F5        â†’ Hard refresh browser (clear cache)
+Ctrl+L         â†’ Select address bar
+Ctrl+Shift+M   â†’ Toggle mobile device view in browser
+Ctrl+Shift+Z   â†’ Redo in editor
+Ctrl+Z         â†’ Undo in editor
 Data saved to browser localStorage:
 Date: 2026-02-02
 DO = Do it / Implement now
@@ -279,7 +279,7 @@ English (EN)
 Example good request:
 Example PA request:
 Example unclear request:
-F12            → Open developer console (check for errors)
+F12            â†’ Open developer console (check for errors)
 FILE LOCATIONS & STRUCTURE
 FILE OPERATIONS (Terminal)
 Files (current)
