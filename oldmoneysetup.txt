@@ -1,0 +1,127 @@
+OLD MONEY PROJECT SETUP INSTRUCTIONS
+=====================================
+
+Project: Old Money Website
+Repository: https://github.com/howcan66/oldmoney
+Location: C:\Git\oldmoney
+
+FILES CREATED
+-------------
+1. oldmoneylinks.html - Links and resources page
+2. listing.html - Marketplace with search and chat functionality
+3. styles.css - Shared stylesheet for all pages
+
+FEATURES
+--------
+- Modern responsive design
+- Mobile-optimized (tablets and smartphones)
+- Apple device optimizations
+- Search functionality
+- Interactive chat interface
+- Listing/marketplace grid
+- Smooth animations and transitions
+
+SETUP STEPS
+-----------
+
+1. CLONE REPOSITORY
+   cd C:\Git
+   git clone https://github.com/howcan66/oldmoney
+
+2. NAVIGATE TO PROJECT
+   cd oldmoney
+
+3. ADD FILES TO GIT
+   git add .
+
+4. COMMIT CHANGES
+   git commit -m "Add website files with modern responsive design"
+
+5. PUSH TO GITHUB
+   git push origin main
+
+6. ENABLE GITHUB PAGES
+   - Go to https://github.com/howcan66/oldmoney
+   - Click "Settings" tab
+   - Click "Pages" in left sidebar
+   - Under "Source": Select "main" branch
+   - Select "/ (root)" folder
+   - Click "Save"
+   - Wait 1-2 minutes for deployment
+
+7. ACCESS YOUR SITE
+   Main links page: https://howcan66.github.io/oldmoney/oldmoneylinks.html
+   Listing page: https://howcan66.github.io/oldmoney/listing.html
+
+DESIGN FEATURES
+---------------
+- Responsive font sizing with clamp()
+- Grid layouts for mobile, tablet, desktop
+- Touch-optimized for mobile devices
+- Retina display support
+- Smooth animations and hover effects
+- Shared CSS for consistent styling across all pages
+
+MOBILE BREAKPOINTS
+------------------
+- Mobile: < 767px
+- Tablet: 768px - 1024px
+- Desktop: > 1024px
+
+CREATING NEW PAGES
+------------------
+To create a new page with the same design:
+
+1. Create new HTML file (e.g., newpage.html)
+2. Add this in the <head> section:
+   <link rel="stylesheet" href="styles.css">
+3. Use these HTML structure classes:
+   - .container (main wrapper)
+   - .links-section or section (content sections)
+   - .listing-card (for card layouts)
+   - footer (bottom section)
+
+UPDATING STYLES
+---------------
+To change the design for ALL pages:
+- Edit styles.css
+- All pages will automatically update
+
+COLOR SCHEME
+------------
+Primary: #8b7355 (brown/tan)
+Secondary: #6b5335 (dark brown)
+Background: Linear gradient #f5f7fa to #e8ebe8
+Text: #2c2c2c
+Accent: #e5e5e5
+
+FONTS
+-----
+Primary: Apple system fonts (-apple-system, BlinkMacSystemFont, Segoe UI)
+Fallback: Helvetica Neue, Arial, sans-serif
+
+NEXT STEPS
+----------
+- Create index.html as homepage
+- Add more listing items
+- Connect chat to backend API
+- Add image galleries
+- Implement user authentication
+- Add payment integration
+
+MAINTENANCE
+-----------
+1. Make changes locally
+2. Test in browser
+3. git add .
+4. git commit -m "description of changes"
+5. git push origin main
+6. Changes will auto-deploy to GitHub Pages
+
+SUPPORT
+-------
+For issues or questions, check:
+- GitHub repository: https://github.com/howcan66/oldmoney
+- GitHub Pages documentation: https://docs.github.com/en/pages
+
+Last Updated: February 3, 2026

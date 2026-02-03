@@ -1,0 +1,229 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe8 100%);
+    color: #2c2c2c;
+    padding: clamp(20px, 5vw, 40px);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: clamp(30px, 6vw, 60px);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    border: 1px solid rgba(212, 197, 169, 0.2);
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #1a1a1a;
+    text-align: center;
+    border-bottom: 3px solid #8b7355;
+    padding-bottom: 20px;
+    margin-bottom: 40px;
+}
+
+.links-section, section {
+    margin-bottom: 40px;
+    animation: fadeInUp 0.6s ease-out backwards;
+}
+
+.links-section:nth-child(2), section:nth-child(2) { animation-delay: 0.1s; }
+.links-section:nth-child(3), section:nth-child(3) { animation-delay: 0.2s; }
+.links-section:nth-child(4), section:nth-child(4) { animation-delay: 0.3s; }
+.links-section:nth-child(5), section:nth-child(5) { animation-delay: 0.4s; }
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+h2 {
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    color: #3d3d3d;
+    margin-bottom: 20px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+h2:before {
+    content: "";
+    width: 4px;
+    height: 24px;
+    background: linear-gradient(180deg, #8b7355 0%, #6b5335 100%);
+    border-radius: 2px;
+}
+
+ul {
+    list-style: none;
+    padding-left: 0;
+    display: grid;
+    gap: 12px;
+}
+
+li {
+    background: #fafafa;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid #e5e5e5;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+li:hover {
+    background: #fff;
+    border-color: #8b7355;
+    box-shadow: 0 4px 12px rgba(139, 115, 85, 0.15);
+    transform: translateY(-2px);
+}
+
+li:active {
+    transform: translateY(0);
+}
+
+a {
+    color: #8b7355;
+    text-decoration: none;
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    font-weight: 500;
+    display: block;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: #6b5335;
+}
+
+.description {
+    color: #666;
+    font-size: clamp(0.875rem, 2vw, 0.9375rem);
+    margin-top: 6px;
+    line-height: 1.5;
+}
+
+p {
+    margin-bottom: 20px;
+    line-height: 1.8;
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+}
+
+.subtitle {
+    font-style: italic;
+    color: #666;
+    margin-top: 10px;
+    font-size: clamp(1rem, 2.5vw, 1.125rem);
+    text-align: center;
+}
+
+.quote {
+    background-color: #fafafa;
+    border-left: 4px solid #8b7355;
+    padding: 20px 30px;
+    margin: 30px 0;
+    font-style: italic;
+    color: #555;
+    border-radius: 8px;
+}
+
+header {
+    text-align: center;
+    border-bottom: 3px solid #8b7355;
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+}
+
+main {
+    margin: 40px 0;
+}
+
+footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #e5e5e5;
+    color: #888;
+    font-size: clamp(0.875rem, 2vw, 0.9375rem);
+}
+
+/* Tablet styles */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .container {
+        padding: 40px;
+    }
+
+    ul {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+}
+
+/* Mobile styles */
+@media (max-width: 767px) {
+    body {
+        padding: 15px;
+    }
+
+    .container {
+        padding: 25px 20px;
+        border-radius: 12px;
+    }
+
+    h1 {
+        padding-bottom: 15px;
+        margin-bottom: 30px;
+    }
+
+    .links-section, section {
+        margin-bottom: 30px;
+    }
+
+    li {
+        padding: 14px 16px;
+    }
+
+    h2:before {
+        height: 20px;
+    }
+
+    header {
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+}
+
+/* Apple device specific optimizations */
+@supports (-webkit-touch-callout: none) {
+    li {
+        -webkit-tap-highlight-color: rgba(139, 115, 85, 0.1);
+    }
+
+    a {
+        -webkit-touch-callout: default;
+    }
+}
+
+/* High resolution displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .container {
+        border-width: 0.5px;
+    }
+}
