@@ -456,11 +456,16 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
    - Background: #D7D5C9
    - Border-top: 1px solid #C8C8C8
    - Height: 32-40px (responsive)
-   - Text alignment: LEFT (default - center only if explicitly specified)
+   - Text alignment: LEFT (ALWAYS - NEVER center)
    - Font size: 0.875rem
    - Text color: #6A6A6A
    - Separators: " | " (pipe character)
-   - Content alignment: LEFT-aligned unless otherwise specified in page requirements
+   
+   CSS REQUIREMENT (MANDATORY):
+   .footer {
+       justify-content: flex-start;  /* LEFT alignment - NEVER center or flex-end */
+       text-align: left;
+   }
 
 TEXT ALIGNMENT RULES (CRITICAL):
 

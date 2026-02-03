@@ -294,7 +294,7 @@ body {
     padding: 8px 12px;
     height: 36px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     font-size: 0.875rem;
     color: #6A6A6A;
