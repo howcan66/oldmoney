@@ -1,0 +1,495 @@
+PROJECT: Old Money – HTML Structure & Layout Guide
+FORMAT: Explicit HTML specifications for all pages
+
+---------------------------------------------------------
+PURPOSE
+---------------------------------------------------------
+This document defines the EXACT HTML structure and CSS
+layout requirements for creating pages that follow the
+Old Money UI standards.
+
+Use this guide to build HTML files that comply with
+general_ui_standards.txt.
+
+CRITICAL: Follow this section-by-section. Do not copy
+from other files. Build HTML explicitly from these
+specifications.
+
+---------------------------------------------------------
+1. HTML DOCUMENT STRUCTURE
+---------------------------------------------------------
+
+DOCTYPE & HTML Tag:
+  <!DOCTYPE html>
+  <html lang="sv">
+
+META & HEAD:
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Default Title</title>  <!-- Replace "Default Title" per page -->
+      <link rel="stylesheet" href="css/style.css">
+  </head>
+
+Body & Main Container:
+  <body>
+      <!-- All content goes here -->
+  </body>
+
+---------------------------------------------------------
+2. HEADER SECTION (MANDATORY)
+---------------------------------------------------------
+
+Requirements:
+- Position: FIXED at top
+- Background color: #283046 (Modern) or #D7D5C9 (Old Money)
+- Border-bottom: 1px solid #C8C8C8
+- Class: "header"
+
+HTML Structure:
+  <header class="header">
+      <div class="title">Default Title</div>
+      <div class="nav-buttons">
+          <!-- Language Switcher Here -->
+          <!-- Refresh Button Here -->
+          <!-- Close Button Here -->
+      </div>
+  </header>
+
+Title Subsection:
+- Class: "title"
+- Text alignment: LEFT (CSS: text-align: left)
+- Text content: "Default Title" (or page-specific title)
+- Font: Georgia, serif; Font-weight: 600
+
+HTML:
+  <div class="title">Default Title</div>
+
+Navigation Buttons Subsection:
+- Container class: "nav-buttons"
+- CSS positioning: margin-left: auto; (pushes to right)
+- CSS alignment: justify-content: flex-end; (RIGHT-aligned)
+- Contains: Language switcher, Refresh button, Close button
+
+HTML Structure:
+  <div class="nav-buttons">
+      <!-- Language Switcher -->
+      <div class="language-switcher">
+          <button class="lang-btn active" data-lang="sv" 
+                  onclick="switchLanguage('sv')" 
+                  title="Byt till Svenska" 
+                  aria-pressed="true">SV</button>
+          <button class="lang-btn" data-lang="en" 
+                  onclick="switchLanguage('en')" 
+                  title="Switch to English" 
+                  aria-pressed="false">EN</button>
+      </div>
+      <!-- Refresh Button -->
+      <button class="refresh-btn" onclick="refreshPage()" 
+              title="Refresh page">Refresh</button>
+      <!-- Close Button -->
+      <button class="close-btn" onclick="closePage()" 
+              title="Close window">Close</button>
+  </div>
+
+Button Requirements:
+- Refresh button: class="refresh-btn", text "Refresh", onclick refreshPage()
+- Close button: class="close-btn", text "Close", onclick closePage()
+- Font-weight: 600 (bold) for both buttons
+- Size: Consistent with language switcher buttons
+
+---------------------------------------------------------
+3. MAIN CONTENT SECTION (MANDATORY)
+---------------------------------------------------------
+
+Requirements:
+- Container element: <main class="content">
+- Max-width: 900px (centered)
+- Padding: 16-24px
+- Background: #F5F5FA (Modern) or #F7F7F2 (Old Money)
+- Text alignment: LEFT (all content)
+
+HTML Structure:
+  <main class="content">
+      <!-- Description Section -->
+      <!-- Links Section -->
+  </main>
+
+Description Section (REQUIRED):
+- Tag: <p class="description">
+- Text: "Default Body Text" (or page-specific description)
+- Font size: 16-18px (desktop), 15-17px (mobile)
+- Alignment: LEFT
+- Appears immediately after header
+
+HTML:
+  <p class="description">Default Body Text</p>
+
+Links Section (REQUIRED, Collapsible):
+- Container: <div class="links-section-container">
+- Header: <div class="links-header" onclick="toggleLinks()">
+- Heading: <h3>External Links</h3>
+- Toggle icon: <span class="toggle-icon" id="linksToggle">▼</span>
+- Content wrapper: <div class="links-content" id="linksContent">
+- List: <ul class="links-list">
+
+Behavior:
+- Desktop (≥1024px): OPEN by default
+- Tablet/Mobile (<1024px): CLOSED by default
+- Click toggles open/closed state
+- Toggle icon rotates (90 degrees when closed, 0 degrees when open)
+
+HTML Structure:
+  <div class="links-section-container">
+      <div class="links-header" onclick="toggleLinks()" 
+           title="Click to expand/collapse">
+          <h3>External Links</h3>
+          <span class="toggle-icon" id="linksToggle">▼</span>
+      </div>
+      <div class="links-content" id="linksContent">
+          <ul class="links-list">
+              <li><a href="interesetoninterest.html">Interest Calculator</a></li>
+              <li><a href="listing.html">Marketplace</a></li>
+              <li><a href="oldmoneylinks.html">Resources</a></li>
+          </ul>
+      </div>
+  </div>
+
+CSS Requirements for Links:
+  .links-section-container {
+      margin-top: 24px;
+      border: 1px solid #C8C8C8;
+  }
+  
+  .links-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 16px;
+      cursor: pointer;
+      background: #F7F7F2;
+  }
+  
+  .links-header h3 {
+      margin: 0;
+      font-weight: 600;
+  }
+  
+  .toggle-icon {
+      transition: transform 0.3s ease;
+  }
+  
+  .links-content {
+      padding: 16px;
+      display: block;  /* Show on desktop */
+  }
+  
+  .links-content.hidden {
+      display: none;  /* Hide on mobile/tablet by default */
+  }
+  
+  .links-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+  }
+  
+  .links-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid #E0E0E0;
+  }
+  
+  .links-list li:last-child {
+      border-bottom: none;
+  }
+  
+  .links-list a {
+      color: #1F2430;
+      text-decoration: none;
+  }
+  
+  .links-list a:hover {
+      color: #10B981;
+      text-decoration: underline;
+  }
+
+---------------------------------------------------------
+4. HORIZONTAL DIVIDER (Optional but Recommended)
+---------------------------------------------------------
+
+HTML:
+  <hr class="footer-divider">
+
+CSS:
+  .footer-divider {
+      border: none;
+      border-top: 1px solid #C8C8C8;
+      margin: 24px 0;
+  }
+
+---------------------------------------------------------
+5. FOOTER SECTION (MANDATORY)
+---------------------------------------------------------
+
+Requirements:
+- Position: FIXED at bottom
+- Background color: #283046 (Modern) or #D7D5C9 (Old Money)
+- Border-top: 1px solid #C8C8C8
+- Height: 32-40px (responsive)
+- Text alignment: LEFT (text-align: left)
+- Alignment: justify-content: flex-start (NEVER center or flex-end)
+- Class: "footer"
+- Font size: 0.875rem (14px)
+- Text color: #6A6A6A (muted gray)
+
+Format:
+  © CoolPortals | filename | timestamp
+
+Filename Handling:
+- Static filename: Use page-specific filename (e.g., "default3.html")
+- OR dynamic: Use <span id="footer-filename">default3.html</span>
+- Update in footer generation if needed
+
+Timestamp Handling:
+- Generated on page load via JavaScript
+- Updated per user refresh
+- Format: "YYYY-MM-DD HH:MM:SS" (or preferred format)
+- Element: <span id="footer-timestamp"></span>
+
+HTML Structure:
+  <footer class="footer">
+      <span>&copy; CoolPortals | 
+            <span id="footer-filename">default3.html</span> | 
+            <span id="footer-timestamp"></span></span>
+  </footer>
+
+CSS Requirements (MANDATORY):
+  .footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background-color: #283046;  /* Modern theme */
+      border-top: 1px solid #C8C8C8;
+      padding: 8px 16px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      text-align: left;
+      justify-content: flex-start;  /* LEFT alignment - NEVER center */
+      font-size: 0.875rem;
+      color: #6A6A6A;
+  }
+
+JavaScript for Timestamp:
+  <script>
+      document.getElementById('footer-timestamp').textContent = generateTimestamp();
+  </script>
+
+generateTimestamp() Function (in app.js):
+  function generateTimestamp() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  }
+
+---------------------------------------------------------
+6. JAVASCRIPT INCLUDES (REQUIRED)
+---------------------------------------------------------
+
+At bottom of <body>, before closing tag:
+
+  <script src="js/app.js"></script>
+
+Include app.js which contains:
+- generateTimestamp() function
+- switchLanguage() function
+- refreshPage() function
+- closePage() function
+- toggleLinks() function
+
+---------------------------------------------------------
+7. COMPLETE HTML TEMPLATE (STEP-BY-STEP)
+---------------------------------------------------------
+
+Copy this template for new pages:
+
+  <!DOCTYPE html>
+  <html lang="sv">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Default Title</title>
+      <link rel="stylesheet" href="css/style.css">
+  </head>
+  <body>
+      <!-- Header -->
+      <header class="header">
+          <div class="title">Default Title</div>
+          <div class="nav-buttons">
+              <div class="language-switcher">
+                  <button class="lang-btn active" data-lang="sv" 
+                          onclick="switchLanguage('sv')" 
+                          title="Byt till Svenska" 
+                          aria-pressed="true">SV</button>
+                  <button class="lang-btn" data-lang="en" 
+                          onclick="switchLanguage('en')" 
+                          title="Switch to English" 
+                          aria-pressed="false">EN</button>
+              </div>
+              <button class="refresh-btn" onclick="refreshPage()" 
+                      title="Refresh page">Refresh</button>
+              <button class="close-btn" onclick="closePage()" 
+                      title="Close window">Close</button>
+          </div>
+      </header>
+
+      <!-- Main Content -->
+      <main class="content">
+          <p class="description">Default Body Text</p>
+
+          <div class="links-section-container">
+              <div class="links-header" onclick="toggleLinks()" 
+                   title="Click to expand/collapse">
+                  <h3>External Links</h3>
+                  <span class="toggle-icon" id="linksToggle">▼</span>
+              </div>
+              <div class="links-content" id="linksContent">
+                  <ul class="links-list">
+                      <li><a href="interesetoninterest.html">Interest Calculator</a></li>
+                      <li><a href="listing.html">Marketplace</a></li>
+                      <li><a href="oldmoneylinks.html">Resources</a></li>
+                  </ul>
+              </div>
+          </div>
+      </main>
+
+      <!-- Horizontal Divider -->
+      <hr class="footer-divider">
+
+      <!-- Footer -->
+      <footer class="footer">
+          <span>&copy; CoolPortals | 
+                <span id="footer-filename">page-name.html</span> | 
+                <span id="footer-timestamp"></span></span>
+      </footer>
+
+      <script src="js/app.js"></script>
+      <script>
+          document.getElementById('footer-timestamp').textContent = generateTimestamp();
+      </script>
+  </body>
+  </html>
+
+INSTRUCTIONS FOR USE:
+1. Copy the template above
+2. Replace "Default Title" with page-specific title
+3. Replace "Default Body Text" with page content
+4. Replace "page-name.html" with actual filename
+5. Update links section with page-specific links
+6. Do NOT add extra elements (forms, tables, etc.) without page-specific approval
+7. Maintain exact structure, CSS classes, and layout
+
+---------------------------------------------------------
+8. MOBILE/TABLET RESPONSIVE ADJUSTMENTS
+---------------------------------------------------------
+
+Links Section Collapsible Behavior:
+
+Desktop (≥1024px):
+  - Links section: OPEN by default
+  - CSS: .links-content { display: block; }
+
+Tablet/Mobile (<1024px):
+  - Links section: CLOSED by default
+  - CSS: .links-content { display: none; }
+  - User can toggle open with toggleLinks()
+
+Footer Responsive:
+  - Desktop: height 40px, font-size 0.875rem
+  - Tablet: height 40px, font-size 0.8125rem
+  - Mobile: height 48px, font-size 0.75rem (for touch)
+
+Content Responsive:
+  - Desktop: max-width 900px, padding 24px
+  - Tablet: max-width 100%, padding 20px
+  - Mobile: max-width 100%, padding 16px
+
+---------------------------------------------------------
+9. COLOR THEMES
+---------------------------------------------------------
+
+MODERN THEME (DEFAULT):
+  - Header/Footer background: #283046
+  - Main background: #F5F5FA
+  - Title/Body text: #1F2430
+  - Secondary text: #6B7280
+  - Borders: #D1D5DB
+
+OLD MONEY THEME:
+  - Header/Footer background: #D7D5C9
+  - Main background: #F7F7F2
+  - Title/Body text: #2A2A2A
+  - Secondary text: #6A6A6A
+  - Borders: #C8C8C8
+
+CSS Override:
+  Apply theme colors in CSS classes:
+  .header { background: var(--color-header-footer); }
+  .footer { background: var(--color-header-footer); }
+  .content { background: var(--color-bg-main); }
+
+---------------------------------------------------------
+10. STRICT COMPLIANCE CHECKLIST
+---------------------------------------------------------
+
+Before publishing any HTML page:
+
+Header:
+  ☐ class="header" present
+  ☐ Has <div class="title"> with LEFT-aligned text
+  ☐ Has <div class="nav-buttons"> with RIGHT alignment (margin-left: auto)
+  ☐ Contains language switcher (SV/EN buttons)
+  ☐ Contains Refresh button with class="refresh-btn"
+  ☐ Contains Close button with class="close-btn"
+  ☐ Background color set correctly (#283046 or #D7D5C9)
+
+Main Content:
+  ☐ <main class="content"> wrapper
+  ☐ <p class="description"> with body text
+  ☐ <div class="links-section-container"> with collapsible links
+  ☐ Links section has toggleLinks() onclick
+  ☐ Toggle icon present and rotates
+  ☐ All content LEFT-aligned (no center/right alignment except nav)
+
+Footer:
+  ☐ class="footer" present
+  ☐ Positioned FIXED at bottom
+  ☐ text-align: left (not center)
+  ☐ justify-content: flex-start (not center)
+  ☐ Format: © CoolPortals | filename | timestamp
+  ☐ Filename in <span id="footer-filename">
+  ☐ Timestamp in <span id="footer-timestamp">
+
+Scripts:
+  ☐ <script src="js/app.js"> present
+  ☐ Timestamp generation script included
+  ☐ All onclick handlers (switchLanguage, refreshPage, closePage, toggleLinks)
+     are defined in app.js
+
+Responsive:
+  ☐ Links section opens on desktop, closes on mobile
+  ☐ Footer and content adjust padding/font for mobile
+  ☐ All elements visible and functional on all device sizes
+
+---------------------------------------------------------
+END OF HTML STRUCTURE GUIDE
+---------------------------------------------------------
+
+Use this guide when creating NEW pages or modifying existing ones.
+Reference this FIRST before looking at other pages.
+Do NOT copy HTML from other pages - build from these specifications.
