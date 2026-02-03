@@ -323,25 +323,31 @@ Vertical Rhythm:
 5. LAYOUT & ALIGNMENT RULES (MANDATORY)
 =============================================================
 
-GLOBAL ALIGNMENT PRINCIPLE:
+CRITICAL GLOBAL ALIGNMENT RULE:
 ────────────────────────────────────────────────────
 
-ALL content: LEFT-aligned (default)
-EXCEPTION ONLY: Navigation buttons RIGHT-aligned
+ALL text and content between header and footer MUST be
+LEFT-aligned (text-align: left).
 
-This rule applies to:
+This includes:
   ✓ Header title
-  ✓ Body content
-  ✓ Links section
-  ✓ Lists
+  ✓ Main content area (all text, paragraphs)
+  ✓ Links section (title, list items)
+  ✓ Lists (ul, ol)
   ✓ Text paragraphs
-  ✓ Labels
+  ✓ Labels and captions
   ✓ Footer text
+  ✓ Any other content elements
 
-✗ WRONG ALIGNMENT:
-  ✗ Center-aligned body content
-  ✗ Right-aligned footer
+ONLY EXCEPTION: Navigation buttons in header are RIGHT-aligned
+
+✗ FORBIDDEN ALIGNMENT:
+  ✗ Center-aligned body content (text-align: center)
+  ✗ Right-aligned footer (justify-content: flex-end)
   ✗ Centered links section
+  ✗ Center-aligned paragraphs or text
+
+This rule applies to ALL pages, ALL devices, ALL themes.
 
 Header Layout:
 ────────────────────────────────────────────────────
@@ -371,20 +377,29 @@ CSS:
 Content Layout:
 ────────────────────────────────────────────────────
 
-CSS:
+CSS (MANDATORY for ALL content):
   .content {
-      text-align: left;           /* ALL content LEFT */
+      text-align: left;           /* ALL content LEFT - CRITICAL */
       max-width: 900px;           /* Centered container */
       margin: 0 auto;
       padding: 16-24px;
   }
 
   .description {
-      text-align: left;
+      text-align: left;           /* Paragraphs LEFT */
   }
 
   .links-section-container {
-      text-align: left;
+      text-align: left;           /* Links section LEFT */
+  }
+
+  .links-list {
+      text-align: left;           /* List items LEFT */
+  }
+
+  /* Apply to ALL text elements */
+  p, h1, h2, h3, h4, h5, h6, ul, ol, li, div {
+      text-align: left;           /* Global LEFT alignment */
   }
 
 Footer Layout:

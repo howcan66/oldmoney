@@ -104,10 +104,23 @@ Button Requirements:
 
 Requirements:
 - Container element: <main class="content">
-- Max-width: 900px (centered)
+- Max-width: 900px (centered container, but content LEFT-aligned)
 - Padding: 16-24px
 - Background: #F5F5FA (Modern) or #F7F7F2 (Old Money)
-- Text alignment: LEFT (all content)
+- Text alignment: LEFT (ALL content between header and footer)
+
+CRITICAL ALIGNMENT RULE:
+ALL text, paragraphs, lists, and content between header and
+footer MUST be LEFT-aligned. No center or right alignment
+except for navigation buttons in header.
+
+CSS:
+  .content {
+      text-align: left;  /* MANDATORY - ALL content LEFT */
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 16-24px;
+  }
 
 HTML Structure:
   <main class="content">
@@ -236,11 +249,16 @@ Requirements:
 - Background color: #283046 (Modern) or #D7D5C9 (Old Money)
 - Border-top: 1px solid #C8C8C8
 - Height: 32-40px (responsive)
-- Text alignment: LEFT (text-align: left)
+- Text alignment: LEFT (text-align: left) - MANDATORY
 - Alignment: justify-content: flex-start (NEVER center or flex-end)
 - Class: "footer"
 - Font size: 0.875rem (14px)
 - Text color: #6A6A6A (muted gray)
+
+CRITICAL ALIGNMENT RULE:
+Footer text MUST be LEFT-aligned. This is part of the global
+rule: ALL content between header and footer (and footer itself)
+is LEFT-aligned except navigation buttons.
 
 Format:
   © CoolPortals | filename | timestamp
