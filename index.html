@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Money - Compound Interest Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .tagline {
+            font-size: 1.2em;
+            font-style: italic;
+            opacity: 0.9;
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .results {
+            margin-top: 20px;
+        }
+
+        .highlight {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .highlight h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .stat-label {
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .breakdown {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .chart-container {
+            margin-top: 20px;
+            height: 300px;
+            position: relative;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 100%;
+            gap: 5px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(to top, #667eea, #764ba2);
+            border-radius: 4px 4px 0 0;
+            position: relative;
+            transition: all 0.3s;
+            min-height: 10px;
+        }
+
+        .bar:hover {
+            opacity: 0.8;
+        }
+
+        .bar-label {
+            position: absolute;
+            bottom: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .info-section {
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .info-section h2 {
+            margin-bottom: 15px;
+        }
+
+        .info-section p {
+            line-height: 1.8;
+            color: #555;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💰 Old Money</h1>
+            <p class="tagline">The Power of Compound Interest - Getting Rich the Slow Way</p>
+        </header>
+
+        <div class="content">
+            <div class="card">
+                <h2>Calculate Your Growth</h2>
+                <form id="calculatorForm">
+                    <div class="form-group">
+                        <label for="principal">Initial Investment ($)</label>
+                        <input type="number" id="principal" value="10000" min="0" step="100" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rate">Annual Interest Rate (%)</label>
+                        <input type="number" id="rate" value="7" min="0" max="100" step="0.1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="years">Time Period (Years)</label>
+                        <input type="number" id="years" value="30" min="1" max="100" step="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="compound">Compound Frequency</label>
+                        <select id="compound" required>
+                            <option value="1">Annually</option>
+                            <option value="2">Semi-Annually</option>
+                            <option value="4">Quarterly</option>
+                            <option value="12" selected>Monthly</option>
+                            <option value="365">Daily</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contribution">Monthly Contribution ($)</label>
+                        <input type="number" id="contribution" value="0" min="0" step="10">
+                    </div>
+
+                    <button type="submit">Calculate</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Results</h2>
+                <div id="results" class="results">
+                    <p style="color: #999; text-align: center; padding: 40px 0;">
+                        Enter your values and click Calculate to see the magic of compound interest!
+                    </p>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h2>Understanding Compound Interest: The 8th Wonder of the World</h2>
+                <p>
+                    Compound interest is often called "the eighth wonder of the world" - and for good reason. 
+                    Unlike simple interest which only earns returns on your initial investment, compound interest 
+                    earns returns on both your principal AND the interest you've already earned. This creates 
+                    exponential growth over time.
+                </p>
+                <p>
+                    The formula for compound interest is: <strong>A = P(1 + r/n)^(nt)</strong>, where:
+                    A is the final amount, P is the principal, r is the annual interest rate, 
+                    n is the number of times interest is compounded per year, and t is the time in years.
+                </p>
+                <p>
+                    This is how "old money" builds wealth - not through get-rich-quick schemes, but through 
+                    patient, disciplined investing over long periods. The key is starting early and letting 
+                    time do the heavy lifting. As Warren Buffett says: "The stock market is a device for 
+                    transferring money from the impatient to the patient."
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculateCompoundInterest();
+        });
+
+        function calculateCompoundInterest() {
+            // Get input values
+            const principal = parseFloat(document.getElementById('principal').value);
+            const rate = parseFloat(document.getElementById('rate').value) / 100;
+            const years = parseInt(document.getElementById('years').value);
+            const compound = parseInt(document.getElementById('compound').value);
+            const monthlyContribution = parseFloat(document.getElementById('contribution').value) || 0;
+
+            // Calculate year-by-year breakdown
+            const yearlyData = [];
+            let currentPrincipal = principal;
+
+            for (let year = 1; year <= years; year++) {
+                // Add monthly contributions for the year
+                const contributionsThisYear = monthlyContribution * 12;
+                
+                // Calculate compound interest for the year
+                const finalAmount = currentPrincipal * Math.pow(1 + rate / compound, compound);
+                
+                // Calculate interest earned this year (before adding contributions)
+                const interestEarned = finalAmount - currentPrincipal;
+                
+                // Add contributions at the end of the year
+                const totalWithContributions = finalAmount + contributionsThisYear;
+                
+                yearlyData.push({
+                    year: year,
+                    startingBalance: currentPrincipal,
+                    interestEarned: interestEarned,
+                    contributions: contributionsThisYear,
+                    endingBalance: totalWithContributions
+                });
+
+                currentPrincipal = totalWithContributions;
+            }
+
+            // Calculate totals
+            const finalAmount = currentPrincipal;
+            const totalContributions = principal + (monthlyContribution * 12 * years);
+            const totalInterest = finalAmount - totalContributions;
+
+            // Display results
+            displayResults(finalAmount, totalContributions, totalInterest, yearlyData, years);
+        }
+
+        function displayResults(finalAmount, totalContributions, totalInterest, yearlyData, years) {
+            const resultsDiv = document.getElementById('results');
+            
+            // Create summary
+            let html = `
+                <div class="highlight">
+                    <h3>Summary</h3>
+                    <div class="stat">
+                        <span class="stat-label">Final Balance:</span>
+                        <span class="stat-value">$${finalAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Total Contributions:</span>
+                        <span class="stat-value">$${totalContributions.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Total Interest Earned:</span>
+                        <span class="stat-value">$${totalInterest.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">Interest as % of Total:</span>
+                        <span class="stat-value">${((totalInterest / finalAmount) * 100).toFixed(1)}%</span>
+                    </div>
+                </div>
+            `;
+
+            // Add chart
+            html += '<div class="chart-container">';
+            html += '<div class="bar-chart">';
+            
+            // Show max 10 bars for readability
+            const step = Math.ceil(years / 10);
+            const maxBalance = Math.max(...yearlyData.map(d => d.endingBalance));
+            
+            for (let i = 0; i < yearlyData.length; i += step) {
+                const data = yearlyData[i];
+                const height = (data.endingBalance / maxBalance) * 100;
+                html += `
+                    <div class="bar" style="height: ${height}%" title="Year ${data.year}: $${data.endingBalance.toLocaleString('en-US', {maximumFractionDigits: 0})}">
+                        <div class="bar-label">Yr ${data.year}</div>
+                    </div>
+                `;
+            }
+            
+            html += '</div></div>';
+
+            // Add detailed breakdown
+            html += '<div class="breakdown"><h3>Year-by-Year Breakdown</h3>';
+            html += `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Year</th>
+                            <th>Starting Balance</th>
+                            <th>Interest Earned</th>
+                            <th>Contributions</th>
+                            <th>Ending Balance</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            // Show first 5 years, then every 5th year, and last year
+            yearlyData.forEach((data, index) => {
+                if (index < 5 || (index + 1) % 5 === 0 || index === yearlyData.length - 1) {
+                    html += `
+                        <tr>
+                            <td>${data.year}</td>
+                            <td>$${data.startingBalance.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                            <td>$${data.interestEarned.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                            <td>$${data.contributions.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                            <td>$${data.endingBalance.toLocaleString('en-US', {maximumFractionDigits: 0})}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            html += '</tbody></table></div>';
+
+            resultsDiv.innerHTML = html;
+        }
+
+        // Calculate on page load with default values
+        window.addEventListener('load', function() {
+            calculateCompoundInterest();
+        });
+    </script>
+</body>
+</html>
