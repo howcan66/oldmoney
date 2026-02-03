@@ -1,6 +1,10 @@
 PROJECT: Old Money – Design & Style Standards (CONSOLIDATED)
 FORMAT: Single comprehensive reference for all design, layout, and styling
 
+MAIN INSTRUCTION NOTICE:
+Start with instruction_guide.txt.
+Do NOT treat this file as the entry point.
+
 =============================================================
 TABLE OF CONTENTS
 =============================================================
