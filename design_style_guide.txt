@@ -1,0 +1,1290 @@
+PROJECT: Old Money – Design & Style Standards (CONSOLIDATED)
+FORMAT: Single comprehensive reference for all design, layout, and styling
+
+=============================================================
+TABLE OF CONTENTS
+=============================================================
+1. Purpose & Overview
+2. Color Palettes (Modern & Old Money)
+3. Typography & Fonts
+4. Spacing & Grid System
+5. Layout & Alignment Rules
+6. Header Design
+7. Footer Design
+8. Content & Body Design
+9. Links & Buttons
+10. Forms & Inputs
+11. Tooltips & Interactive Elements
+12. Responsive Design (Desktop/Tablet/Mobile)
+13. Accessibility Requirements
+14. CSS Requirements (Complete)
+15. Compliance Checklist
+
+=============================================================
+1. PURPOSE & OVERVIEW
+=============================================================
+
+This document consolidates ALL design, style, and layout
+requirements for the Old Money application.
+
+SCOPE:
+- Applies to ALL pages and components
+- Overrides all individual .txt files
+- Single source of truth for design decisions
+- Page-specific specs can override ONLY with explicit approval
+
+DESIGN PHILOSOPHY:
+- Modern (default) OR Old Money (alternate) theme
+- Consistent across all devices (colors, typography)
+- Responsive layout changes per device
+- LEFT-aligned content (except navigation buttons)
+- Clear visual hierarchy and spacing
+
+=============================================================
+2. COLOR PALETTES
+=============================================================
+
+MODERN THEME (DEFAULT - SELECTED FOR THIS PROJECT)
+────────────────────────────────────────────────────
+
+Primary Colors:
+  • Header/Footer background: #283046 (deep blue-slate)
+  • Main background: #F5F5FA (cool light gray-blue)
+  • Cards/Boxes: #FFFFFF (pure white)
+
+Text Colors:
+  • Primary text: #1F2430 (dark blue-gray)
+  • Secondary text: #6B7280 (medium gray)
+  • Muted text: #9CA3AF (light gray)
+
+Interactive Elements:
+  • Primary action buttons: #2563EB (vibrant blue)
+  • Button hover: #1D4ED8 (darker blue)
+  • Button active: #1E40AF (darkest blue)
+  • Links (default): #1F2430 (dark text)
+  • Links (hover): #10B981 (teal accent)
+  • Links (visited): #6B7280 (muted)
+
+Semantic Colors:
+  • Success: #10B981 (teal green)
+  • Error: #DC2626 (bright red)
+  • Warning: #F59E0B (amber/orange)
+  • Info: #3B82F6 (light blue)
+
+Borders & Dividers:
+  • Standard border: #D1D5DB (light gray)
+  • Border on hover: #8b7355 (brown accent)
+  • Disabled state: #F3F4F6 (very light gray)
+
+ALTERNATIVE: OLD MONEY THEME
+────────────────────────────────────────────────────
+
+Primary Colors:
+  • Header/Footer background: #D7D5C9 (muted olive-gray)
+  • Main background: #F7F7F2 (off-white)
+  • Cards/Boxes: #FAF8F2 (warm white)
+
+Text Colors:
+  • Primary text: #2A2A2A (charcoal)
+  • Secondary text: #6A6A6A (medium gray)
+  • Muted text: #999999 (light gray)
+
+Interactive Elements:
+  • Primary action buttons: #8b7355 (warm brown)
+  • Button hover: #7a6349 (darker brown)
+  • Button active: #69533d (darkest brown)
+  • Links (default): #2A2A2A (charcoal)
+  • Links (hover): #8b7355 (brown)
+  • Links (visited): #6A6A6A (muted)
+
+Semantic Colors:
+  • Success: #4CAF50 (green)
+  • Error: #D32F2F (red)
+  • Warning: #FF9800 (orange)
+  • Info: #2196F3 (blue)
+
+Borders & Dividers:
+  • Standard border: #C8C8C8 (light gray)
+  • Border on hover: #8b7355 (brown)
+  • Disabled state: #E0DED6 (light beige)
+
+PALETTE USAGE RULES:
+────────────────────────────────────────────────────
+
+✓ DO:
+  • Choose ONE palette per project
+  • Apply consistently across all pages
+  • Use same colors on all devices
+  • Vary only layout per device size
+
+✗ DON'T:
+  • Mix colors from different palettes
+  • Change palette mid-project without approval
+  • Use custom colors not defined here
+  • Vary colors between desktop/mobile
+
+CSS VARIABLES (Implementation):
+
+:root {
+  --color-bg-main: #F5F5FA;              /* Modern */
+  --color-bg-card: #FFFFFF;
+  --color-header-footer: #283046;
+  --color-text-primary: #1F2430;
+  --color-text-secondary: #6B7280;
+  --color-border: #D1D5DB;
+  --color-primary-action: #2563EB;
+  --color-primary-hover: #1D4ED8;
+  --color-success: #10B981;
+  --color-error: #DC2626;
+  --color-warning: #F59E0B;
+}
+
+Accessibility Verification:
+  • Text vs background: Minimum 4.5:1 contrast (WCAG AA)
+  • Large text (18px+): Minimum 3:1 contrast
+  • Interactive elements: Minimum 3:1 contrast
+  • Test with: WebAIM Contrast Checker tool
+
+=============================================================
+3. TYPOGRAPHY & FONTS
+=============================================================
+
+Font Family (All Text):
+  • Primary: Georgia, 'Playfair Display', 'Times New Roman', serif
+  • Fallback: serif (system default)
+  • NO sans-serif fonts for main content
+
+Font Sizes:
+────────────────────────────────────────────────────
+
+Desktop (≥1024px):
+  • Header title: 1.125rem (18px)
+  • Main headings (h1): 1.75rem (28px)
+  • Subheadings (h2/h3): 1.25rem (20px)
+  • Body text: 1rem (16px)
+  • Small text: 0.875rem (14px)
+  • Footer text: 0.875rem (14px)
+  • Labels: 0.9375rem (15px)
+
+Tablet (768px - 1024px):
+  • Header title: 1.25rem (20px)
+  • Main headings (h1): 1.6rem (26px)
+  • Subheadings (h2/h3): 1.2rem (19px)
+  • Body text: 0.9375rem (15px)
+  • Footer text: 0.8125rem (13px)
+
+Mobile (<768px):
+  • Header title: 1rem (16px)
+  • Main headings (h1): 1.4rem (22px)
+  • Subheadings (h2/h3): 1rem (16px)
+  • Body text: 0.9375rem (15px) - MINIMUM for readability
+  • Footer text: 0.75rem (12px)
+
+Font Weight:
+  • Headings: 600 (semi-bold)
+  • Navigation buttons: 600 (semi-bold/bold)
+  • Body text: 400 (regular)
+  • Labels: 600 (semi-bold)
+  • Links: 400 (regular)
+
+Line Height:
+  • Desktop: 1.6 (spacious)
+  • Tablet: 1.65 (balanced)
+  • Mobile: 1.5 (compact)
+
+Letter Spacing:
+  • Normal text: 0 (default)
+  • Headings: 0.5px (slight increase for elegance)
+
+=============================================================
+4. SPACING & GRID SYSTEM
+=============================================================
+
+8px Base Grid:
+  Spacing increments: 8px, 16px, 24px, 32px, 40px, 48px
+  Fine-tuning allowed: 6px, 12px (for special cases)
+
+Margin Rules:
+  • Top/Bottom margins: Multiples of 8px
+  • Left/Right margins: Multiples of 8px
+  • Between sections: 24-32px
+  • Between elements: 8-16px
+
+Padding Rules:
+  • Container padding: 16-24px (desktop), 12-16px (mobile)
+  • Element padding: 8-16px
+  • Button padding: 8px 12px (desktop), 12px 16px (mobile)
+  • Input padding: 8px 12px
+
+Gap Between Flex Items:
+  • Small gap: 4-6px
+  • Standard gap: 8px
+  • Large gap: 16px
+
+Vertical Rhythm:
+  • Maintain consistent spacing between all elements
+  • Never deviate from grid without explicit reason
+  • Mobile may compress spacing slightly (still multiples of 8px)
+
+=============================================================
+5. LAYOUT & ALIGNMENT RULES (MANDATORY)
+=============================================================
+
+GLOBAL ALIGNMENT PRINCIPLE:
+────────────────────────────────────────────────────
+
+ALL content: LEFT-aligned (default)
+EXCEPTION ONLY: Navigation buttons RIGHT-aligned
+
+This rule applies to:
+  ✓ Header title
+  ✓ Body content
+  ✓ Links section
+  ✓ Lists
+  ✓ Text paragraphs
+  ✓ Labels
+  ✓ Footer text
+
+✗ WRONG ALIGNMENT:
+  ✗ Center-aligned body content
+  ✗ Right-aligned footer
+  ✗ Centered links section
+
+Header Layout:
+────────────────────────────────────────────────────
+
+Structure: Flex container with space-between
+
+CSS:
+  .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+  }
+
+  .title {
+      text-align: left;
+      /* pushes nav-buttons to right */
+  }
+
+  .nav-buttons {
+      margin-left: auto;           /* PUSH to right */
+      justify-content: flex-end;   /* RIGHT alignment */
+      display: flex;
+      gap: 6px;
+  }
+
+Content Layout:
+────────────────────────────────────────────────────
+
+CSS:
+  .content {
+      text-align: left;           /* ALL content LEFT */
+      max-width: 900px;           /* Centered container */
+      margin: 0 auto;
+      padding: 16-24px;
+  }
+
+  .description {
+      text-align: left;
+  }
+
+  .links-section-container {
+      text-align: left;
+  }
+
+Footer Layout:
+────────────────────────────────────────────────────
+
+CSS (MANDATORY):
+  .footer {
+      display: flex;
+      text-align: left;              /* CRITICAL: LEFT text */
+      justify-content: flex-start;   /* CRITICAL: LEFT align */
+      align-items: center;
+      padding: 8px 12px;
+  }
+
+✓ CORRECT:
+  justify-content: flex-start;
+
+✗ WRONG:
+  justify-content: center;          /* NEVER center */
+  justify-content: flex-end;        /* NEVER right */
+
+=============================================================
+6. HEADER DESIGN
+=============================================================
+
+Position: FIXED (sticky at top)
+Background: #283046 (Modern) or #D7D5C9 (Old Money)
+Border-bottom: 1px solid #C8C8C8
+Height: 48px (desktop), 52px (tablet), 46px (mobile)
+Padding: 8px 12px (desktop/tablet), 6px 8px (mobile)
+Z-index: 1000 (above content)
+
+Title Subsection:
+────────────────────────────────────────────────────
+
+  • Font size: 1.125rem (desktop), 1.25rem (tablet), 1rem (mobile)
+  • Font weight: 600
+  • Color: #1F2430 (Modern) or #2A2A2A (Old Money)
+  • Text alignment: LEFT
+  • Padding: None
+  • Flex: 0 (doesn't grow)
+
+Navigation Buttons Container:
+────────────────────────────────────────────────────
+
+  • Display: flex
+  • Gap: 6px (between buttons)
+  • Align items: center
+  • Alignment: RIGHT (margin-left: auto; justify-content: flex-end;)
+  • Flex: 0 (doesn't grow)
+
+Button Specifications (ALL nav buttons):
+────────────────────────────────────────────────────
+
+Language Switcher Buttons (SV/EN):
+  • Background (inactive): #E0DED6 (Old Money style)
+  • Background (active): #8b7355 (brown, active language)
+  • Text (inactive): #2A2A2A (charcoal)
+  • Text (active): #FFFFFF (white)
+  • Border: 1px solid #C8C8C8
+  • Padding: 4px 8px
+  • Font weight: 600
+  • Border-radius: 5px
+  • Hover background: #C9C7BF
+  • Min-width: 36px
+  • Font size: 0.8125rem
+
+Refresh Button:
+  • Class: refresh-btn
+  • Text: "Refresh"
+  • Background: #E0DED6
+  • Text color: #2A2A2A
+  • Font weight: 600 (BOLD - per instructions)
+  • Border: 1px solid #C8C8C8
+  • Padding: 4px 6px
+  • Border-radius: 5px
+  • Hover background: #C9C7BF
+  • Font size: 0.875rem
+  • Tooltip: "Refresh page"
+
+Close Button:
+  • Class: close-btn
+  • Text: "Close"
+  • Background: #E0DED6
+  • Text color: #2A2A2A
+  • Font weight: 600 (BOLD - per instructions)
+  • Border: 1px solid #C8C8C8
+  • Padding: 4px 6px
+  • Border-radius: 5px
+  • Hover background: #C9C7BF
+  • Font size: 0.875rem
+  • Tooltip: "Close window"
+
+Button Focus & Accessibility:
+  • Outline: 2px solid #8b7355 (focus indicator)
+  • Outline-offset: 2px
+  • Border-radius: 3px (outline)
+  • NEVER remove outline (accessibility violation)
+
+Tooltip Styling (CSS pseudo-elements):
+  • Position: ABOVE button (top: -32px)
+  • Background: #2A2A2A (charcoal)
+  • Text: #F7F7F2 (off-white)
+  • Arrow: Points DOWN to button
+  • Opacity: 0 (hidden), 1 (visible on hover)
+  • Transition: opacity 0.2s
+
+=============================================================
+7. FOOTER DESIGN
+=============================================================
+
+Position: FIXED (sticky at bottom)
+Background: #283046 (Modern) or #D7D5C9 (Old Money)
+Border-top: 1px solid #C8C8C8
+Height: 40px (desktop), 38px (tablet), 32px (mobile)
+Padding: 8px 12px
+Z-index: 999 (below header)
+Display: flex (layout)
+
+Text Alignment (MANDATORY):
+────────────────────────────────────────────────────
+
+CSS REQUIREMENT:
+  .footer {
+      text-align: left;              /* CRITICAL */
+      justify-content: flex-start;   /* CRITICAL - LEFT */
+      align-items: center;
+  }
+
+✓ CORRECT:
+  text-align: left;
+  justify-content: flex-start;
+
+✗ WRONG:
+  text-align: center;
+  justify-content: center;
+
+Format: © CoolPortals | filename | timestamp
+
+Components:
+  1. Copyright symbol: &copy; (HTML entity)
+  2. Brand name: "CoolPortals"
+  3. Separator: " | " (space-pipe-space)
+  4. Filename: Dynamic (from current page)
+  5. Separator: " | " (space-pipe-space)
+  6. Timestamp: Auto-generated on page load
+
+Example:
+  © CoolPortals | default3.html | 2026-02-03 14:32:45
+
+Typography:
+  • Font size: 0.875rem (14px desktop), 0.8125rem (13px tablet), 0.75rem (12px mobile)
+  • Color: #6A6A6A (muted gray)
+  • Font weight: 400 (regular)
+
+Elements in HTML:
+  <footer class="footer">
+      <span>&copy; CoolPortals | 
+            <span id="footer-filename">page-name.html</span> | 
+            <span id="footer-timestamp"></span></span>
+  </footer>
+
+Responsive Adjustments:
+  • Desktop: height 40px, padding 8px 12px
+  • Tablet: height 38px, padding 8px 12px
+  • Mobile: height 32px, padding 6px 8px
+
+=============================================================
+8. CONTENT & BODY DESIGN
+=============================================================
+
+Container (.content):
+────────────────────────────────────────────────────
+
+  • Max-width: 900px (prevents overly wide text)
+  • Margin: 0 auto (centered)
+  • Padding: 24px (desktop), 20px (tablet), 12-16px (mobile)
+  • Background: #F5F5FA (Modern) or #F7F7F2 (Old Money)
+  • Text alignment: LEFT
+  • Margin-top: 60px (below fixed header)
+  • Margin-bottom: 50px (above fixed footer)
+
+Description Section (.description):
+────────────────────────────────────────────────────
+
+  • Element: <p class="description">
+  • Content: "Default Body Text" (page-specific)
+  • Font size: 1rem (desktop), 0.9375rem (mobile)
+  • Font weight: 400
+  • Color: #1F2430 (Modern) or #2A2A2A (Old Money)
+  • Text alignment: LEFT
+  • Margin-bottom: 20px
+  • Line height: 1.6 (desktop), 1.5 (mobile)
+
+Links Section (.links-section-container):
+────────────────────────────────────────────────────
+
+  • Position: Before footer
+  • Margin-top: 30px
+  • Margin-bottom: 20px
+  • Border: 1px solid #C8C8C8
+  • Border-radius: 5px
+  • Background: #FAF8F2 (Old Money-inspired)
+
+Links Header (.links-header):
+  • Padding: 12px
+  • Background: #E0DED6 (clickable area)
+  • Hover background: #C9C7BF
+  • Display: flex
+  • Justify-content: space-between
+  • Align-items: center
+  • Cursor: pointer
+  • Border-radius: 5px 5px 0 0 (when expanded)
+
+  <h3> inside header:
+    • Font size: 1rem
+    • Font weight: 600
+    • Color: #2A2A2A
+    • Margin: 0 (reset)
+
+  Toggle Icon (.toggle-icon):
+    • Character: ▼ (downward arrow)
+    • Font size: 0.875rem
+    • Color: #2A2A2A
+    • Rotation: 0deg (expanded), 90deg (collapsed)
+    • Transition: transform 0.3s
+
+Links Content (.links-content):
+  • Desktop (≥1024px): EXPANDED by default (display: block)
+  • Tablet/Mobile (<1024px): COLLAPSED by default (display: none)
+  • Toggle onclick: toggleLinks() function
+  • Max-height: 500px (expanded)
+  • Max-height: 0 (collapsed)
+  • Overflow: hidden
+  • Transition: max-height 0.3s ease-out
+  • Padding (expanded): 12px
+  • Border (expanded): 0 1px 1px 1px (bottom/sides)
+  • Background: #FAF8F2
+
+Links List (.links-list):
+  • List-style: none (no bullets)
+  • Padding: 0
+  • Margin: 0
+
+Links List Items (.links-list li):
+  • Padding: 8px 0
+  • Margin-bottom: 10px
+  • Border-bottom: 1px solid #E0E0E0
+  • Last item: border-bottom: none
+
+Links (.links-list a):
+  • Color: #1F2430 (Modern) or #2A2A2A (Old Money)
+  • Text-decoration: none
+  • Font size: 0.9375rem
+  • Display: block
+  • Padding: 6px 0
+  • Hover: color #10B981 (Modern) or #8b7355 (Old Money)
+  • Hover: text-decoration: underline
+  • Visited: color #6B7280 (muted)
+  • Transition: color 0.2s
+
+Horizontal Divider (.footer-divider):
+────────────────────────────────────────────────────
+
+  • Element: <hr class="footer-divider">
+  • Border: none
+  • Border-top: 1px solid #C8C8C8
+  • Margin: 24px 0
+  • Separates content from footer
+
+=============================================================
+9. LINKS & BUTTONS
+=============================================================
+
+Link Styling:
+────────────────────────────────────────────────────
+
+Default State:
+  • Color: #1F2430 (Modern) or #2A2A2A (Old Money)
+  • Text-decoration: none
+  • Font weight: 400
+
+Hover State:
+  • Color: #10B981 (Modern) or #8b7355 (Old Money)
+  • Text-decoration: underline
+  • Cursor: pointer
+  • Transition: color 0.2s
+
+Visited State:
+  • Color: #6B7280 (Modern) or #6A6A6A (Old Money)
+  • Text-decoration: none
+
+Focus State:
+  • Outline: 2px solid #8b7355
+  • Outline-offset: 2px
+  • NEVER remove outline
+
+Button Styling (General):
+────────────────────────────────────────────────────
+
+All Buttons:
+  • Font-family: inherit (Georgia serif)
+  • Font-weight: 600 (semi-bold)
+  • Border-radius: 5px
+  • Cursor: pointer
+  • Transition: all 0.2s
+  • Padding: 8px 12px (desktop), 12px 16px (mobile)
+  • Minimum height: 36-40px (touch-friendly)
+
+Primary Button:
+  • Background: #2563EB (Modern) or #8b7355 (Old Money)
+  • Text color: #FFFFFF (white)
+  • Border: 1px solid #2563EB (Modern) or #8b7355 (Old Money)
+  • Hover: Background #1D4ED8 (Modern) or #7a6349 (Old Money)
+  • Active: Background #1E40AF (Modern) or #69533d (Old Money)
+
+Secondary Button:
+  • Background: #E0DED6 (light)
+  • Text color: #2A2A2A (dark)
+  • Border: 1px solid #C8C8C8
+  • Hover: Background #C9C7BF
+  • Active: Background #B5B3AC
+
+Disabled Button:
+  • Opacity: 0.5
+  • Cursor: not-allowed
+  • Pointer-events: none
+
+=============================================================
+10. FORMS & INPUTS
+=============================================================
+
+Input Fields:
+────────────────────────────────────────────────────
+
+All inputs:
+  • Background: #FFFFFF (white)
+  • Border: 1px solid #C8C8C8
+  • Border-radius: 5px
+  • Padding: 8px 12px
+  • Font-size: 1rem (desktop), 0.9375rem (mobile)
+  • Font-family: inherit (Georgia serif)
+  • Color: #1F2430 (Modern) or #2A2A2A (Old Money)
+
+Focus State:
+  • Border: 1px solid #8b7355 (brown/accent)
+  • Outline: 2px solid #8b7355
+  • Outline-offset: 2px
+  • Box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1)
+
+Invalid/Error State:
+  • Border: 2px solid #DC2626 (Modern) or #D32F2F (Old Money)
+  • Background: #FFEBEE (light red)
+  • Color: #DC2626 (error text)
+
+Placeholder Text:
+  • Color: #999999 (light gray)
+  • Font-style: italic
+  • Opacity: 0.7
+
+Labels:
+  • Font-weight: 600
+  • Font-size: 0.9375rem
+  • Color: #1F2430 (Modern) or #2A2A2A (Old Money)
+  • Margin-bottom: 6px
+  • Display: block
+  • Text alignment: LEFT
+
+Required Field Indicator:
+  • Asterisk (*) after label
+  • Color: #DC2626 (red)
+  • ARIA: aria-required="true"
+
+Optional Field Indicator:
+  • Text "(optional)" after label
+  • Color: #6B7280 (gray)
+  • Font-style: italic
+
+Error Messages:
+  • Display: block (below field)
+  • Color: #DC2626 (Modern) or #D32F2F (Old Money)
+  • Font-size: 0.8125rem
+  • Icon: ✗ before message
+  • Margin-top: 4px
+  • Clear on re-focus
+
+=============================================================
+11. TOOLTIPS & INTERACTIVE ELEMENTS
+=============================================================
+
+Tooltip Specifications (for buttons):
+────────────────────────────────────────────────────
+
+HTML Attribute:
+  <button title="Refresh page">...</button>
+
+CSS Positioning:
+  • Position: ABOVE button (not below)
+  • Top: -32px (positioned above)
+  • Left: 50% (centered horizontally)
+  • Transform: translateX(-50%) (center adjustment)
+  • Pointer-events: none (doesn't interfere)
+  • Z-index: 1001 (above all content)
+
+CSS Styling:
+  • Background: #2A2A2A (charcoal)
+  • Color: #F7F7F2 (off-white)
+  • Padding: 6px 10px
+  • Border-radius: 4px
+  • Font-size: 0.75rem
+  • White-space: nowrap
+  • Box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15)
+
+Arrow Pointer (::before pseudo-element):
+  • Position: 8px above tooltip
+  • Width/Height: 0 (CSS triangle)
+  • Border-top: 4px solid #2A2A2A
+  • Border-left/right: 4px solid transparent
+  • Border-bottom: none
+  • Centered horizontally
+  • Z-index: 1001
+
+Visibility:
+  • Opacity: 0 (hidden by default)
+  • Opacity: 1 (visible on hover)
+  • Transition: opacity 0.2s
+  • Show on :hover
+
+Implementation (CSS pseudo-elements):
+  button::after { content: attr(title); /* tooltip text */ }
+  button::before { /* arrow pointer */ }
+  button:hover::after,
+  button:hover::before { opacity: 1; }
+
+=============================================================
+12. RESPONSIVE DESIGN
+=============================================================
+
+Breakpoints & Device Sizes:
+────────────────────────────────────────────────────
+
+Desktop (≥1024px):
+  • Container max-width: 900px
+  • Font size: 16-18px (body)
+  • Padding: 16-24px
+  • Button height: 36-40px
+  • Collapsible sections: OPEN by default
+  • Navigation: Full menu visible
+  • Images: Full resolution (1x)
+
+Tablet / iPad Pro (768px - 1024px):
+  • Container max-width: 100% (with padding)
+  • Font size: 17-19px (body)
+  • Padding: 20px
+  • Button height: 44px (touch-friendly)
+  • Button min-width: 100px
+  • Collapsible sections: CLOSED by default
+  • Navigation: Full menu or hamburger
+  • Images: Medium resolution (0.75x)
+
+Mobile / iPhone 17 Max (<768px):
+  • Container max-width: 100%
+  • Font size: 15-17px (body) - minimum 15px
+  • Padding: 12-16px
+  • Button height: 48px (minimum touch target)
+  • Button min-width: 100% (full width)
+  • Collapsible sections: CLOSED by default
+  • Navigation: Hamburger menu
+  • Images: Optimized/compressed (0.5x)
+  • Vertical spacing: Increased (44px min tap targets)
+  • Line length: Max 75 characters per line
+
+Touch Target Sizes:
+  • Minimum: 44x44px (Apple HIG)
+  • Recommended: 48x48px (Material Design)
+  • Spacing between targets: 8px minimum
+
+Media Query Syntax:
+
+/* Desktop (default) */
+/* No media query needed - desktop is base */
+
+/* Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+    body { font-size: 17px; }
+    .content { padding: 20px; }
+    .footer { height: 38px; }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    body { font-size: 15px; }
+    .content { padding: 12px; margin-bottom: 44px; }
+    .footer { height: 32px; font-size: 0.8125rem; }
+    .btn-text { display: none; }
+    /* Show icons only on mobile */
+}
+
+Responsive Behavior Rules:
+
+Layout:
+  • Desktop: Multi-column layouts allowed
+  • Tablet: 2-column maximum
+  • Mobile: Single column (vertical stacking)
+
+Typography:
+  • Scale down 10-20% on mobile
+  • Body text: Minimum 15px (readability)
+  • Line height: 1.6 (desktop), 1.5 (mobile)
+
+Images & Media:
+  • Desktop: Max width 100%
+  • Mobile: Compress images, lazy load
+  • Icons: SVG preferred (scalable)
+
+Performance:
+  • Mobile: Lazy load off-screen content
+  • Mobile: Minimize animations
+  • Mobile: Reduce JavaScript bundle
+
+Testing:
+  • Test on real devices when possible
+  • Chrome DevTools device emulation
+  • Test both landscape and portrait
+  • Test with accessibility features enabled
+
+=============================================================
+13. ACCESSIBILITY REQUIREMENTS (WCAG 2.1 AA)
+=============================================================
+
+Color Contrast:
+────────────────────────────────────────────────────
+
+Minimum Ratios:
+  • Normal text: 4.5:1 (WCAG AA)
+  • Large text (18px+): 3:1 (WCAG AA)
+  • UI components: 3:1 (WCAG AA)
+  • Graphics/icons: 3:1 (WCAG AA)
+
+Testing:
+  • Use WebAIM Contrast Checker
+  • Test on real devices
+  • Verify dark mode compatibility
+  • Test with color blindness simulators
+
+ARIA Labels & Attributes:
+────────────────────────────────────────────────────
+
+Interactive Elements:
+  • All buttons need accessible names
+  • All form inputs: <label> or aria-label
+  • Icons: aria-hidden="true" if decorative
+  • Language switcher: aria-pressed="true/false"
+
+Live Regions:
+  • Dynamic content updates: aria-live="polite"
+  • Error messages: role="alert"
+  • Screen reader announces changes
+
+Semantic HTML:
+  • <header>, <main>, <footer>, <nav>
+  • <label> for form inputs
+  • <table> with <th> and scope attribute
+  • <button> not <div>
+  • <a> for links not <span onclick>
+
+Focus & Navigation:
+────────────────────────────────────────────────────
+
+Focus Indicators:
+  • Outline: 2px solid #8b7355
+  • Offset: 2px
+  • Border-radius: 3px
+  • NEVER remove outline (accessibility violation)
+  • Visible on all interactive elements
+
+Tab Order:
+  1. Header navigation buttons
+  2. Main content (inputs, buttons)
+  3. Links section
+  4. Footer (if interactive)
+
+Keyboard Navigation:
+  • Tab: Move focus forward
+  • Shift+Tab: Move focus backward
+  • Enter: Submit form / Activate button
+  • Escape: Close modal / Cancel
+  • Space: Toggle checkbox/dropdown
+
+Screen Reader Support:
+  • Test with NVDA (Windows) or JAWS
+  • Test with VoiceOver (Mac)
+  • Announce headings and structure
+  • Describe form fields and errors
+  • Provide alt text for all images
+
+Alt Text:
+  • All images: Descriptive alt text
+  • Decorative images: alt="" (empty)
+  • Complex images: Detailed text description
+
+=============================================================
+14. CSS REQUIREMENTS (COMPLETE)
+=============================================================
+
+Master CSS Rules:
+────────────────────────────────────────────────────
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Georgia, 'Playfair Display', 'Times New Roman', serif;
+    background: #F5F5FA;           /* Modern theme */
+    color: #1F2430;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* Header - MANDATORY */
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: #283046;           /* Modern theme */
+    border-bottom: 1px solid #C8C8C8;
+    padding: 8px 12px;
+    height: 48px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    text-align: left;
+}
+
+.title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #1F2430;
+    text-align: left;              /* MANDATORY: LEFT */
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-left: auto;             /* PUSH to right */
+    justify-content: flex-end;     /* MANDATORY: RIGHT aligned */
+}
+
+.language-switcher {
+    display: flex;
+    gap: 4px;
+    margin-right: 8px;
+}
+
+.lang-btn {
+    padding: 4px 8px;
+    background: #E0DED6;
+    border: 1px solid #C8C8C8;
+    border-radius: 5px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    color: #2A2A2A;
+    transition: all 0.2s;
+    min-width: 36px;
+}
+
+.lang-btn:hover {
+    background: #C9C7BF;
+}
+
+.lang-btn.active {
+    background: #8b7355;
+    color: #FFFFFF;
+    border-color: #8b7355;
+}
+
+.lang-btn:focus {
+    outline: 2px solid #8b7355;
+    outline-offset: 2px;
+}
+
+.refresh-btn,
+.close-btn {
+    padding: 4px 6px;
+    background: #E0DED6;
+    border: 1px solid #C8C8C8;
+    border-radius: 5px;
+    font-size: 0.875rem;
+    font-weight: 600;              /* MANDATORY: BOLD */
+    cursor: pointer;
+    font-family: inherit;
+    color: #2A2A2A;
+    transition: background-color 0.2s;
+}
+
+.refresh-btn:hover,
+.close-btn:hover {
+    background: #C9C7BF;
+}
+
+.refresh-btn:focus,
+.close-btn:focus {
+    outline: 2px solid #8b7355;
+    outline-offset: 2px;
+}
+
+/* Content - MANDATORY LEFT alignment */
+.content {
+    margin-top: 60px;
+    margin-bottom: 50px;
+    padding: 16px;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;              /* MANDATORY: LEFT */
+    background: #F5F5FA;
+}
+
+.description {
+    font-size: 1rem;
+    margin-bottom: 20px;
+    color: #1F2430;
+    text-align: left;              /* MANDATORY: LEFT */
+}
+
+/* Links Section - Collapsible */
+.links-section-container {
+    margin-top: 30px;
+    margin-bottom: 20px;
+    border: 1px solid #C8C8C8;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.links-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #E0DED6;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.links-header:hover {
+    background: #C9C7BF;
+}
+
+.links-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2A2A2A;
+    margin: 0;
+}
+
+.toggle-icon {
+    font-size: 0.875rem;
+    color: #2A2A2A;
+    transition: transform 0.3s;
+}
+
+.toggle-icon.expanded {
+    transform: rotate(0deg);
+}
+
+.toggle-icon.collapsed {
+    transform: rotate(-90deg);        /* or 90deg depending on implementation */
+}
+
+.links-content {
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: #FAF8F2;
+    border: 0 solid #C8C8C8;
+    padding: 0;
+}
+
+.links-content.hidden {
+    max-height: 0;
+    padding: 0;
+    border-width: 0;
+}
+
+.links-content.expanded {
+    max-height: 500px;
+    border-width: 0 1px 1px 1px;
+    padding: 12px;
+}
+
+.links-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.links-list li {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #E0E0E0;
+}
+
+.links-list li:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+}
+
+.links-list a {
+    color: #1F2430;
+    text-decoration: none;
+    font-size: 0.9375rem;
+    display: block;
+    padding: 6px 0;
+    transition: color 0.2s;
+}
+
+.links-list a:hover {
+    color: #10B981;
+    text-decoration: underline;
+}
+
+.links-list a:visited {
+    color: #6B7280;
+}
+
+/* Footer - MANDATORY LEFT alignment */
+.footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #283046;           /* Modern theme */
+    border-top: 1px solid #C8C8C8;
+    padding: 8px 12px;
+    height: 40px;
+    display: flex;
+    text-align: left;              /* MANDATORY: LEFT */
+    justify-content: flex-start;   /* MANDATORY: LEFT - NEVER center */
+    align-items: center;
+    font-size: 0.875rem;
+    color: #6A6A6A;
+    z-index: 999;
+}
+
+.footer span {
+    text-align: left;              /* Ensure span inherits LEFT */
+}
+
+/* Horizontal Divider */
+.footer-divider {
+    border: none;
+    border-top: 1px solid #C8C8C8;
+    margin: 24px 0;
+}
+
+/* Responsive - Tablet */
+@media (min-width: 768px) and (max-width: 1024px) {
+    body { font-size: 17px; }
+    .header { padding: 10px 16px; height: 52px; }
+    .title { font-size: 1.25rem; }
+    .content { padding: 20px; margin-top: 64px; }
+    .footer { height: 38px; font-size: 0.8125rem; }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 767px) {
+    body { font-size: 15px; }
+    .header { padding: 6px 8px; height: 46px; }
+    .title { font-size: 1rem; }
+    .nav-buttons { gap: 4px; }
+    .lang-btn, .refresh-btn, .close-btn { padding: 4px; }
+    .content { padding: 12px; margin-bottom: 44px; }
+    .footer { height: 32px; font-size: 0.75rem; }
+    .links-content.expanded { max-height: 300px; }  /* Smaller on mobile */
+}
+
+=============================================================
+15. COMPLIANCE CHECKLIST
+=============================================================
+
+Before publishing ANY page, verify:
+
+Header Compliance:
+  ☐ class="header" present and fixed
+  ☐ Has <div class="title"> with LEFT-aligned text
+  ☐ Has <div class="nav-buttons"> with RIGHT alignment
+  ☐ margin-left: auto; on .nav-buttons
+  ☐ justify-content: flex-end; on .nav-buttons
+  ☐ Contains language switcher (SV/EN buttons)
+  ☐ Contains Refresh button (class="refresh-btn", font-weight: 600)
+  ☐ Contains Close button (class="close-btn", font-weight: 600)
+  ☐ Background color: #283046 (Modern) or #D7D5C9 (Old Money)
+  ☐ Border-bottom: 1px solid #C8C8C8
+  ☐ Z-index: 1000
+
+Main Content:
+  ☐ <main class="content"> wrapper
+  ☐ text-align: left; on .content
+  ☐ <p class="description"> with body text
+  ☐ <div class="links-section-container"> with collapsible links
+  ☐ Links section has onclick="toggleLinks()"
+  ☐ Toggle icon (<span class="toggle-icon">) present
+  ☐ Links content (<div class="links-content">) hideable
+  ☐ All content LEFT-aligned (no center/right except nav buttons)
+  ☐ Max-width: 900px
+  ☐ Proper spacing with margin-top/bottom
+
+Links Behavior:
+  ☐ Desktop (≥1024px): Links OPEN by default
+  ☐ Tablet/Mobile (<1024px): Links CLOSED by default
+  ☐ Clicking header toggles open/closed
+  ☐ Icon rotates on toggle
+
+Footer:
+  ☐ class="footer" present and fixed
+  ☐ text-align: left; (CRITICAL)
+  ☐ justify-content: flex-start; (CRITICAL - NEVER center)
+  ☐ Format: © CoolPortals | filename | timestamp
+  ☐ Filename in <span id="footer-filename">
+  ☐ Timestamp in <span id="footer-timestamp">
+  ☐ Background color: #283046 (Modern) or #D7D5C9 (Old Money)
+  ☐ Border-top: 1px solid #C8C8C8
+  ☐ Z-index: 999 (below header)
+  ☐ Position: fixed at bottom
+  ☐ Height appropriate for device
+
+Scripts:
+  ☐ <script src="js/app.js"> present
+  ☐ Timestamp generation script included
+  ☐ All onclick handlers defined in app.js
+  ☐ toggleLinks() function works
+  ☐ switchLanguage() function works
+  ☐ refreshPage() function works
+  ☐ closePage() function works
+
+Accessibility:
+  ☐ All buttons have title attributes (tooltips)
+  ☐ Language switcher has aria-pressed
+  ☐ Form inputs have associated labels
+  ☐ Color contrast ≥4.5:1 (WCAG AA)
+  ☐ Focus indicators visible (outline: 2px solid #8b7355)
+  ☐ Tab order logical (header → content → links → footer)
+  ☐ Semantic HTML used (<header>, <main>, <footer>)
+
+Responsive:
+  ☐ Desktop view tested (≥1024px)
+  ☐ Tablet view tested (768-1024px)
+  ☐ Mobile view tested (<768px)
+  ☐ Font sizes scale appropriately
+  ☐ Padding adjusts per device
+  ☐ Button heights meet touch targets (44x44px minimum)
+  ☐ Links section behavior correct per device
+
+Colors:
+  ☐ Modern theme OR Old Money theme (not mixed)
+  ☐ All colors from approved palette
+  ☐ No custom colors
+  ☐ Text colors have sufficient contrast
+  ☐ Links distinguishable from body text
+
+Tooltips:
+  ☐ Refresh button has tooltip "Refresh page"
+  ☐ Close button has tooltip "Close window"
+  ☐ Tooltips appear ABOVE buttons
+  ☐ Arrow pointer points DOWN
+  ☐ Tooltips fade in smoothly on hover
+  ☐ Tooltips don't interfere with cursor
+
+=============================================================
+END OF CONSOLIDATED DESIGN & STYLE STANDARDS
+=============================================================
+
+This document is the SINGLE SOURCE OF TRUTH for all
+design and layout decisions.
+
+Use this file for:
+  • Creating new pages
+  • Modifying existing pages
+  • CSS styling decisions
+  • Layout and alignment
+  • Color palette selection
+  • Typography choices
+  • Responsive design
+  • Accessibility compliance
+
+Questions? Refer to this document FIRST before asking.
+Last Updated: February 3, 2026
