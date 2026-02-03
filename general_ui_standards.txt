@@ -355,6 +355,65 @@ Submit Buttons:
 8. CONSISTENCY RULES
 ---------------------------------------------------------
 
+MANDATORY PAGE STRUCTURE (ALL PAGES):
+
+1. HEADER (Fixed Top):
+   - Title: "Old Money" or page-specific title
+   - Language switcher: EN/SV buttons
+   - Navigation buttons: Refresh, Close
+   - Background: #D7D5C9
+   - Border-bottom: 1px solid #C8C8C8
+
+2. DESCRIPTION SECTION (Required):
+   - Brief description of page purpose
+   - Appears immediately after header
+   - Background: #F7F7F2
+   - Text alignment: LEFT (always)
+
+3. MAIN CONTENT:
+   - Container max-width: 900px (centered)
+   - Padding: 16-24px
+   - Background: #F7F7F2
+
+4. LINKS SECTION (Required):
+   - Collapsible external/internal links
+   - Positioned before footer
+   - Default: Expanded (desktop), Collapsed (mobile/tablet)
+
+5. HORIZONTAL LINE (Required):
+   - 1px solid #C8C8C8
+   - Margin: 20px 0
+   - Position: Above footer
+
+6. FOOTER (Fixed Bottom - MANDATORY):
+   - Copyright: "© CoolPortals"
+   - Auto-generated timestamp
+   - Background: #D7D5C9
+   - Border-top: 1px solid #C8C8C8
+   - Height: 32-40px (responsive)
+   - Text alignment: CENTER
+   - Font size: 0.875rem
+   - Text color: #6A6A6A
+
+TEXT ALIGNMENT RULES (CRITICAL):
+
+DEFAULT ALIGNMENT: LEFT
+- ALL body text: LEFT-aligned
+- Paragraphs: LEFT-aligned
+- Descriptions: LEFT-aligned
+- Labels: LEFT-aligned
+- Headers/Titles: LEFT-aligned
+- Lists: LEFT-aligned
+- Form labels: LEFT-aligned
+
+EXCEPTIONS (Only when specified):
+- Numeric values in tables: RIGHT-aligned
+- Footer text: CENTER-aligned
+- Modal dialogs: CENTER-aligned (optional)
+
+NEVER use center or right alignment for body text unless
+explicitly specified in page-specific requirements.
+
 Color Palette (Old Money Theme):
 - Background: #F7F7F2 (off-white)
 - Header/Footer: #D7D5C9 (muted olive-gray)
