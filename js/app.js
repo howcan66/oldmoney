@@ -20,6 +20,18 @@ document.addEventListener('DOMContentLoaded', function() {
         const filename = window.location.pathname.split('/').pop() || 'index.html';
         filenameElement.textContent = filename;
     }
+
+    // Set default state for links section based on device width
+    const linksContent = document.getElementById('linksContent');
+    const linksToggle = document.getElementById('linksToggle');
+    if (linksContent && linksToggle) {
+        if (window.innerWidth >= 1024) {
+            // Desktop: expanded by default
+            linksContent.classList.add('expanded');
+            linksToggle.classList.add('expanded');
+        }
+        // Tablet/Mobile: collapsed by default (no action needed)
+    }
 });
 
 // Refresh button handler
@@ -30,4 +42,15 @@ function refreshPage() {
 // Close button handler
 function closePage() {
     window.close();
+}
+
+// Toggle links section
+function toggleLinks() {
+    const linksContent = document.getElementById('linksContent');
+    const linksToggle = document.getElementById('linksToggle');
+    
+    if (linksContent && linksToggle) {
+        linksContent.classList.toggle('expanded');
+        linksToggle.classList.toggle('expanded');
+    }
 }

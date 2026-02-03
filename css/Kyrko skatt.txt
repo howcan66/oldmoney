@@ -1,0 +1,98 @@
+PROJECT: Income & Savings Projection Module
+FORMAT: Minimalistic Functional Specification
+
+---------------------------------------------------------
+1. INPUT FIELDS
+---------------------------------------------------------
+- Input A: "Årsinkomst (kr)"
+  - Type: numeric text field
+  - Validation: positive number
+
+- Input B: "Förväntad Löneökning (%) per år"
+  - Type: numeric text field
+  - Validation: positive number or zero
+
+- Input C: "Avgift / Besparingsprocent (%)"
+  - Type: numeric text field
+  - Validation: positive number or zero
+  - Example use: kyrkoavgift, medlemsavgift, sparprocent
+
+- All beräkningar uppdateras automatiskt när något fält ändras.
+
+---------------------------------------------------------
+2. BERÄKNINGSLOGIK
+---------------------------------------------------------
+- Year 0 Income = Input A
+- Year N Income = Year(N-1) * (1 + löneökning/100)
+
+- Årlig besparing = Income(N) * (avgift/100)
+- Månatlig besparing = Årlig besparing / 12
+
+- Alla värden avrundas till 2 decimaler.
+- Plain numbers only (no currency formatting).
+
+---------------------------------------------------------
+3. OUTPUT TABELL (10–40 ÅR)
+---------------------------------------------------------
+Tabellen visas i grupper (togglar):
+- Group 1: År 1–10
+- Group 2: År 11–30
+- Group 3: År 31–40
+
+Varje rad innehåller:
+- År (index)
+- Inkomst det året
+- Löneökning det året (absolut belopp)
+- Årlig besparing (Income * procent)
+- Månatlig besparing
+- Total ackumulerad besparing fram till det året
+
+---------------------------------------------------------
+4. TABELLREGLER
+---------------------------------------------------------
+- Tight spacing, minimal padding.
+- Numeriska värden högerjusterade.
+- Årsindex vänsterjusterat.
+- Header rad låst vid scroll.
+- Grupper kollapsbara.
+
+---------------------------------------------------------
+5. SUMMERING
+---------------------------------------------------------
+Efter tabellerna visas:
+- Total besparing efter 10 år
+- Total besparing efter 30 år
+- Total besparing efter 40 år
+- Total löneökning över perioden
+- Slutlig årsinkomst efter 40 år
+
+---------------------------------------------------------
+6. RESPONSIVE BEHAVIOR
+---------------------------------------------------------
+Desktop:
+- Fullbreddstabeller, grupper öppna.
+
+Tablet (iPad Pro):
+- Fullbreddstabeller, grupper stängda.
+
+Mobile (iPhone 17 Max + andra):
+- Horisontell scroll på tabeller.
+- Grupper stängda.
+- Kolumner kan staplas vertikalt vid behov.
+
+---------------------------------------------------------
+7. EXPORT
+---------------------------------------------------------
+- Export to CSV (plain numbers).
+- Copy-to-clipboard.
+
+---------------------------------------------------------
+8. ERROR HANDLING
+---------------------------------------------------------
+- Tomma fält: disable output.
+- Ogiltiga värden: minimal inline warning.
+- Löneökning = 0: visa stabil inkomstkurva.
+
+---------------------------------------------------------
+END OF SPECIFICATION
+---------------------------------------------------------

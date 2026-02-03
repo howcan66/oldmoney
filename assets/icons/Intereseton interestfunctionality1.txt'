@@ -218,11 +218,38 @@ MAIN CONTENT SECTION:
 - Responsive layout for desktop/tablet/mobile
 
 LINKS SECTION (REQUIRED):
-- Appears at bottom of content
+- Appears at bottom of content (before horizontal line and footer)
 - Links to other pages in the Old Money application
 - Navigation back to homepage (index.html)
 - Related pages links
+- MUST BE COLLAPSIBLE (expand/collapse functionality)
 - Minimal styling with hover effects
+
+COLLAPSIBLE LINKS BEHAVIOR:
+- Desktop: Expanded by default (visible on load)
+- Tablet: Collapsed by default (user clicks to expand)
+- Mobile: Collapsed by default (user clicks to expand)
+- Smooth animation (0.3s transition)
+- Click header/arrow to toggle
+
+REQUIRED EXTERNAL LINKS (Examples):
+1. Avanza - Swedish investment platform
+   URL: https://www.avanza.se
+   
+2. Lysa - Swedish robo-advisor
+   URL: https://www.lysa.se/
+   
+3. Church Tax - Swedish church membership/exit
+   URL: https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan
+   
+4. (Additional links as needed for each page)
+
+Links Styling:
+- Each link on separate row
+- Icon or bullet point before link
+- Hover effect: color change to #8b7355
+- Visited links: slightly muted color
+- External links: optional external icon indicator
 
 -------------------------------------------------
 12. FOOTER SECTION (REQUIRED ON ALL PAGES)
