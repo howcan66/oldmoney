@@ -12,6 +12,12 @@ or override these standards when necessary.
 Use these standards to ensure consistency, accessibility,
 and quality across the entire application.
 
+RULE OF PRECEDENCE (MANDATORY):
+- ALWAYS follow this standard unless explicitly overridden
+   in a page-specific instruction file.
+- If any requirement is unclear or conflicting, ask questions
+   before implementing.
+
 ---------------------------------------------------------
 1. INPUT VALIDATION STANDARDS
 ---------------------------------------------------------
