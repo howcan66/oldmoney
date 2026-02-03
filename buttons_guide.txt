@@ -1,0 +1,256 @@
+PROJECT: Old Money – BUTTONS GUIDE
+FORMAT: Button specifications and icon standards
+
+=============================================================
+PURPOSE
+=============================================================
+This file defines all button types, sizes, icons, and tooltip
+requirements for Desktop, Tablet, and Mobile platforms.
+
+Reference file: buttons_inventory.html (comprehensive inventory)
+
+=============================================================
+BUTTON SIZE CLASSES
+=============================================================
+
+All buttons have the SAME HEIGHT: 24px
+Three fixed widths:
+
+Size 1 (88px):
+────────────────────────────────────────────────────
+• width: 88px
+• height: 24px
+• padding: 6px 8px
+• font-size: 12px
+• gap: 4px (between icon and text)
+• Use for: most common actions
+
+Size 2 (104px):
+────────────────────────────────────────────────────
+• width: 104px
+• height: 24px
+• padding: 6px 8px
+• font-size: 12px
+• gap: 4px (between icon and text)
+• Use for: medium-length labels
+
+Size 3 (124px):
+────────────────────────────────────────────────────
+• width: 124px
+• height: 24px
+• padding: 6px 8px
+• font-size: 12px
+• gap: 4px (between icon and text)
+• Use for: longer descriptive labels
+
+=============================================================
+BUTTON TYPES
+=============================================================
+
+1. TEXT-BTN (Text Only)
+   • No icon, text-only button
+   • Example: "Login", "Demo Mode"
+   • Desktop: Full text
+   • Tablet: Full text + icon added
+   • Mobile: Icon only
+
+2. ICON-BTN (Icon Only)
+   • Icon-only button
+   • Example: ⋮, 🧩, 👁️
+   • Desktop: Icon only
+   • Tablet: Icon only
+   • Mobile: Icon only
+   • Always requires tooltip
+
+3. BTN TEXT+ICON (Icon + Text)
+   • Combined icon and text
+   • Example: 🔓 Reset Lockout, ✖ Close
+   • Desktop: Icon + text
+   • Tablet: Icon + shortened text
+   • Mobile: Icon only
+   • Icon position: left of text
+
+=============================================================
+BUTTON STRUCTURE (CSS)
+=============================================================
+
+display: inline-flex
+align-items: center
+justify-content: flex-start
+text-align: left
+white-space: nowrap
+overflow: hidden
+border-radius: 4px
+
+Icon styling:
+• min-width: 16px
+• text-align: left
+• display: inline-block
+
+=============================================================
+TOOLTIP REQUIREMENTS BY PLATFORM
+=============================================================
+
+Desktop:
+────────────────────────────────────────────────────
+• Trigger: Hover
+• Format: "Action description"
+• Example: "Sign in to account"
+• Required for: ALL icon-only buttons
+• Optional for: Text buttons with descriptive labels
+
+Tablet:
+────────────────────────────────────────────────────
+• Trigger: Tap
+• Format: "Tap: Action description"
+• Example: "Tap: Sign in to account"
+• Required for: ALL buttons with icons
+• Display: On tap, persist until next interaction
+
+Mobile:
+────────────────────────────────────────────────────
+• Trigger: Tap
+• Format: "Tap: Action description"
+• Example: "Tap: Sign in to account"
+• Required for: ALL icon-only buttons
+• Display: Tap-to-toggle (no hover on phones)
+• Note: Must be dismissible
+
+=============================================================
+RECOMMENDED ICONS BY ACTION
+=============================================================
+
+Authentication & Access:
+────────────────────────────────────────────────────
+• Login: 🔑
+• Logout: 👋
+• Demo Mode: 👀
+• Token: 🔑
+• Reset Lockout: 🔄
+
+Navigation & View:
+────────────────────────────────────────────────────
+• Menu (Collapse): ☰
+• Compact Mode: ⊟
+• Back to Top: 🔝
+• View: 👀
+• Expand: ►
+• Description Toggle: ▼
+
+Actions:
+────────────────────────────────────────────────────
+• Edit: ✏️
+• Delete: 🗑️ (alt: × / ❌)
+• Close: × (alt: ✖ / ❌)
+• Add Task: 📝
+• Add User: 👤
+• Add Project: 📁
+• Refresh: ↻ (alt: 🔄)
+• Sync: ⇄
+• Export: ⬇️
+• Send Invite: 💌 (alt: ✉️ / 📧)
+• Reset Defaults: 🔄
+
+Admin & Settings:
+────────────────────────────────────────────────────
+• Admin: 🛠️
+• Docs/Help: ℹ️
+
+Priority & Status:
+────────────────────────────────────────────────────
+• High Priority: ⚡
+• Kanban Status: ? (question) | ! (urgent) | ✓ (done)
+
+File & Organization:
+────────────────────────────────────────────────────
+• File Dividers: 📂
+• Grid: ◼
+
+=============================================================
+BUTTON COLOR SCHEME (FROM MODERN THEME)
+=============================================================
+
+Primary Action (Blue):
+• background: #3b82f6
+• Example: Login, Add Task, Send Invitation
+
+Success/Demo (Green):
+• background: #10b981
+• Example: Demo Mode, Add New User
+
+Warning/Reset (Orange):
+• background: #f59e0b
+• Example: Reset Lockout, Reset Defaults
+
+Error/Priority (Red):
+• background: #dc2626
+• Example: HIGH priority badge
+
+Neutral/Secondary (Gray):
+• background: #6b7280
+• Example: Docs, Token, Sync, Admin, Logout, Export, Refresh
+
+All buttons:
+• color: white (text)
+• border-radius: 4px
+
+=============================================================
+RESPONSIVE BEHAVIOR
+=============================================================
+
+Desktop → Tablet:
+• Text buttons: Add icon to the left
+• Keep full or shortened text
+• Maintain 24px height
+• May reduce font-size for longer labels (10px-12px)
+
+Tablet → Mobile:
+• Icon + text buttons: Show icon only
+• Text-only buttons: Convert to icon-only
+• Always provide tap tooltip
+• Maintain 24px height for consistency
+
+=============================================================
+ACCESSIBILITY REQUIREMENTS
+=============================================================
+
+All buttons MUST have:
+• Clear visual affordance (color, border, or background)
+• Sufficient contrast ratio (4.5:1 minimum)
+• Descriptive tooltip or aria-label
+• Minimum touch target: 24px × 24px (already met)
+• Keyboard accessible (tab navigation)
+• Focus indicator visible
+
+Icon-only buttons MUST have:
+• Tooltip on all platforms
+• aria-label attribute
+• Clear visual representation
+
+=============================================================
+IMPLEMENTATION CHECKLIST
+=============================================================
+
+For each new button, verify:
+☐ Size class assigned (btn-size-1, btn-size-2, or btn-size-3)
+☐ Type defined (text-btn, icon-btn, or btn text+icon)
+☐ Icon selected from recommended list
+☐ Tooltip text written for all platforms
+☐ Color scheme matches action type
+☐ Responsive behavior defined (Desktop/Tablet/Mobile)
+☐ Accessibility attributes added
+☐ Added to buttons_inventory.html for documentation
+
+=============================================================
+REFERENCE
+=============================================================
+
+For complete visual inventory of all 30 buttons with
+platform-specific implementations, see:
+→ buttons_inventory.html
+
+For tooltip implementation details, see:
+→ TOOLTIP_REQUIREMENT.txt
+
+For color values, see:
+→ color_palette_guide.txt
