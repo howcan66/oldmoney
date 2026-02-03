@@ -192,7 +192,20 @@ ACCESSIBILITY:
 - Consider adding visual indicator for external links
 - Screen readers should understand link opens in new window
 
-Default Test URLs (7 links):
+DEMO FILE FOR target="_blank":
+────────────────────────────────────────────────────
+File: open_blank_demo.html
+Purpose: Demonstrates how target="_blank" works in practice
+
+This demo page:
+- Opens in a new tab/window when linked with target="_blank"
+- Shows example code for proper link implementation
+- Explains security and accessibility requirements
+- Can be used as a test/reference file
+
+Add as URL8 in default links section to demonstrate target="_blank"
+
+Default Test URLs (8 links):
   1. https://www.dn.se (Test URL1)
   2. https://www.avanza.com (Test URL2)
   3. https://www.avanza.com (Test URL3)
@@ -200,6 +213,7 @@ Default Test URLs (7 links):
   5. https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan (Test URL5)
   6. https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift (Test URL6)
   7. https://www.dn.se (Test URL7)
+  8. open_blank_demo.html (Open Blank Demo - demonstrates target="_blank")
 
 HTML Structure:
   <div class="links-section-container">
@@ -217,6 +231,7 @@ HTML Structure:
               <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank" rel="noopener noreferrer">Test URL5</a></li>
               <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener noreferrer">Test URL6</a></li>
               <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL7</a></li>
+              <li><a href="open_blank_demo.html" target="_blank" rel="noopener noreferrer">Open Blank Demo</a></li>
           </ul>
       </div>
   </div>

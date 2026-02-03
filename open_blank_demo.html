@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Target Blank Demo - Old Money</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="title">Target Blank Demo</div>
+        <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" 
+                        onclick="switchLanguage('sv')" 
+                        title="Byt till Svenska" 
+                        aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" 
+                        onclick="switchLanguage('en')" 
+                        title="Switch to English" 
+                        aria-pressed="false">EN</button>
+            </div>
+            <button class="refresh-btn" onclick="refreshPage()" 
+                    title="Refresh page">Refresh</button>
+            <button class="close-btn" onclick="closePage()" 
+                    title="Close window">Close</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <p class="description">This page demonstrates how target="_blank" works. This page opened in a new tab/window because the link used target="_blank" attribute.</p>
+
+        <h3>How This Works:</h3>
+        <ul style="margin-top: 16px; line-height: 1.8;">
+            <li><strong>target="_blank"</strong> - Opens link in new tab/window</li>
+            <li><strong>rel="noopener noreferrer"</strong> - Security protection</li>
+            <li>Prevents window.opener exploit</li>
+            <li>Use for external links and workflow interruptions</li>
+        </ul>
+
+        <h3 style="margin-top: 24px;">Example Code:</h3>
+        <pre style="background: #F7F7F2; padding: 16px; border: 1px solid #C8C8C8; border-radius: 5px; overflow-x: auto; margin-top: 8px;">
+&lt;a href="open_blank_demo.html" 
+   target="_blank" 
+   rel="noopener noreferrer"&gt;
+   Open Blank Demo
+&lt;/a&gt;</pre>
+
+        <p style="margin-top: 24px;">You can close this tab/window to return to the previous page.</p>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>&copy; CoolPortals | 
+              <span id="footer-filename">open_blank_demo.html</span> | 
+              <span id="footer-timestamp"></span></span>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script>
+        document.getElementById('footer-timestamp').textContent = generateTimestamp();
+    </script>
+</body>
+</html>
