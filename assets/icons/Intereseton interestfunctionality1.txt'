@@ -107,5 +107,65 @@ Mobile (iPhone 17 Max + others):
 - Long-term grouping extended to 40 years.
 
 ---------------------------------------------------------
+11. PAGE STRUCTURE REQUIREMENTS
+---------------------------------------------------------
+ALL webpages for Old Money application must follow this structure:
+
+HEADER SECTION:
+- Fixed top position
+- Title: "Old Money"
+- Navigation buttons (Refresh, Close) with tooltips
+- Buttons positioned right-aligned, icon-first design
+
+DESCRIPTION SECTION (REQUIRED):
+- Appears immediately after header
+- Brief description of page purpose
+- Example: "Calculate compound interest over time with yearly breakdowns"
+- Uses "old money" aesthetic typography
+- Light background color (#F7F7F2)
+
+MAIN CONTENT SECTION:
+- Input fields, tables, forms, or primary content
+- Responsive layout for desktop/tablet/mobile
+
+LINKS SECTION (REQUIRED):
+- Appears at bottom of content
+- Links to other pages in the Old Money application
+- Navigation back to homepage (index.html)
+- Related pages links
+- Minimal styling with hover effects
+
+-------------------------------------------------
+12. FOOTER SECTION (REQUIRED ON ALL PAGES)
+-------------------------------------------------
+Fixed footer at bottom of page:
+
+[HORIZONTAL LINE - 1px solid #C8C8C8]
+
+Footer Content:
+- Copyright text: "© CoolPortals"
+- Auto-generated timestamp
+- Centered, minimal styling
+- Background: #D7D5C9 (matches header)
+- Height: 32-40px (responsive)
+- Font size: 0.875rem
+- Text color: #6A6A6A
+
+Footer Format Example:
+  © CoolPortals | Last updated: [timestamp]
+
+-------------------------------------------------
+13. HORIZONTAL LINE SPECIFICATION
+-------------------------------------------------
+- Position: Above footer section
+- Style: 1px solid border
+- Color: #C8C8C8 (matches button borders)
+- Width: Full page width
+- Margin: 20px 0 (top and bottom)
+- Opacity: Subtle, does not dominate
+
+Purpose: Visual separation between content and footer
+
+-------------------------------------------------
 END OF FUNCTIONAL SPECIFICATION
 ---------------------------------------------------------
