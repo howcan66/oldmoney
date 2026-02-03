@@ -369,31 +369,38 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
    - Appears immediately after header
    - Background: #F7F7F2
    - Text alignment: LEFT (always)
+   - NO metadata/file info in body (moved to footer)
 
 3. MAIN CONTENT:
    - Container max-width: 900px (centered)
    - Padding: 16-24px
    - Background: #F7F7F2
+   - Focus on primary content (no metadata boxes)
 
 4. LINKS SECTION (Required):
    - Collapsible external/internal links
    - Positioned before footer
    - Default: Expanded (desktop), Collapsed (mobile/tablet)
 
-5. HORIZONTAL LINE (Required):
+5. HORIZONTAL LINE (Conditional):
    - 1px solid #C8C8C8
    - Margin: 20px 0
-   - Position: Above footer
+   - Position: ONLY above footer (separator between content and footer)
+   - NOT used around individual sections in body
+   - Use border/box styling instead for section separation
 
 6. FOOTER (Fixed Bottom - MANDATORY):
+   - Format: © CoolPortals | filename | timestamp
    - Copyright: "© CoolPortals"
-   - Auto-generated timestamp
+   - File name: Dynamic (from current page)
+   - Timestamp: Auto-generated on page load
    - Background: #D7D5C9
    - Border-top: 1px solid #C8C8C8
    - Height: 32-40px (responsive)
    - Text alignment: CENTER
    - Font size: 0.875rem
    - Text color: #6A6A6A
+   - Separators: " | " (pipe character)
 
 TEXT ALIGNMENT RULES (CRITICAL):
 
