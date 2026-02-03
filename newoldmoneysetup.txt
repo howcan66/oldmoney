@@ -1,0 +1,77 @@
+PROJECT: Old Money Web Application
+FORMAT: Minimalistic Technical Specification
+TARGET DEVICES: Desktop, Tablet (focus: iPad Pro), Mobile (iPhone 17 Max + common iPhone sizes)
+
+-----------------------------------------
+1. GENERAL DESIGN PRINCIPLES
+-----------------------------------------
+- Minimalistic, compact, clean layout.
+- Responsive design for desktop, tablets, and mobile terminals.
+- Optimized breakpoints for:
+  - iPad Pro (portrait + landscape)
+  - iPhone 17 Max
+  - Common iPhone screen sizes
+  - Standard desktop widths
+- Tight spacing rules:
+  - Navigation bars compact and aligned.
+  - Buttons tightly grouped with minimal padding.
+  - Captions placed directly above their corresponding input fields.
+  - Input fields minimized in height and width while remaining usable.
+
+-----------------------------------------
+2. HEADER LAYOUT
+-----------------------------------------
+- Create a top header row.
+- Title: "Old Money".
+- Include a compact navigation button set:
+  - Refresh
+  - Close
+- Buttons aligned horizontally, tight spacing, icon‑first design.
+
+-----------------------------------------
+3. BODY CONTENT
+-----------------------------------------
+- Description text: "Hello world".
+- Metadata block:
+  - File name: (dynamic)
+  - Copyright: "CoolPortals"
+  - Timestamp: (auto‑generated)
+
+-----------------------------------------
+4. RESPONSIVE BEHAVIOR
+-----------------------------------------
+- Desktop:
+  - Header fixed at top.
+  - Navigation buttons right‑aligned.
+  - Content centered.
+- Tablet (iPad Pro):
+  - Maintain compact header.
+  - Adjust button spacing for touch ergonomics.
+  - Typography scaled slightly larger.
+- Mobile (iPhone 17 Max + others):
+  - Header collapses to single row.
+  - Buttons become icon‑only.
+  - Text fields full‑width.
+  - Captions remain tightly coupled to inputs.
+
+-----------------------------------------
+5. STYLE GUIDELINES
+-----------------------------------------
+- Color palette: neutral, understated, “old money” aesthetic.
+- Typography: serif or classic sans‑serif.
+- Margins: minimal.
+- Shadows: none or extremely subtle.
+- Borders: thin, understated.
+- Interaction feedback: minimal, non‑animated.
+
+-----------------------------------------
+6. FILE STRUCTURE (SUGGESTED)
+-----------------------------------------
+- index.html
+- /css/style.css
+- /js/app.js
+- /assets/icons/ (refresh, close)
+
+-----------------------------------------
+END OF SPECIFICATION
+-----------------------------------------
