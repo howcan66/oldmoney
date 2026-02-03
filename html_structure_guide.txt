@@ -192,6 +192,67 @@ ACCESSIBILITY:
 - Consider adding visual indicator for external links
 - Screen readers should understand link opens in new window
 
+BROWSER UI LIMITATIONS:
+────────────────────────────────────────────────────
+IMPORTANT: Modern browsers BLOCK hiding the URL bar and navigation buttons
+for security reasons. This is intentional and cannot be bypassed.
+
+What target="_blank" DOES:
+  ✓ Opens link in a new tab or window
+  ✓ Keeps the current page open in the original tab
+  ✓ Provides user choice (browser/system decides new tab vs new window)
+  ✓ Prevents accidental page loss
+
+What target="_blank" CANNOT DO:
+  ✗ Hide the browser URL bar
+  ✗ Hide navigation buttons (back, forward, refresh, etc.)
+  ✗ Hide the bookmarks bar or settings menu
+  ✗ Control window size or position (in modern browsers)
+  ✗ Prevent users from seeing where they're navigating to
+
+WHY Browsers Block UI Hiding:
+  1. Security: Prevents malicious sites from tricking users
+  2. Transparency: Users must always see browser identity/URL
+  3. Control: Users must always have access to browser controls
+  4. Standards: All major browsers (Chrome, Firefox, Edge, Safari) enforce this
+
+OLDER APPROACH (DEPRECATED):
+  window.open(url, '_blank', 'toolbar=no,location=no,menubar=no');
+  Status: IGNORED by all modern browsers
+  Use: Only mentioned for historical/educational purposes
+  Result: Opens new window with full browser UI (security override)
+
+MODERN ALTERNATIVES FOR UI-LESS EXPERIENCE:
+
+1. FULLSCREEN API (Recommended for presentations)
+   - Works: Yes, in all modern browsers
+   - Trigger: Requires user click/gesture
+   - Exit: User can press ESC anytime
+   - Example: Gallery views, presentations, games
+   Code:
+   element.requestFullscreen();
+
+2. KIOSK MODE (Platform-level solution)
+   - Windows: Browser kiosk settings (Internet Explorer/Edge)
+   - Android: Full-screen web app mode
+   - Chromebook: Dedicated kiosk mode
+   - Requires: OS/system configuration, NOT just HTML/JS
+
+3. PROGRESSIVE WEB APP (PWA)
+   - Android: Install as standalone app (no URL bar visible)
+   - Desktop: Installable web app experience
+   - Requires: Service worker, manifest.json configuration
+
+4. DEVICE RESTRICTIONS (Hardware level)
+   - Raspberry Pi: Run browser in kiosk mode
+   - Public Displays: Configure OS to auto-launch fullscreen browser
+   - Requires: Direct device access and configuration
+
+BEST PRACTICE:
+  Accept browser UI as permanent and design accordingly.
+  Assume users can always see the URL bar and browser controls.
+  This improves trust and accessibility for all users.
+
 DEMO FILE FOR target="_blank":
 ────────────────────────────────────────────────────
 File: open_blank_demo.html
