@@ -730,6 +730,16 @@ Implementation (CSS pseudo-elements):
   button:hover::after,
   button:hover::before { opacity: 1; }
 
+Tooltip Acceptance Criteria:
+  ✓ All buttons have tooltip text visible on hover
+  ✓ Tooltips positioned ABOVE buttons
+  ✓ Arrow points downward to button
+  ✓ Tooltips use #2A2A2A background and #F7F7F2 text
+  ✓ Centered positioning for visibility
+  ✓ Cursor does NOT interfere with tooltip
+  ✓ Smooth fade-in transition
+  ✓ Title attribute present for accessibility
+
 =============================================================
 12. RESPONSIVE DESIGN
 =============================================================
