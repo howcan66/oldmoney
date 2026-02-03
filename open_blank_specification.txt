@@ -258,6 +258,63 @@ NOTES:
   - Refresh and Close buttons work normally
 
 =============================================================
+11. HOW TO CREATE open_blank HTML (STEP-BY-STEP)
+=============================================================
+
+STEP 1: Create the HTML file
+  - File name: open_blank_demo.html (or open_blank.html if explicitly requested)
+  - Use standard template structure (header, main content, footer)
+  - Include css/style.css
+
+STEP 2: Header layout (MANDATORY)
+  - Title text: "Open Blank Demo"
+  - Language buttons: SV / EN (standard behavior)
+  - Add navigation buttons: « and »
+  - Add index display: "X of 9"
+  - Keep Refresh and Close buttons
+  - All header buttons must share same style and bold text
+
+STEP 3: Content area
+  - Add a single iframe inside main content
+  - iframe ID: contentFrame
+  - Must be full width and fixed height (600px default)
+  - Use sandbox="allow-same-origin"
+  - Use referrerpolicy="no-referrer"
+
+STEP 4: Define content source list
+  - Use 9 items total:
+    Index 0: open_blank_demo.html (self)
+    Index 1-8: The 8 external links
+  - Store in array with label + url + local flag
+
+STEP 5: Implement navigation logic
+  - currentIndex starts at 0
+  - « button decrements index (disabled at 0)
+  - » button increments index (disabled at 8)
+  - Index display updates on every change
+
+STEP 6: Implement A→B→C fallback chain (MANDATORY)
+  A) Try direct iframe load (external URL)
+  B) If blocked or timeout, show local content in iframe using srcdoc
+  C) If srcdoc unsupported, load local fallback file
+
+STEP 7: Create local fallback file
+  - File name: open_blank_local.html
+  - Minimal HTML only (no toolbar, no external dependencies)
+  - Accepts query parameter ?title= to set heading
+
+STEP 8: Initialize on page load
+  - On DOMContentLoaded, call updateContentFrame()
+  - Set footer timestamp using generateTimestamp()
+  - Prevent recursive iframe loading when embedded
+
+STEP 9: Verify behavior
+  - Index 0 loads self (embedded view)
+  - External links display if allowed by browser
+  - If external blocked, local fallback shows
+  - Navigation buttons update states correctly
+
+=============================================================
 SPECIFICATION VERSION: 1.0
 CREATED: February 3, 2026
 LAST UPDATED: February 3, 2026
