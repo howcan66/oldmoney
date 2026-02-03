@@ -352,7 +352,60 @@ Submit Buttons:
 - Disabled state: 50% opacity, cursor not-allowed
 
 ---------------------------------------------------------
-8. CONSISTENCY RULES
+8. TABLE STANDARDS (MANDATORY)
+---------------------------------------------------------
+
+TABLE CAPTIONS (REQUIRED):
+- Caption placement: ALWAYS above table (before list/rows)
+- Caption alignment: LEFT-aligned
+- Caption styling: Bold, 1rem font-size
+- Padding: 8px below caption before table starts
+- Purpose: Describe table content at a glance
+
+Table Structure:
+- <caption> element (semantic HTML)
+- OR: <h3> or <h4> immediately before <table>
+- Example: "Years 1-10" (above table)
+
+Caption Examples:
+✓ CORRECT:
+  <h3>Years 1-10</h3>
+  <table>...</table>
+
+✓ CORRECT:
+  <table>
+    <caption>Years 1-10</caption>
+    <thead>...</thead>
+  </table>
+
+✗ WRONG:
+  <table>
+    <thead><tr><td>Years 1-10</td></tr></thead>
+
+NEVER place caption:
+- Inside table header cells
+- At bottom of table
+- Centered or right-aligned (always LEFT)
+- Mixed with data rows
+
+Table Header Row Specifications:
+- Position: Sticky (fixed when scrolling)
+- Background: #D7D5C9 (header color)
+- Text: Bold, 600 weight
+- Border: 1px solid #C8C8C8
+- Alignment: LEFT for text, RIGHT for numeric
+- Z-index: 10 (sticky positioning)
+
+Table Body Row Specifications:
+- Height: 28-32px (mobile), 32-36px (desktop/tablet)
+- Padding: 8px horizontal, 6px vertical
+- Border: 1px solid #C8C8C8
+- Alternate rows: Subtle background (#F7F7F2)
+- Hover state: Darker background (#E0DED6)
+- Alignment: LEFT for text, RIGHT for numeric
+
+---------------------------------------------------------
+9. CONSISTENCY RULES
 ---------------------------------------------------------
 
 MANDATORY PAGE STRUCTURE (ALL PAGES):
@@ -397,10 +450,11 @@ MANDATORY PAGE STRUCTURE (ALL PAGES):
    - Background: #D7D5C9
    - Border-top: 1px solid #C8C8C8
    - Height: 32-40px (responsive)
-   - Text alignment: CENTER
+   - Text alignment: LEFT (default - center only if explicitly specified)
    - Font size: 0.875rem
    - Text color: #6A6A6A
    - Separators: " | " (pipe character)
+   - Content alignment: LEFT-aligned unless otherwise specified in page requirements
 
 TEXT ALIGNMENT RULES (CRITICAL):
 
@@ -411,14 +465,15 @@ DEFAULT ALIGNMENT: LEFT
 - Labels: LEFT-aligned
 - Headers/Titles: LEFT-aligned
 - Lists: LEFT-aligned
-- Form labels: LEFT-aligned
+- FOOTER content: LEFT-aligned (unless explicitly specified otherwise)
 
-EXCEPTIONS (Only when specified):
+EXCEPTIONS (Only when specified in page requirements):
 - Numeric values in tables: RIGHT-aligned
-- Footer text: CENTER-aligned
 - Modal dialogs: CENTER-aligned (optional)
+- Page title/heading: LEFT-aligned (default)
 
-NEVER use center or right alignment for body text unless
+NEVER use center or right alignment for body text or footer content 
+unless NEVER use center or right alignment for body text unless
 explicitly specified in page-specific requirements.
 
 Color Palette (Old Money Theme):
@@ -542,7 +597,7 @@ Keyboard-Only Navigation:
 - No keyboard traps
 
 ---------------------------------------------------------
-10. PERFORMANCE STANDARDS
+11. PERFORMANCE STANDARDS
 ---------------------------------------------------------
 
 Page Load:
