@@ -6,68 +6,67 @@
     <title>Open Blank Demo</title>
     <link rel="stylesheet" href="css/style.css">
     <style>
-        .link-navigator {
-            margin: 20px 0;
-            padding: 15px;
-            background-color: #F5F5FA;
-            border: 1px solid #283046;
-            border-radius: 4px;
-            text-align: left;
-        }
-        
-        .nav-controls {
+        .header-nav-extended {
             display: flex;
             align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-            flex-wrap: wrap;
+            gap: 15px;
         }
         
-        .nav-button {
-            padding: 8px 12px;
+        .nav-index {
+            font-weight: 600;
+            color: #283046;
+            font-size: 14px;
+            user-select: none;
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .nav-arrow-btn {
+            padding: 6px 10px;
             background-color: #283046;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 14px;
+            font-size: 16px;
+            min-width: 40px;
+            text-align: center;
         }
         
-        .nav-button:hover {
+        .nav-arrow-btn:hover:not(:disabled) {
             background-color: #1e2333;
         }
         
-        .nav-button:disabled {
+        .nav-arrow-btn:disabled {
             background-color: #ccc;
             cursor: not-allowed;
+            opacity: 0.6;
         }
         
-        .index-display {
-            font-weight: 600;
-            color: #283046;
-            font-size: 14px;
-            min-width: 80px;
-        }
-        
-        .current-link {
-            padding: 12px;
-            background-color: white;
+        .content-frame-container {
+            margin-top: 20px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            text-align: left;
+            overflow: hidden;
+            min-height: 400px;
         }
         
-        .current-link a {
-            color: #283046;
-            text-decoration: none;
-            font-weight: 500;
-            word-break: break-all;
+        .content-frame-container iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+            display: block;
         }
         
-        .current-link a:hover {
-            color: #1e2333;
-            text-decoration: underline;
+        @media (max-width: 768px) {
+            .content-frame-container iframe {
+                height: 400px;
+            }
+            
+            .header-nav-extended {
+                gap: 8px;
+            }
         }
     </style>
 </head>
@@ -86,6 +85,15 @@
                         title="Switch to English" 
                         aria-pressed="false">EN</button>
             </div>
+            <div class="header-nav-extended">
+                <button class="nav-arrow-btn" id="prevBtn" onclick="previousLink()" 
+                        title="Go to previous link" aria-label="Previous link">«</button>
+                <span class="nav-index" aria-live="polite">
+                    <span id="currentIndex">0</span> of 9
+                </span>
+                <button class="nav-arrow-btn" id="nextBtn" onclick="nextLink()" 
+                        title="Go to next link" aria-label="Next link">»</button>
+            </div>
             <button class="refresh-btn" onclick="refreshPage()" 
                     title="Refresh page">Refresh</button>
             <button class="close-btn" onclick="closePage()" 
@@ -95,41 +103,12 @@
 
     <!-- Main Content -->
     <main class="content">
-        <p class="description">Demo page with link navigation. Use the buttons below to browse and open links in new tabs.</p>
-
-        <!-- Link Navigator Section -->
-        <div class="link-navigator">
-            <div class="nav-controls">
-                <button class="nav-button" onclick="previousLink()" title="Go to previous link">«</button>
-                <span class="index-display">
-                    <span id="currentIndex">1</span> of <span id="totalLinks">8</span>
-                </span>
-                <button class="nav-button" onclick="nextLink()" title="Go to next link">»</button>
-                <button class="nav-button" onclick="openCurrentLink()" title="Open current link in new tab">Open Link</button>
-            </div>
-            <div class="current-link">
-                <a href="#" id="currentLinkText" target="_blank" rel="noopener noreferrer">DN - News</a>
-            </div>
-        </div>
-
-        <!-- All Links Section (Collapsible) -->
-        <div class="links-section-container">
-            <div class="links-header" onclick="toggleLinks()" title="Click to expand/collapse">
-                <h3>All External Links</h3>
-                <span class="toggle-icon" id="linksToggle">▼</span>
-            </div>
-            <div class="links-content" id="linksContent">
-                <ul class="links-list">
-                    <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL1</a></li>
-                    <li><a href="https://www.avanza.com" target="_blank" rel="noopener noreferrer">Test URL2</a></li>
-                    <li><a href="https://www.avanza.com" target="_blank" rel="noopener noreferrer">Test URL3</a></li>
-                    <li><a href="https://www.lysa.com" target="_blank" rel="noopener noreferrer">Test URL4</a></li>
-                    <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank" rel="noopener noreferrer">Test URL5</a></li>
-                    <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener noreferrer">Test URL6</a></li>
-                    <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL7</a></li>
-                    <li><a href="index.html" target="_blank" rel="noopener noreferrer">Test URL8</a></li>
-                </ul>
-            </div>
+        <div class="content-frame-container">
+            <iframe id="contentFrame" 
+                    sandbox="allow-same-origin" 
+                    referrerpolicy="no-referrer"
+                    title="Content Frame">
+            </iframe>
         </div>
     </main>
 
@@ -142,26 +121,26 @@
 
     <script src="js/app.js"></script>
     <script>
-        // Link navigation data
-        const links = [
-            { text: 'DN - News', url: 'https://www.dn.se' },
-            { text: 'Avanza - Investment', url: 'https://www.avanza.com' },
-            { text: 'Avanza - Investment (2)', url: 'https://www.avanza.com' },
-            { text: 'Lysa - Robo-Advisor', url: 'https://www.lysa.com' },
-            { text: 'Church Tax - Membership Info', url: 'https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan' },
-            { text: 'Church Tax Calculator', url: 'https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift' },
-            { text: 'DN - News (2)', url: 'https://www.dn.se' },
-            { text: 'Home', url: 'index.html' }
+        // Content sources: index 0-9 (9 items total)
+        const contentSources = [
+            'open_blank_demo.html',
+            'https://www.dn.se',
+            'https://www.avanza.com',
+            'https://www.avanza.com',
+            'https://www.lysa.com',
+            'https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan',
+            'https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift',
+            'https://www.dn.se',
+            'index.html'
         ];
         
         let currentIndex = 0;
         
         /**
-         * Initialize link navigator on page load
+         * Initialize on page load
          */
         document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('totalLinks').textContent = links.length;
-            updateCurrentLink();
+            updateContentFrame();
             document.getElementById('footer-timestamp').textContent = generateTimestamp();
         });
         
@@ -171,7 +150,7 @@
         function previousLink() {
             if (currentIndex > 0) {
                 currentIndex--;
-                updateCurrentLink();
+                updateContentFrame();
             }
         }
         
@@ -179,37 +158,30 @@
          * Go to next link
          */
         function nextLink() {
-            if (currentIndex < links.length - 1) {
+            if (currentIndex < contentSources.length - 1) {
                 currentIndex++;
-                updateCurrentLink();
+                updateContentFrame();
             }
         }
         
         /**
-         * Open current link in new tab
+         * Update iframe content and display
          */
-        function openCurrentLink() {
-            const link = links[currentIndex];
-            window.open(link.url, '_blank', 'noopener,noreferrer');
+        function updateContentFrame() {
+            const contentFrame = document.getElementById('contentFrame');
+            const indexDisplay = document.getElementById('currentIndex');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
             
-            // Auto-advance to next link
-            if (currentIndex < links.length - 1) {
-                currentIndex++;
-                updateCurrentLink();
-            }
-        }
-        
-        /**
-         * Update current link display and index
-         */
-        function updateCurrentLink() {
-            const link = links[currentIndex];
-            const linkElement = document.getElementById('currentLinkText');
-            const indexElement = document.getElementById('currentIndex');
+            // Set iframe source
+            contentFrame.src = contentSources[currentIndex];
             
-            linkElement.textContent = link.text;
-            linkElement.href = link.url;
-            indexElement.textContent = currentIndex + 1;
+            // Update index display
+            indexDisplay.textContent = currentIndex;
+            
+            // Update button states
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === contentSources.length - 1;
         }
     </script>
 </body>
