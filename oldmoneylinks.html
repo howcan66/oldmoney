@@ -1,90 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sv">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Old Money Links</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Old Money - Resources</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Old Money Resources</h1>
+    <!-- Header -->
+    <header class="header">
+        <div class="title">Old Money - Resources</div>
+        <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" onclick="switchLanguage('sv')" title="Byt till Svenska" aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')" title="Switch to English" aria-pressed="false">EN</button>
+            </div>
+            <button class="nav-btn" onclick="refreshPage()" title="Refresh page">
+                <img src="assets/icons/refresh.svg" alt="Refresh">
+                <span class="btn-text">Refresh</span>
+            </button>
+            <button class="nav-btn" onclick="closePage()" title="Close window">
+                <img src="assets/icons/close.svg" alt="Close">
+                <span class="btn-text">Close</span>
+            </button>
+        </div>
+    </header>
 
-        <div class="links-section">
-            <h2>Style & Fashion</h2>
-            <ul>
-                <li>
-                    <a href="#">Classic Wardrobe Essentials</a>
-                    <p class="description">Timeless pieces every wardrobe needs</p>
-                </li>
-                <li>
-                    <a href="#">Heritage Brands Guide</a>
-                    <p class="description">Brands with history and craftsmanship</p>
-                </li>
-                <li>
-                    <a href="#">Seasonal Capsule Collections</a>
-                    <p class="description">Curated selections for each season</p>
-                </li>
-            </ul>
+    <!-- Body Content -->
+    <main class="content">
+        <p class="description" data-lang-key="resourcesDescription">Utforska våra samlade resurser för klassisk stil, livsstil och ekonomisk framgång.</p>
+
+        <!-- Resource Categories -->
+        <div class="resources-container">
+            <!-- Style & Fashion -->
+            <section class="resource-section" style="border: 1px solid #C8C8C8; padding: 16px; margin-bottom: 16px; border-radius: 5px;">
+                <h3 data-lang-key="categoryStyle">Stil & Mode</h3>
+                <ul style="list-style: none; padding: 0; margin: 12px 0 0 0;">
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="essentials">Klassiska garderober</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="brands">Märken med historia</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="seasonal">Säsongssamlingar</a></li>
+                </ul>
+            </section>
+
+            <!-- Lifestyle & Culture -->
+            <section class="resource-section" style="border: 1px solid #C8C8C8; padding: 16px; margin-bottom: 16px; border-radius: 5px;">
+                <h3 data-lang-key="categoryLifestyle">Livsstil & Kultur</h3>
+                <ul style="list-style: none; padding: 0; margin: 12px 0 0 0;">
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="hosting">Konsten att värda</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="literature">Klassisk litteratur</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="travel">Resedestinationer</a></li>
+                </ul>
+            </section>
+
+            <!-- Home & Living -->
+            <section class="resource-section" style="border: 1px solid #C8C8C8; padding: 16px; margin-bottom: 16px; border-radius: 5px;">
+                <h3 data-lang-key="categoryHome">Hem & Liv</h3>
+                <ul style="list-style: none; padding: 0; margin: 12px 0 0 0;">
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="design">Inredning</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="antiques">Antikviteter & Samlingar</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="garden">Trädgårdsdesign</a></li>
+                </ul>
+            </section>
+
+            <!-- Arts & Pursuits -->
+            <section class="resource-section" style="border: 1px solid #C8C8C8; padding: 16px; margin-bottom: 16px; border-radius: 5px;">
+                <h3 data-lang-key="categoryArts">Konst & Intressen</h3>
+                <ul style="list-style: none; padding: 0; margin: 12px 0 0 0;">
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="music">Klassisk musik</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="art">Konst och samling</a></li>
+                    <li style="margin-bottom: 10px;"><a href="#" data-lang-key="crafts">Traditionellt hantverk</a></li>
+                </ul>
+            </section>
         </div>
 
-        <div class="links-section">
-            <h2>Lifestyle & Culture</h2>
-            <ul>
-                <li>
-                    <a href="#">The Art of Hosting</a>
-                    <p class="description">Elegant entertaining and etiquette</p>
-                </li>
-                <li>
-                    <a href="#">Classic Literature Collection</a>
-                    <p class="description">Essential reads for the refined mind</p>
-                </li>
-                <li>
-                    <a href="#">Travel Destinations</a>
-                    <p class="description">Historic and cultural destinations</p>
-                </li>
-            </ul>
+        <!-- Collapsible Links Section -->
+        <div class="links-section-container">
+            <div class="links-header" onclick="toggleLinks()" title="Click to expand/collapse">
+                <h3 data-lang-key="externalLinks">Externa Länker</h3>
+                <span class="toggle-icon" id="linksToggle">▼</span>
+            </div>
+            <div class="links-content" id="linksContent">
+                <ul class="links-list">
+                    <li><a href="index.html" data-lang-key="linkHome">Hem</a></li>
+                    <li><a href="calculator.html" data-lang-key="linkCalculator">Räntekalkylator</a></li>
+                    <li><a href="listing.html" data-lang-key="linkMarketplace">Marknadsplats</a></li>
+                    <li><a href="https://www.avanza.se" target="_blank" rel="noopener">Avanza - Investment Platform</a></li>
+                    <li><a href="https://www.lysa.se/" target="_blank" rel="noopener">Lysa - Robo-Advisor</a></li>
+                    <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank" rel="noopener">Church Tax - Membership Info</a></li>
+                </ul>
+            </div>
         </div>
+    </main>
 
-        <div class="links-section">
-            <h2>Home & Living</h2>
-            <ul>
-                <li>
-                    <a href="#">Interior Design Principles</a>
-                    <p class="description">Creating timeless, elegant spaces</p>
-                </li>
-                <li>
-                    <a href="#">Antiques & Collectibles</a>
-                    <p class="description">Guide to quality vintage pieces</p>
-                </li>
-                <li>
-                    <a href="#">Garden Design</a>
-                    <p class="description">Classic landscaping and outdoor spaces</p>
-                </li>
-            </ul>
-        </div>
+    <!-- Horizontal Line -->
+    <hr class="footer-divider">
 
-        <div class="links-section">
-            <h2>Arts & Pursuits</h2>
-            <ul>
-                <li>
-                    <a href="#">Classical Music Guide</a>
-                    <p class="description">Essential composers and performances</p>
-                </li>
-                <li>
-                    <a href="#">Fine Art Appreciation</a>
-                    <p class="description">Understanding and collecting art</p>
-                </li>
-                <li>
-                    <a href="#">Traditional Crafts</a>
-                    <p class="description">Artisanal skills and makers</p>
-                </li>
-            </ul>
-        </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <span>&copy; CoolPortals | <span id="filename">oldmoneylinks.html</span> | <span id="footer-timestamp"></span></span>
+    </footer>
 
-        <footer>
-            <p>&copy; 2026 Old Money Collection. Curated with care.</p>
-        </footer>
-    </div>
+    <script src="js/app.js"></script>
 </body>
 </html>

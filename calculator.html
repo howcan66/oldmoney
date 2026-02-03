@@ -10,8 +10,12 @@
 <body>
     <!-- Header -->
     <header class="header">
-        <h1 class="title">Old Money - Interest Calculator</h1>
+        <div class="title">Old Money - Interest Calculator</div>
         <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" onclick="switchLanguage('sv')" title="Byt till Svenska" aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')" title="Switch to English" aria-pressed="false">EN</button>
+            </div>
             <button class="nav-btn" onclick="refreshPage()" title="Refresh page">
                 <img src="assets/icons/refresh.svg" alt="Refresh">
                 <span class="btn-text">Refresh</span>
@@ -207,7 +211,7 @@
     <div class="toast-container" id="toastContainer"></div>
 
     <!-- Horizontal Line -->
-    <hr class="footer-divider">
+    <hr class="footer-divider">ilename">calculator.html</span> | <span id="f
 
     <!-- Footer -->
     <footer class="footer">
