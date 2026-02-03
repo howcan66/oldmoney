@@ -1,0 +1,106 @@
+PROJECT: Old Money – Abbreviation Guide for Instructions
+FORMAT: Command Reference for All Requests
+
+---------------------------------------------------------
+PURPOSE
+---------------------------------------------------------
+This guide defines abbreviations used at the END of user 
+requests to control how I execute instructions.
+
+Use these abbreviations to signal your exact intent BEFORE 
+I take action.
+
+---------------------------------------------------------
+ABBREVIATION REFERENCE
+---------------------------------------------------------
+
+PA = PLEASE ANALYSE (Analyze first - NEVER execute immediately)
+- Meaning: Analyze the request thoroughly before any action
+- Ask clarifying questions
+- Propose improvements
+- Do NOT implement or execute
+- Do NOT make changes
+- Wait for user confirmation before proceeding
+- Example: "Fix the footer alignment PA"
+
+PASI = PLEASE ANALYSE + SUGGEST IMPROVEMENTS (Analyze and propose improvements)
+- Meaning: Analyze thoroughly and suggest improvements
+- Do NOT execute or implement
+- Ask clarifying questions
+- Propose multiple solutions/approaches
+- Wait for user decision
+- Example: "How can we improve the footer layout PASI"
+
+PAI = PERFORM ACTION + IMPLEMENT (Execute immediately and apply to all files)
+- Meaning: Implement the solution directly
+- Apply changes to ALL relevant files
+- No questions asked
+- Just do it across the board
+- Example: "Add bold font to nav buttons PAI"
+
+OA = ORDERLY ANALYSIS (Analyze first)
+- Meaning: Analyze the problem thoroughly
+- Identify all issues
+- Explain findings in detail
+- Ask clarifying questions before action
+- Example: "Why is the cache not updating? OA"
+
+DA = DEEP ANALYSIS (Root cause diagnosis)
+- Meaning: Find the underlying cause
+- Investigate systematically
+- Trace the problem back to source
+- Provide detailed diagnostic report
+- Example: "Why does corruption happen repeatedly? DA"
+
+SQ = SEEK QUESTIONS (Verify before proceeding)
+- Meaning: Ask me for clarification
+- Do not assume intent
+- Confirm requirements
+- Wait for answers before executing
+- Example: "Should I delete the old files? SQ"
+
+NO = NO OPERATION (Report only)
+- Meaning: Analyze and report findings
+- Do not make changes
+- Do not execute anything
+- Provide information only
+- Example: "What files are corrupted? NO"
+
+---------------------------------------------------------
+USAGE RULES
+---------------------------------------------------------
+
+1. Place abbreviation at END of request
+   Example: "Update the footer PA"
+   NOT at the beginning
+
+2. Only ONE abbreviation per request
+   Example: "Fix alignment PA" ✓
+   NOT: "Fix alignment PA OA"
+
+3. If NO abbreviation provided:
+   Default behavior: PA (Perform Action)
+   I will execute the request directly
+
+4. All responses follow the specified abbreviation mode
+
+---------------------------------------------------------
+EXAMPLES
+---------------------------------------------------------
+
+Request: "Are the instructions clear? OA"
+Response: I analyze the instructions, identify issues, 
+          explain findings, then ask for clarification
+
+Request: "Update CSS to left-align footer PA"
+Response: I update CSS and push to GitHub directly
+
+Request: "What's wrong with index.html? DA"
+Response: I investigate systematically, find root cause,
+          provide detailed diagnostic report
+
+Request: "Should I remove the horizontal line? SQ"
+Response: I ask clarifying questions and wait for answer
+
+Request: "Check if footer is left-aligned NO"
+Response: I check and report findings, no changes made
