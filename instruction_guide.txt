@@ -34,6 +34,15 @@ Create HTML pages with calculations (calculator pages):
   - Implement calculation functions, validation, export (CSV/clipboard)
   - Then design_style_guide.txt for CSS/layout details
 
+Add language support (Swedish/English) to HTML pages:
+  - Add data-lang-sv and data-lang-en attributes to all text elements
+  - Format: <element data-lang-sv="Swedish text" data-lang-en="English text">Default</element>
+  - Language buttons (SV/EN) automatically provided in header
+  - Language preference is saved to localStorage (persists across page reloads)
+  - switchLanguage(lang) function in app.js handles all translations
+  - initializeLanguage() is called automatically on DOMContentLoaded
+  - Default language is Swedish (sv)
+
 Choose or verify colors:
   - Read color_palette_guide.txt
   - Then design_style_guide.txt for application rules
