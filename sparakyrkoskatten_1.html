@@ -809,7 +809,8 @@
             let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
 
             // Get loan data for deduction calculation
-            const deductionType = document.querySelector('input[name="savingsDeduction"]:checked').value;
+            const deductionTypeEl = document.querySelector('input[name="savingsDeduction"]:checked');
+            const deductionType = deductionTypeEl ? deductionTypeEl.value : 'loan';
             let yearlyLoanInterest = [];
             if (deductionType === 'loan') {
                 const loanData = calculateLoanAmortization();
@@ -1075,7 +1076,8 @@
             const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
 
             // Get loan data for deduction calculation
-            const deductionType = document.querySelector('input[name="savingsDeduction"]:checked').value;
+            const deductionTypeEl = document.querySelector('input[name="savingsDeduction"]:checked');
+            const deductionType = deductionTypeEl ? deductionTypeEl.value : 'loan';
             let yearlyLoanInterest = [];
             if (deductionType === 'loan') {
                 const loanData = calculateLoanAmortization();
