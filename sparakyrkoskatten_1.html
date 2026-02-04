@@ -806,6 +806,7 @@
             const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
             const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
             let baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            alert('B) baseMonthlySavings (actual input): ' + baseMonthlySavings);
             let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
 
             // Get loan data for monthly loan cost calculation (average)
@@ -1613,6 +1614,7 @@
             const startAmount = localStorage.getItem('startAmount') || '50000';
             const interestRate = localStorage.getItem('interestRate') || '3';
             const monthlySavings = localStorage.getItem('monthlySavings') || '2000';
+            alert('A) monthlySavings (default): ' + monthlySavings);
             const yearlyDeposit = localStorage.getItem('yearlyDeposit') || '0';
             const annualIncome = localStorage.getItem('annualIncome') || '300000';
             const salaryIncrease = localStorage.getItem('salaryIncrease') || '2';
