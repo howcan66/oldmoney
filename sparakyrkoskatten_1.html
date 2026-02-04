@@ -904,6 +904,12 @@
             if (yearlyLoanInterest.length > 0 && yearlyLoanInterest[0]) {
                 const monthlyLoanCost = yearlyLoanInterest[0] / 12;
                 document.getElementById('monthlyLoanCost').value = formatCurrency(monthlyLoanCost);
+                
+                // Button 2 Formula: Monthly Savings = baseMonthlySavings - Monthly Loan Cost
+                if (deductionType === 'loan') {
+                    const adjustedMonthlySavings = baseMonthlySavings - monthlyLoanCost;
+                    // This value will be used in the loop for each year
+                }
             } else {
                 document.getElementById('monthlyLoanCost').value = '0 kr';
             }
