@@ -402,9 +402,110 @@ function getToastColor(type) {
 }
 
 /**
- * Initialize calculator on page load
+ * Send calculation results by email
  */
-document.addEventListener('DOMContentLoaded', function() {
+async function sendChurchTaxByEmail() {
+    const emailInput = document.getElementById('emailRecipient');
+    const emailError = document.getElementById('emailError');
+
+    if (emailError) {
+        emailError.textContent = '';
+    }
+
+    if (lastResults.length === 0) {
+        showToast('Please calculate first', 'warning');
+        return;
+    }
+
+    const recipient = emailInput ? emailInput.value.trim() : '';
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Validate email
+    if (!recipient || !emailPattern.test(recipient)) {
+        if (emailError) {
+            const currentLang = localStorage.getItem('preferredLanguage') || 'sv';
+            const errorMsg = currentLang === 'sv' 
+                ? 'Ange en giltig e-postadress'
+                : 'Please enter a valid email address';
+            emailError.textContent = errorMsg;
+        }
+        showToast('Invalid email address', 'error');
+        return;
+    }
+
+    try {
+        const csv = buildChurchTaxCsv();
+        const subject = lastSummary.annualIncome 
+            ? `Church Tax Calculation - Income: ${lastSummary.annualIncome} kr`
+            : 'Church Tax Calculation';
+
+        const payload = {
+            to: recipient,
+            subject: subject,
+            text: buildChurchTaxEmailBody(),
+            csv: csv
+        };
+
+        const response = await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to send email');
+        }
+
+        // Clear email input on success
+        if (emailInput) {
+            emailInput.value = '';
+            emailInput.style.borderColor = '#ccc';
+        }
+        if (emailError) {
+            emailError.textContent = '';
+        }
+
+        showToast('Email sent successfully', 'success');
+    } catch (error) {
+        console.error('Email send error:', error);
+        if (emailError) {
+            emailError.textContent = error.message || 'Error sending email';
+        }
+        showToast('Error sending email: ' + error.message, 'error');
+    }
+}
+
+/**
+ * Build email body with summary and instructions
+ * @returns {string} Email body text
+ */
+function buildChurchTaxEmailBody() {
+    let body = 'Church Tax Calculation Results\n';
+    body += '================================\n\n';
+    body += `Generated: ${new Date().toLocaleString('sv-SE')}\n\n`;
+    
+    body += 'Input Parameters:\n';
+    body += `- Annual Income: ${formatCurrency(lastSummary.annualIncome)}\n`;
+    body += `- Salary Increase (%): ${lastSummary.salaryIncrease}%\n`;
+    body += `- Savings Percentage (%): ${lastSummary.savingsPercent}%\n\n`;
+    
+    body += 'Summary Results:\n';
+    body += `- Savings after 10 years: ${formatCurrency(lastSummary.savings10yr)}\n`;
+    body += `- Savings after 30 years: ${formatCurrency(lastSummary.savings30yr)}\n`;
+    body += `- Savings after 40 years: ${formatCurrency(lastSummary.savings40yr)}\n`;
+    body += `- Total Salary Increase: ${formatCurrency(lastSummary.totalSalaryIncrease)}\n`;
+    body += `- Final Annual Income: ${formatCurrency(lastSummary.finalIncome)}\n\n`;
+    
+    body += 'Full data table is attached as CSV.\n';
+    body += '\nBest regards,\nOld Money Calculator';
+    
+    return body;
+}
+
+
     // Set default values
     document.getElementById('annualIncome').value = '300000';
     document.getElementById('salaryIncrease').value = '2';

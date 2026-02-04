@@ -113,6 +113,20 @@
                 </div>
             </div>
 
+            <!-- Email Export Section -->
+            <div class="email-export">
+                <label for="emailRecipient" data-lang-sv="Email-resultat" data-lang-en="Email Results">Email Results</label>
+                <div class="email-export-controls">
+                    <input
+                        type="email"
+                        id="emailRecipient"
+                        placeholder="recipient@example.com"
+                        title="Enter recipient email address">
+                    <button class="btn-export" onclick="sendChurchTaxByEmail()" title="Send results by email" data-lang-sv="Skicka email" data-lang-en="Send Email">Send Email</button>
+                </div>
+                <span class="error-message" id="emailError"></span>
+            </div>
+
             <!-- Export Buttons -->
             <div class="export-buttons">
                 <button class="btn-export" onclick="exportChurchTaxToCSV()" title="Export table to CSV file" data-lang-sv="Exportera till CSV" data-lang-en="Export to CSV">Export to CSV</button>
