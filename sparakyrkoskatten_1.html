@@ -1594,6 +1594,22 @@
             }
         }
 
+        // Finance Data Input Defaults and Local Storage Instruction:
+        // All fields have default values and use localStorage
+        // Priority: localStorage value (if exists) > default value
+        // 
+        // Defaults:
+        // - Startbelopp sparande: 50,000 kr
+        // - Årlig genomsnittsränta (%): 3%
+        // - Månatligt sparande: 2,000 kr
+        // - Årlig insättning: 0 kr
+        // - Årsinkomst (kr): 300,000 kr
+        // - Löneökning: 2%
+        // - Sparprocent: 1.2%
+        // - Lånbelopp: 2,500,000 kr
+        // - Låneavbetalning: 1,000 kr
+        // - Låneränta: 3%
+        
         function loadFinanceData() {
             const startAmount = localStorage.getItem('startAmount') || '50000';
             const interestRate = localStorage.getItem('interestRate') || '3';
@@ -1606,16 +1622,16 @@
             const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
             const loanInterestRate = localStorage.getItem('loanInterestRate') || '3';
 
-            if (startAmount) document.getElementById('startAmount').value = formatNumber(startAmount);
-            if (interestRate) document.getElementById('interestRate').value = formatNumber(interestRate);
-            if (monthlySavings) document.getElementById('monthlySavings').value = formatNumber(monthlySavings);
-            if (yearlyDeposit) document.getElementById('yearlyDeposit').value = formatNumber(yearlyDeposit);
-            if (annualIncome) document.getElementById('annualIncome').value = formatNumber(annualIncome);
-            if (salaryIncrease) document.getElementById('salaryIncrease').value = formatNumber(salaryIncrease);
-            if (savingsPercent) document.getElementById('savingsPercent').value = formatNumber(savingsPercent);
-            if (loanAmount) document.getElementById('loanAmount').value = formatNumber(loanAmount);
-            if (loanAmortization) document.getElementById('loanAmortization').value = formatNumber(loanAmortization);
-            if (loanInterestRate) document.getElementById('loanInterestRate').value = formatNumber(loanInterestRate);
+            document.getElementById('startAmount').value = formatNumber(startAmount);
+            document.getElementById('interestRate').value = formatNumber(interestRate);
+            document.getElementById('monthlySavings').value = formatNumber(monthlySavings);
+            document.getElementById('yearlyDeposit').value = formatNumber(yearlyDeposit);
+            document.getElementById('annualIncome').value = formatNumber(annualIncome);
+            document.getElementById('salaryIncrease').value = formatNumber(salaryIncrease);
+            document.getElementById('savingsPercent').value = formatNumber(savingsPercent);
+            document.getElementById('loanAmount').value = formatNumber(loanAmount);
+            document.getElementById('loanAmortization').value = formatNumber(loanAmortization);
+            document.getElementById('loanInterestRate').value = formatNumber(loanInterestRate);
         }
 
         function saveFinanceData() {
