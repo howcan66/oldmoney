@@ -808,14 +808,10 @@
             let baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
             let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
 
-            // Get loan data for deduction calculation
-            const deductionTypeEl = document.querySelector('input[name="savingsDeduction"]:checked');
-            const deductionType = deductionTypeEl ? deductionTypeEl.value : 'loan';
-            let yearlyLoanInterest = [];
-            if (deductionType === 'loan') {
-                const loanData = calculateLoanAmortization();
-                yearlyLoanInterest = loanData.yearlyInterest || [];
-            }
+            // Get loan data for monthly loan cost calculation (average)
+            const loanData = calculateLoanAmortization();
+            const yearlyLoanInterest = loanData.yearlyInterest || [];
+            const monthlyLoanCostAvg = yearlyLoanInterest.length > 0 ? (yearlyLoanInterest[0] / 12) : 0;
 
             if (isNaN(baseMonthlySavings)) {
                 baseMonthlySavings = 0;
@@ -835,12 +831,8 @@
             const monthlyRate = (interestRate / 100) / 12;
 
             for (let year = 1; year <= 40; year++) {
-                // Calculate monthly savings with deduction for this year
-                let monthlySavings = baseMonthlySavings;
-                if (deductionType === 'loan' && yearlyLoanInterest && yearlyLoanInterest.length > 0 && yearlyLoanInterest[year - 1]) {
-                    const monthlyInterestCost = yearlyLoanInterest[year - 1] / 12;
-                    monthlySavings = baseMonthlySavings - monthlyInterestCost;
-                }
+                // Monthly Savings = baseMonthlySavings - Monthly Loan Cost (average)
+                const monthlySavings = baseMonthlySavings - monthlyLoanCostAvg;
                 const startBalance = currentAmount;
                 let totalInterest = 0;
                 let balance = startBalance + yearlyDeposit;
@@ -893,14 +885,7 @@
             
             // Populate Monthly Loan Cost field with Year 1 loan cost
             if (yearlyLoanInterest.length > 0 && yearlyLoanInterest[0]) {
-                const monthlyLoanCost = yearlyLoanInterest[0] / 12;
-                document.getElementById('monthlyLoanCost').value = formatCurrency(monthlyLoanCost);
-                
-                // Button 2 Formula: Monthly Savings = baseMonthlySavings - Monthly Loan Cost
-                if (deductionType === 'loan') {
-                    const adjustedMonthlySavings = baseMonthlySavings - monthlyLoanCost;
-                    // This value will be used in the loop for each year
-                }
+                document.getElementById('monthlyLoanCost').value = formatCurrency(monthlyLoanCostAvg);
             } else {
                 document.getElementById('monthlyLoanCost').value = '0 kr';
             }
@@ -1075,14 +1060,10 @@
             const salaryIncrease = parseFloat(unformatNumber(document.getElementById('salaryIncrease').value));
             const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
 
-            // Get loan data for deduction calculation
-            const deductionTypeEl = document.querySelector('input[name="savingsDeduction"]:checked');
-            const deductionType = deductionTypeEl ? deductionTypeEl.value : 'loan';
-            let yearlyLoanInterest = [];
-            if (deductionType === 'loan') {
-                const loanData = calculateLoanAmortization();
-                yearlyLoanInterest = loanData.yearlyInterest || [];
-            }
+            // Get loan data for monthly loan cost calculation (average)
+            const loanData = calculateLoanAmortization();
+            const yearlyLoanInterest = loanData.yearlyInterest || [];
+            const monthlyLoanCostAvg = yearlyLoanInterest.length > 0 ? (yearlyLoanInterest[0] / 12) : 0;
 
             if (isNaN(monthlySavings)) {
                 monthlySavings = 0;
@@ -1100,12 +1081,8 @@
             const monthlyRate = (interestRate / 100) / 12;
 
             for (let year = 1; year <= 40; year++) {
-                // Calculate monthly savings with deduction for this year
-                let yearMonthlySavings = monthlySavings;
-                if (deductionType === 'loan' && yearlyLoanInterest[year - 1]) {
-                    const monthlyInterestCost = yearlyLoanInterest[year - 1] / 12;
-                    yearMonthlySavings = monthlySavings - monthlyInterestCost;
-                }
+                // Monthly Savings = baseMonthlySavings - Monthly Loan Cost (average)
+                const yearMonthlySavings = monthlySavings - monthlyLoanCostAvg;
                 if (year > 1) {
                     currentIncome = currentIncome * (1 + salaryIncrease / 100);
                 }
