@@ -1802,6 +1802,28 @@
             document.getElementById('loanResults').style.display = 'none';
         }
 
+        function updateMonthlySavingsOnButtonChange() {
+            const radioButtons = document.querySelectorAll('input[name="savingsDeduction"]');
+            radioButtons.forEach(button => {
+                button.addEventListener('change', function() {
+                    if (this.value === 'loan') {
+                        // Button 2 selected: calculate and display the negative result
+                        const loanData = calculateLoanAmortization();
+                        const yearlyLoanInterest = loanData.yearlyInterest || [];
+                        if (yearlyLoanInterest[0]) {
+                            const monthlyInterestCost = yearlyLoanInterest[0] / 12;
+                            const baseSavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value)) || 0;
+                            const result = baseSavings - monthlyInterestCost;
+                            document.getElementById('monthlySavings').value = formatNumber(result.toString());
+                        }
+                    } else {
+                        // Button 1 selected: restore original value (if needed)
+                        loadFinanceData();
+                    }
+                });
+            });
+        }
+
         window.addEventListener('load', function() {
             const savedLang = localStorage.getItem('lang') || 'sv';
             applyLanguage(savedLang);
@@ -1818,6 +1840,9 @@
             addNumberFormatting('loanAmount');
             addNumberFormatting('loanAmortization');
             addNumberFormatting('loanInterestRate');
+            
+            // Setup radio button change listener for monthly savings calculation
+            updateMonthlySavingsOnButtonChange();
             
             const footerTimestamp = document.getElementById('footer-timestamp');
             if (footerTimestamp) {
