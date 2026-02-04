@@ -802,6 +802,12 @@
         }
 
         function calculateInterest() {
+            // Button 2 Calculation Instructions:
+            // When Button 2 ("Dra av låneavdrag") is selected:
+            // Monthly Savings = baseMonthlySavings - (yearlyLoanInterest[year-1] / 12)
+            // Example: 2,000 kr - 5,805 kr/month = -3,805 kr (Year 1)
+            // Loan data defaults: 2,500,000 kr @ 3%, 1,000 kr/month payment
+            
             const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
             const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
             let baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
@@ -835,7 +841,7 @@
             for (let year = 1; year <= 40; year++) {
                 // Calculate monthly savings with deduction for this year
                 let monthlySavings = baseMonthlySavings;
-                if (deductionType === 'loan' && yearlyLoanInterest[year - 1]) {
+                if (deductionType === 'loan' && yearlyLoanInterest && yearlyLoanInterest.length > 0 && yearlyLoanInterest[year - 1]) {
                     const monthlyInterestCost = yearlyLoanInterest[year - 1] / 12;
                     monthlySavings = baseMonthlySavings - monthlyInterestCost;
                 }
