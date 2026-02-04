@@ -882,7 +882,9 @@
 
             // Get loan yearly interest data
             const loanData = calculateLoanAmortization();
-            const yearlyLoanInterest = loanData.yearlyInterest || [];
+            if (yearlyLoanInterest.length === 0) {
+                yearlyLoanInterest = loanData.yearlyInterest || [];
+            }
             const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
 
             populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
@@ -1133,9 +1135,11 @@
             }
 
             // Get loan yearly interest data
-            const loanData = calculateLoanAmortization();
-            const yearlyLoanInterest = loanData.yearlyInterest || [];
-            const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
+            const loanDataChurch = calculateLoanAmortization();
+            if (yearlyLoanInterest.length === 0) {
+                yearlyLoanInterest = loanDataChurch.yearlyInterest || [];
+            }
+            const yearlyBeginningBalance = loanDataChurch.yearlyBeginningBalance || [];
 
             populateChurchInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
             updateChurchInterestSummary(
