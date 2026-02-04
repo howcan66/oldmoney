@@ -192,7 +192,7 @@
 
     <div class="input-group">
         <label for="loanAmount" data-lang-sv="Lånebelopp" data-lang-en="Loan Amount">Lånebelopp</label>
-        <input type="text" id="loanAmount" value="0" placeholder="e.g., 0">
+        <input type="text" id="loanAmount" value="100000" placeholder="e.g., 100000">
         <span id="loanAmountError"></span>
     </div>
 
@@ -336,10 +336,9 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
-                    <th>Loan Interest/Year</th>
+                    <th>Loan Beginning Balance</th>
+                    <th>Loan Cost/month (avg)</th>
                 </tr>
-            </thead>
-            <tbody id="ctIoiTableBody1"></tbody>
         </table>
 
         <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">År 11-30</h3>
@@ -357,7 +356,8 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
-                    <th>Loan Interest/Year</th>
+                    <th>Loan Beginning Balance</th>
+                    <th>Loan Cost/month (avg)</th>
                 </tr>
             </thead>
             <tbody id="ctIoiTableBody2"></tbody>
@@ -378,7 +378,9 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
-                    <th>Loan Interest/Year</th>
+                    <th>Loan Beginning Balance</th>
+                    <th>Loan Cost/month (avg)</th>
+                </tr>
                 </tr>
             </thead>
             <tbody id="ctIoiTableBody3"></tbody>
@@ -431,13 +433,8 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
-                    <th>Loan Interest/Year</th>
-                </tr>
-            </thead>
-            <tbody id="tableBody2"></tbody>
-        </table>
-
-        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
+                    <th>Loan Beginning Balance</th>
+                    <th>Loan Cost/month (avg)</th>
         <table border="1">
             <thead>
                 <tr>
@@ -451,7 +448,9 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
-                    <th>Loan Interest/Year</th>
+                    <th>Loan Beginning Balance</th>
+                    <th>Loan Cost/month (avg)</th>
+                </tr>
                 </tr>
             </thead>
             <tbody id="tableBody3"></tbody>
@@ -823,8 +822,9 @@
             // Get loan yearly interest data
             const loanData = calculateLoanAmortization();
             const yearlyLoanInterest = loanData.yearlyInterest || [];
+            const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
 
-            populateInterestTables(results, yearlyLoanInterest);
+            populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
             updateInterestSummary(
                 startAmount,
                 results[39].endAmount,
@@ -889,7 +889,7 @@
             });
         }
 
-        function populateInterestTables(results, yearlyLoanInterest) {
+        function populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance) {
             const groups = [
                 { id: 'tableBody1', start: 0, end: 10 },
                 { id: 'tableBody2', start: 10, end: 30 },
@@ -903,7 +903,15 @@
                     for (let i = group.start; i < group.end; i++) {
                         if (results[i]) {
                             const row = document.createElement('tr');
-                            const loanInterest = yearlyLoanInterest && yearlyLoanInterest[i] ? formatCurrency(yearlyLoanInterest[i]) : '0.00 kr';
+                            let loanBeginning = '0.00 kr';
+                            let loanCostMonthly = '0.00 kr';
+                            if (yearlyBeginningBalance && yearlyBeginningBalance.length > 0 && yearlyBeginningBalance[i] !== undefined && yearlyBeginningBalance[i] > 0) {
+                                loanBeginning = formatCurrency(yearlyBeginningBalance[i]);
+                            }
+                            if (yearlyLoanInterest && yearlyLoanInterest.length > 0 && yearlyLoanInterest[i] !== undefined && yearlyLoanInterest[i] > 0) {
+                                const monthlyAverage = yearlyLoanInterest[i] / 12;
+                                loanCostMonthly = formatCurrency(monthlyAverage);
+                            }
                             row.innerHTML = `
                                 <td>${results[i].year}</td>
                                 <td>${formatCurrency(results[i].startAmount)}</td>
@@ -915,7 +923,8 @@
                                 <td>${formatCurrency(results[i].yearlyIncrease)}</td>
                                 <td>${formatCurrency(results[i].depositWithdrawal)}</td>
                                 <td>${results[i].depositText || ''}</td>
-                                <td>${loanInterest}</td>
+                                <td>${loanBeginning}</td>
+                                <td>${loanCostMonthly}</td>
                             `;
                             tbody.appendChild(row);
                         }
@@ -1051,8 +1060,9 @@
             // Get loan yearly interest data
             const loanData = calculateLoanAmortization();
             const yearlyLoanInterest = loanData.yearlyInterest || [];
+            const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
 
-            populateChurchInterestTables(results, yearlyLoanInterest);
+            populateChurchInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
             updateChurchInterestSummary(
                 startAmount,
                 results[0].yearlyDeposit,
@@ -1129,7 +1139,7 @@
             });
         }
 
-        function populateChurchInterestTables(results, yearlyLoanInterest) {
+        function populateChurchInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance) {
             const groupMap = [
                 { id: 'ctIoiTableBody1', start: 0, end: 10 },
                 { id: 'ctIoiTableBody2', start: 10, end: 30 },
@@ -1143,7 +1153,15 @@
                     for (let i = group.start; i < group.end; i++) {
                         if (results[i]) {
                             const row = document.createElement('tr');
-                            const loanInterest = yearlyLoanInterest && yearlyLoanInterest[i] ? formatCurrency(yearlyLoanInterest[i]) : '0.00 kr';
+                            let loanBeginning = '0.00 kr';
+                            let loanCostMonthly = '0.00 kr';
+                            if (yearlyBeginningBalance && yearlyBeginningBalance.length > 0 && yearlyBeginningBalance[i] !== undefined && yearlyBeginningBalance[i] > 0) {
+                                loanBeginning = formatCurrency(yearlyBeginningBalance[i]);
+                            }
+                            if (yearlyLoanInterest && yearlyLoanInterest.length > 0 && yearlyLoanInterest[i] !== undefined && yearlyLoanInterest[i] > 0) {
+                                const monthlyAverage = yearlyLoanInterest[i] / 12;
+                                loanCostMonthly = formatCurrency(monthlyAverage);
+                            }
                             row.innerHTML = `
                                 <td>${results[i].year}</td>
                                 <td>${formatCurrency(results[i].startAmount)}</td>
@@ -1156,7 +1174,8 @@
                                 <td>${formatCurrency(results[i].yearlyIncrease)}</td>
                                 <td>${formatCurrency(results[i].depositWithdrawal)}</td>
                                 <td>${results[i].depositText || ''}</td>
-                                <td>${loanInterest}</td>
+                                <td>${loanBeginning}</td>
+                                <td>${loanCostMonthly}</td>
                             `;
                             tbody.appendChild(row);
                         }
@@ -1505,7 +1524,7 @@
             const annualIncome = localStorage.getItem('annualIncome');
             const salaryIncrease = localStorage.getItem('salaryIncrease');
             const savingsPercent = localStorage.getItem('savingsPercent');
-            const loanAmount = localStorage.getItem('loanAmount');
+            const loanAmount = localStorage.getItem('loanAmount') || '100000';
             const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
             const loanInterestRate = localStorage.getItem('loanInterestRate');
 
@@ -1565,11 +1584,12 @@
             const loanInterestRate = parseFloat(unformatNumber(document.getElementById('loanInterestRate').value)) || 0;
 
             if (loanAmount <= 0 || loanAmortization <= 0) {
-                return { schedule: [], yearlyInterest: [] };
+                return { schedule: [], yearlyInterest: [], yearlyBeginningBalance: [] };
             }
 
             const schedule = [];
             const yearlyInterest = [];
+            const yearlyBeginningBalance = [];
             const monthlyRate = loanInterestRate / 12 / 100;
             let balance = loanAmount;
             let totalInterest = 0;
@@ -1577,6 +1597,8 @@
 
             // Create 40 years × 12 months = 480 rows
             for (let year = 1; year <= 40; year++) {
+                const yearBeginning = balance;
+                yearlyBeginningBalance.push(yearBeginning);
                 let yearInterest = 0;
                 for (let month = 1; month <= 12; month++) {
                     if (balance <= 0) {
@@ -1611,7 +1633,7 @@
                 yearlyInterest.push(yearInterest);
             }
 
-            return { schedule: schedule, yearlyInterest: yearlyInterest, totalInterest: totalInterest, totalPrincipal: totalPrincipal, finalBalance: balance };
+            return { schedule: schedule, yearlyInterest: yearlyInterest, yearlyBeginningBalance: yearlyBeginningBalance, totalInterest: totalInterest, totalPrincipal: totalPrincipal, finalBalance: balance };
         }
 
         function displayLoanAmortization(loanData) {
