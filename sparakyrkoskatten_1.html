@@ -1597,14 +1597,14 @@
         function loadFinanceData() {
             const startAmount = localStorage.getItem('startAmount') || '50000';
             const interestRate = localStorage.getItem('interestRate') || '3';
-            const monthlySavings = localStorage.getItem('monthlySavings');
-            const yearlyDeposit = localStorage.getItem('yearlyDeposit');
-            const annualIncome = localStorage.getItem('annualIncome');
-            const salaryIncrease = localStorage.getItem('salaryIncrease');
-            const savingsPercent = localStorage.getItem('savingsPercent');
+            const monthlySavings = localStorage.getItem('monthlySavings') || '2000';
+            const yearlyDeposit = localStorage.getItem('yearlyDeposit') || '0';
+            const annualIncome = localStorage.getItem('annualIncome') || '300000';
+            const salaryIncrease = localStorage.getItem('salaryIncrease') || '2';
+            const savingsPercent = localStorage.getItem('savingsPercent') || '1.2';
             const loanAmount = localStorage.getItem('loanAmount') || '2500000';
             const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
-            const loanInterestRate = localStorage.getItem('loanInterestRate');
+            const loanInterestRate = localStorage.getItem('loanInterestRate') || '3';
 
             if (startAmount) document.getElementById('startAmount').value = formatNumber(startAmount);
             if (interestRate) document.getElementById('interestRate').value = formatNumber(interestRate);
