@@ -46,6 +46,9 @@ Add language support (Swedish/English) to HTML pages:
 Add email export to calculator pages:
   - Read email_instructions.txt for complete implementation details
 
+Create portal/hub pages (application directory):
+  - Read portal_hub_instructions.txt for implementation details
+
 Choose or verify colors:
   - Read color_palette_guide.txt
   - Then design_style_guide.txt for application rules
