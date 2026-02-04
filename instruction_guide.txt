@@ -43,6 +43,9 @@ Add language support (Swedish/English) to HTML pages:
   - initializeLanguage() is called automatically on DOMContentLoaded
   - Default language is Swedish (sv)
 
+Add email export to calculator pages:
+  - Read email_instructions.txt for complete implementation details
+
 Choose or verify colors:
   - Read color_palette_guide.txt
   - Then design_style_guide.txt for application rules

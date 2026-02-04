@@ -1,0 +1,378 @@
+PROJECT: Old Money – EMAIL EXPORT INSTRUCTIONS
+FORMAT: Complete implementation guide for email functionality
+
+=============================================================
+PURPOSE
+=============================================================
+Email export allows calculator pages to send calculation results
+via email using a serverless backend (Netlify Functions) and
+SendGrid API for transactional email delivery.
+
+See instruction_guide.txt for navigation.
+
+=============================================================
+ARCHITECTURE
+=============================================================
+
+EMAIL FLOW:
+1. User enters recipient email in HTML input field
+2. User clicks "Send Email" button
+3. Frontend validates email format
+4. Frontend calls JavaScript function (sendResultsByEmail or sendChurchTaxByEmail)
+5. Function sends POST request to /.netlify/functions/send-email
+6. Serverless function receives request and validates
+7. Function calls SendGrid API v3 to send email
+8. Response returned to frontend with success/error
+9. Toast notification shown to user
+
+COMPONENTS:
+- Frontend: HTML + JavaScript (input, button, validation)
+- Backend: netlify/functions/send-email.js (serverless handler)
+- Email Service: SendGrid API v3
+- Configuration: netlify.toml, .env, environment variables
+
+=============================================================
+IMPLEMENTATION CHECKLIST
+=============================================================
+
+HTML STRUCTURE:
+[ ] Create email export section in HTML (after summary box)
+[ ] Add email input field with id="emailRecipient"
+[ ] Add "Send Email" button with onclick handler
+[ ] Add error message span with id="emailError"
+[ ] Add data-lang-sv/en attributes for translations (SV/EN support)
+[ ] Import calculator JavaScript file
+
+JAVASCRIPT FUNCTIONS (in calculator.js or specific file):
+[ ] async sendResultsByEmail() - Main email handler
+  - Validate email format with regex
+  - Check if results exist (lastResults array)
+  - Prepare payload (to, subject, text, csv)
+  - Call fetch('/.netlify/functions/send-email', POST)
+  - Handle response and errors
+  - Clear input on success
+  - Show toast notifications
+
+[ ] buildEmailBody() - Format email content
+  - Include input parameters
+  - Include summary results
+  - Include instructions
+  - Format currency values
+  - Return formatted text string
+
+[ ] buildCsvFromResults() - Generate CSV data
+  - First row: settings/parameters
+  - Header row: column names
+  - Data rows: year-by-year results
+  - Include summary totals
+  - Return CSV string
+
+SERVERLESS BACKEND:
+[ ] netlify/functions/send-email.js exists
+[ ] Function validates incoming JSON payload
+[ ] Function validates recipient email
+[ ] Function calls SendGrid API
+[ ] Function returns appropriate HTTP status codes
+[ ] Error handling implemented
+
+CONFIGURATION:
+[ ] .env file contains SENDGRID_API_KEY
+[ ] .env.example documents required variables
+[ ] netlify.toml has functions configured
+[ ] SENDGRID_FROM environment variable set (sender email)
+
+=============================================================
+STATE MANAGEMENT (calculator.js pattern)
+=============================================================
+
+REQUIRED STATE VARIABLES:
+let lastResults = [];      // Full calculation results (40 years)
+let lastSummary = {};      // Aggregated summary data
+
+STORING RESULTS:
+calculateInterest() or calculateSavings() must:
+1. Populate lastResults array with yearly data
+2. Store lastSummary with:
+   - Input parameters (startAmount, rates, etc.)
+   - Summary values (10yr, 30yr, 40yr totals, etc.)
+   - Final metrics (growth %, final income, etc.)
+
+CLEARING RESULTS:
+clearInputs() or clearChurchTaxInputs() must:
+1. Reset lastResults = []
+2. Reset lastSummary = {}
+3. Hide results section
+4. Clear email input and error messages
+
+=============================================================
+EXAMPLE: Email Input HTML Structure
+=============================================================
+
+<!-- Email Export Section -->
+<div class="email-export">
+    <label for="emailRecipient" 
+           data-lang-sv="Email-resultat" 
+           data-lang-en="Email Results">
+        Email Results
+    </label>
+    <div class="email-export-controls">
+        <input
+            type="email"
+            id="emailRecipient"
+            placeholder="recipient@example.com"
+            title="Enter recipient email address">
+        <button class="btn-export" 
+                onclick="sendResultsByEmail()" 
+                title="Send results by email"
+                data-lang-sv="Skicka email" 
+                data-lang-en="Send Email">
+            Send Email
+        </button>
+    </div>
+    <span class="error-message" id="emailError"></span>
+</div>
+
+=============================================================
+EXAMPLE: JavaScript Function Pattern
+=============================================================
+
+async function sendResultsByEmail() {
+    // Get DOM elements
+    const emailInput = document.getElementById('emailRecipient');
+    const emailError = document.getElementById('emailError');
+    
+    // Clear previous errors
+    if (emailError) {
+        emailError.textContent = '';
+    }
+    
+    // Validate results exist
+    if (lastResults.length === 0) {
+        showToast('Please calculate first', 'warning');
+        return;
+    }
+    
+    // Get and validate email
+    const recipient = emailInput ? emailInput.value.trim() : '';
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    if (!recipient || !emailPattern.test(recipient)) {
+        if (emailError) {
+            emailError.textContent = 'Please enter a valid email address';
+        }
+        showToast('Invalid email address', 'error');
+        return;
+    }
+    
+    try {
+        // Prepare email payload
+        const csv = buildCsvFromResults();
+        const payload = {
+            to: recipient,
+            subject: 'Calculation Results',
+            text: buildEmailBody(),
+            csv: csv
+        };
+        
+        // Send to serverless function
+        const response = await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        
+        // Check response
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.message || 'Failed to send email');
+        }
+        
+        // Success: clear input and show message
+        if (emailInput) {
+            emailInput.value = '';
+            emailInput.style.borderColor = '#ccc';
+        }
+        if (emailError) {
+            emailError.textContent = '';
+        }
+        showToast('Email sent successfully', 'success');
+        
+    } catch (error) {
+        console.error('Email send error:', error);
+        if (emailError) {
+            emailError.textContent = error.message || 'Error sending email';
+        }
+        showToast('Error sending email: ' + error.message, 'error');
+    }
+}
+
+=============================================================
+SERVERLESS FUNCTION: send-email.js
+=============================================================
+
+The function should:
+1. Receive JSON POST request with { to, subject, text, csv }
+2. Validate email address format
+3. Validate SENDGRID_API_KEY is set
+4. Format message for SendGrid API v3
+5. Call SendGrid mail/send endpoint
+6. Return JSON response with status
+7. Handle errors gracefully
+
+Required environment variables:
+- SENDGRID_API_KEY: SendGrid API key
+- SENDGRID_FROM: Sender email address (e.g., noreply@oldmoney.app)
+
+=============================================================
+ERROR HANDLING
+=============================================================
+
+VALIDATION ERRORS (shown in emailError span):
+- "Please enter a valid email address" (format validation)
+- "Please calculate first" (no results available)
+
+NETWORK ERRORS (shown in toast):
+- "Error sending email: [error message]"
+- Network timeout
+- CORS errors
+- Invalid response from serverless function
+
+EMAIL ERRORS (from SendGrid):
+- Invalid email address (by SendGrid)
+- Authentication failure (API key issue)
+- Rate limiting (too many emails)
+
+USER FEEDBACK:
+- Success: Toast "Email sent successfully" (green)
+- Error: Toast "Error sending email: [detail]" (red)
+- Warning: Toast "Please calculate first" (yellow)
+
+=============================================================
+TESTING & TROUBLESHOOTING
+=============================================================
+
+LOCAL TESTING:
+1. Set SENDGRID_API_KEY in .env.example
+2. Copy to .env (not committed)
+3. Use Netlify CLI: netlify dev
+4. Test calculator first (generate results)
+5. Enter test email (e.g., test@example.com)
+6. Click "Send Email" button
+7. Check browser console for errors
+8. Check email inbox for received message
+
+COMMON ISSUES:
+
+Issue: "function not found"
+- Check script src="js/calculator.js" in HTML
+- Verify sendResultsByEmail() function exists
+
+Issue: "Invalid email" error
+- Regex: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+- Test email format before submitting
+
+Issue: "NetworkError" or CORS error
+- Verify netlify.toml has functions configured
+- Check function endpoint: /.netlify/functions/send-email
+- Run "netlify dev" not direct HTML open
+
+Issue: Email not received
+- Check SENDGRID_API_KEY is valid
+- Check SENDGRID_FROM is valid sender
+- Check SendGrid account limits/quotas
+- Check spam folder
+
+Issue: CSV attachment not included
+- Verify buildCsvFromResults() returns CSV string
+- Check payload includes csv field
+- Verify serverless function attaches CSV
+
+=============================================================
+CURRENT IMPLEMENTATIONS
+=============================================================
+
+INTEREST CALCULATOR (interestoninterest.html):
+- File: js/calculator.js
+- Functions: sendResultsByEmail(), buildEmailBody(), buildCsvFromResults()
+- Email input: id="emailRecipient"
+- Error span: id="emailError"
+- Button: "Send Email" with onclick="sendResultsByEmail()"
+
+CHURCH TAX CALCULATOR (kyrkoskatt.html):
+- File: js/churchtax.js
+- Functions: sendChurchTaxByEmail(), buildChurchTaxEmailBody(), buildChurchTaxCsv()
+- Email input: id="emailRecipient"
+- Error span: id="emailError"
+- Button: "Send Email" with onclick="sendChurchTaxByEmail()"
+- Languages: SV/EN support with data-lang attributes
+
+Both implementations follow same pattern and use same serverless backend.
+
+=============================================================
+ENVIRONMENT SETUP
+=============================================================
+
+REQUIRED FILES:
+- netlify/functions/send-email.js (backend handler)
+- netlify.toml (function configuration)
+- .env (not committed - contains API keys)
+- .env.example (template for .env)
+
+SET UP SENDGRID:
+1. Create SendGrid account
+2. Generate API key
+3. Add to .env: SENDGRID_API_KEY=sk_test_xxxxx
+4. Set SENDGRID_FROM: your-app@example.com
+
+DEPLOY CONSIDERATIONS:
+- netlify.toml must be committed
+- .env must NOT be committed (add to .gitignore)
+- SENDGRID_API_KEY set in Netlify environment variables
+- SENDGRID_FROM set in Netlify environment variables
+- Test function before production deployment
+
+=============================================================
+SECURITY NOTES
+=============================================================
+
+EMAIL VALIDATION:
+- Frontend regex: basic format check (user feedback)
+- Backend validation: email format check before sending
+- SendGrid validation: final validation by provider
+
+API KEY PROTECTION:
+- Never commit .env file
+- Use environment variables (not hardcoded)
+- Keep API keys confidential
+- Rotate keys periodically
+
+CORS & SECURITY:
+- Serverless function should validate request origin
+- Limit email sending rate to prevent abuse
+- Log email sends for audit trail
+- Consider adding spam/malware checks
+
+CSV EXPORT SECURITY:
+- CSV contains sensitive financial data
+- Email should be encrypted in transit (HTTPS)
+- Consider password-protecting exported file
+- Add expiration date to data retention
+
+=============================================================
+FUTURE ENHANCEMENTS
+=============================================================
+
+POSSIBLE IMPROVEMENTS:
+- Email templates (HTML formatting)
+- Multiple recipient support
+- Scheduled email delivery
+- Recurring calculation exports
+- Email subscription service
+- Webhook notifications
+- Email analytics tracking
+- PDF generation instead of CSV
+- Digital signatures on exports
+
+Last Updated: February 4, 2026
