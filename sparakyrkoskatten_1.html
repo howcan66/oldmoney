@@ -85,7 +85,8 @@
             min-width: 250px;
         }
 
-        input[type="number"] {
+        input[type="number"],
+        input[type="text"] {
             padding: 6px 8px;
             border: 1px solid #C8C8C8;
             border-radius: 4px;
@@ -149,44 +150,62 @@
 
     <div class="input-group">
         <label for="startAmount" data-lang-sv="Startbelopp sparande *" data-lang-en="Saving Start Amount *">Startbelopp sparande *</label>
-        <input type="number" id="startAmount" value="1000" placeholder="e.g., 1000" min="0" max="999999999" step="0.01">
+        <input type="text" id="startAmount" placeholder="e.g., 1000" step="0.01">
         <span id="startAmountError"></span>
     </div>
 
     <div class="input-group">
         <label for="interestRate" data-lang-sv="Årlig genomsnittsränta (%) *" data-lang-en="Yearly Average Interest (%) *">Årlig genomsnittsränta (%) *</label>
-        <input type="number" id="interestRate" value="3" placeholder="e.g., 3" min="0" max="100" step="0.01">
+        <input type="text" id="interestRate" placeholder="e.g., 3" step="0.01">
         <span id="interestRateError"></span>
     </div>
 
     <div class="input-group">
         <label for="monthlySavings" data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</label>
-        <input type="number" id="monthlySavings" value="100" placeholder="e.g., 100" min="0" max="999999999" step="0.01">
+        <input type="text" id="monthlySavings" placeholder="e.g., 100" step="0.01">
         <span id="monthlySavingsError"></span>
     </div>
 
     <div class="input-group">
         <label for="yearlyDeposit" data-lang-sv="Årlig insättning" data-lang-en="Yearly Deposit">Årlig insättning</label>
-        <input type="number" id="yearlyDeposit" value="1000" placeholder="e.g., 1000" min="0" max="999999999" step="0.01">
+        <input type="text" id="yearlyDeposit" placeholder="e.g., 1000" step="0.01">
         <span id="yearlyDepositError"></span>
     </div>
 
     <div class="input-group">
         <label for="annualIncome" data-lang-sv="Årsinkomst (kr) *" data-lang-en="Annual Income (kr) *">Årsinkomst (kr) *</label>
-        <input type="number" id="annualIncome" value="300000" placeholder="e.g., 300000" min="0" max="999999999" step="0.01">
+        <input type="text" id="annualIncome" placeholder="e.g., 300000" step="0.01">
         <span id="annualIncomeError"></span>
     </div>
 
     <div class="input-group">
         <label for="salaryIncrease" data-lang-sv="Förväntad löneökning (%) per år *" data-lang-en="Expected Salary Increase (%) per year *">Förväntad löneökning (%) per år *</label>
-        <input type="number" id="salaryIncrease" value="2" placeholder="e.g., 2" min="0" max="100" step="0.01">
+        <input type="text" id="salaryIncrease" value="2" placeholder="e.g., 2">
         <span id="salaryIncreaseError"></span>
     </div>
 
     <div class="input-group">
         <label for="savingsPercent" data-lang-sv="Kyrkoskatt / Sparprocent (%) *" data-lang-en="Church TaxFee / Savings Percentage (%) *">Kyrkoskatt / Sparprocent (%) *</label>
-        <input type="number" id="savingsPercent" value="1.2" placeholder="e.g., 1.2" min="0" max="100" step="0.01">
+        <input type="text" id="savingsPercent" value="1.2" placeholder="e.g., 1.2">
         <span id="savingsPercentError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="loanAmount" data-lang-sv="Lånebelopp" data-lang-en="Loan Amount">Lånebelopp</label>
+        <input type="text" id="loanAmount" value="0" placeholder="e.g., 0">
+        <span id="loanAmountError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="loanAmortization" data-lang-sv="Låneamortering (år)" data-lang-en="Loan Amortization (years)">Låneamortering (år)</label>
+        <input type="text" id="loanAmortization" placeholder="e.g., 10">
+        <span id="loanAmortizationError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="loanInterestRate" data-lang-sv="Låneränta (%)" data-lang-en="Loan Interest Rate (%)">Låneränta (%)</label>
+        <input type="text" id="loanInterestRate" value="2.8" placeholder="e.g., 2.8">
+        <span id="loanInterestRateError"></span>
     </div>
 
     <div class="input-group">
@@ -554,15 +573,27 @@
                 label.style.minWidth = '60px';
 
                 const input = document.createElement('input');
-                input.type = 'number';
+                input.type = 'text';
                 input.id = `depositYear${year}`;
                 input.placeholder = `${currentLang === 'sv' ? 'År' : 'Year'} ${year}`;
-                input.value = localStorage.getItem(`deposit_year_${year}`) || '0';
-                input.step = '0.01';
+                const savedValue = localStorage.getItem(`deposit_year_${year}`) || '0';
+                input.value = formatNumber(savedValue);
                 input.style.width = '120px';
                 input.style.height = '30px';
                 input.style.fontSize = '14px';
                 input.style.padding = '4px 8px';
+                
+                // Add formatting on blur/focus
+                input.addEventListener('blur', function() {
+                    if (this.value) {
+                        this.value = formatNumber(this.value);
+                    }
+                });
+                input.addEventListener('focus', function() {
+                    if (this.value) {
+                        this.value = unformatNumber(this.value);
+                    }
+                });
 
                 const textInput = document.createElement('input');
                 textInput.type = 'text';
@@ -586,7 +617,8 @@
             let totalWithdrawals = 0;
             
             for (let year = 1; year <= 40; year++) {
-                const value = parseFloat(document.getElementById(`depositYear${year}`).value) || 0;
+                const rawValue = unformatNumber(document.getElementById(`depositYear${year}`).value);
+                const value = parseFloat(rawValue) || 0;
                 const textValue = document.getElementById(`depositText${year}`).value || '';
                 localStorage.setItem(`deposit_year_${year}`, value);
                 localStorage.setItem(`deposit_text_${year}`, textValue);
@@ -610,7 +642,7 @@
                 const textValue = localStorage.getItem(`deposit_text_${year}`) || '';
                 const valueInput = document.getElementById(`depositYear${year}`);
                 const textInput = document.getElementById(`depositText${year}`);
-                if (valueInput) valueInput.value = value;
+                if (valueInput) valueInput.value = formatNumber(value);
                 if (textInput) textInput.value = textValue;
                 if (value > 0) totalDeposits += value;
                 else totalWithdrawals += Math.abs(value);
@@ -655,10 +687,10 @@
         }
 
         function calculateInterest() {
-            const startAmount = parseFloat(document.getElementById('startAmount').value);
-            const interestRate = parseFloat(document.getElementById('interestRate').value);
-            let monthlySavings = parseFloat(document.getElementById('monthlySavings').value);
-            let yearlyDeposit = parseFloat(document.getElementById('yearlyDeposit').value);
+            const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
+            const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
+            let monthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
 
             if (isNaN(monthlySavings)) {
                 monthlySavings = 0;
@@ -833,9 +865,9 @@
                 return;
             }
 
-            const annualIncome = parseFloat(document.getElementById('annualIncome').value);
-            const salaryIncrease = parseFloat(document.getElementById('salaryIncrease').value);
-            const savingsPercent = parseFloat(document.getElementById('savingsPercent').value);
+            const annualIncome = parseFloat(unformatNumber(document.getElementById('annualIncome').value));
+            const salaryIncrease = parseFloat(unformatNumber(document.getElementById('salaryIncrease').value));
+            const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
 
             const results = [];
             let totalAccumulated = 0;
@@ -872,12 +904,12 @@
         }
 
         function calculateChurchInterest() {
-            const startAmount = parseFloat(document.getElementById('startAmount').value);
-            const interestRate = parseFloat(document.getElementById('interestRate').value);
-            let monthlySavings = parseFloat(document.getElementById('monthlySavings').value);
-            const annualIncome = parseFloat(document.getElementById('annualIncome').value);
-            const salaryIncrease = parseFloat(document.getElementById('salaryIncrease').value);
-            const savingsPercent = parseFloat(document.getElementById('savingsPercent').value);
+            const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
+            const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
+            let monthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            const annualIncome = parseFloat(unformatNumber(document.getElementById('annualIncome').value));
+            const salaryIncrease = parseFloat(unformatNumber(document.getElementById('salaryIncrease').value));
+            const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
 
             if (isNaN(monthlySavings)) {
                 monthlySavings = 0;
@@ -1113,6 +1145,40 @@
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
             }).format(value);
+        }
+
+        function formatNumber(value) {
+            if (!value || value === '') return '';
+            const num = parseFloat(String(value).replace(/\s/g, '').replace(',', '.'));
+            if (isNaN(num)) return value;
+            return new Intl.NumberFormat('sv-SE', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(num);
+        }
+
+        function unformatNumber(value) {
+            if (!value) return '';
+            return String(value).replace(/\s/g, '').replace(',', '.');
+        }
+
+        function addNumberFormatting(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            input.addEventListener('blur', function() {
+                if (this.value) {
+                    const formatted = formatNumber(this.value);
+                    this.value = formatted;
+                }
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value) {
+                    const unformatted = unformatNumber(this.value);
+                    this.value = unformatted;
+                }
+            });
         }
 
         function exportAllToCSV() {
@@ -1358,42 +1424,38 @@
             const annualIncome = localStorage.getItem('annualIncome');
             const salaryIncrease = localStorage.getItem('salaryIncrease');
             const savingsPercent = localStorage.getItem('savingsPercent');
+            const loanAmount = localStorage.getItem('loanAmount');
+            const loanAmortization = localStorage.getItem('loanAmortization');
+            const loanInterestRate = localStorage.getItem('loanInterestRate');
 
-            if (startAmount) document.getElementById('startAmount').value = startAmount;
-            if (interestRate) document.getElementById('interestRate').value = interestRate;
-            if (monthlySavings) document.getElementById('monthlySavings').value = monthlySavings;
-            if (yearlyDeposit) document.getElementById('yearlyDeposit').value = yearlyDeposit;
-            if (annualIncome) document.getElementById('annualIncome').value = annualIncome;
-            if (salaryIncrease) document.getElementById('salaryIncrease').value = salaryIncrease;
-            if (savingsPercent) document.getElementById('savingsPercent').value = savingsPercent;
+            if (startAmount) document.getElementById('startAmount').value = formatNumber(startAmount);
+            if (interestRate) document.getElementById('interestRate').value = formatNumber(interestRate);
+            if (monthlySavings) document.getElementById('monthlySavings').value = formatNumber(monthlySavings);
+            if (yearlyDeposit) document.getElementById('yearlyDeposit').value = formatNumber(yearlyDeposit);
+            if (annualIncome) document.getElementById('annualIncome').value = formatNumber(annualIncome);
+            if (salaryIncrease) document.getElementById('salaryIncrease').value = formatNumber(salaryIncrease);
+            if (savingsPercent) document.getElementById('savingsPercent').value = formatNumber(savingsPercent);
+            if (loanAmount) document.getElementById('loanAmount').value = formatNumber(loanAmount);
+            if (loanAmortization) document.getElementById('loanAmortization').value = formatNumber(loanAmortization);
+            if (loanInterestRate) document.getElementById('loanInterestRate').value = formatNumber(loanInterestRate);
         }
 
         function saveFinanceData() {
-            localStorage.setItem('startAmount', document.getElementById('startAmount').value);
-            localStorage.setItem('interestRate', document.getElementById('interestRate').value);
-            localStorage.setItem('monthlySavings', document.getElementById('monthlySavings').value);
-            localStorage.setItem('yearlyDeposit', document.getElementById('yearlyDeposit').value);
-            localStorage.setItem('annualIncome', document.getElementById('annualIncome').value);
-            localStorage.setItem('salaryIncrease', document.getElementById('salaryIncrease').value);
-            localStorage.setItem('savingsPercent', document.getElementById('savingsPercent').value);
+            localStorage.setItem('startAmount', unformatNumber(document.getElementById('startAmount').value));
+            localStorage.setItem('interestRate', unformatNumber(document.getElementById('interestRate').value));
+            localStorage.setItem('monthlySavings', unformatNumber(document.getElementById('monthlySavings').value));
+            localStorage.setItem('yearlyDeposit', unformatNumber(document.getElementById('yearlyDeposit').value));
+            localStorage.setItem('annualIncome', unformatNumber(document.getElementById('annualIncome').value));
+            localStorage.setItem('salaryIncrease', unformatNumber(document.getElementById('salaryIncrease').value));
+            localStorage.setItem('savingsPercent', unformatNumber(document.getElementById('savingsPercent').value));
+            localStorage.setItem('loanAmount', unformatNumber(document.getElementById('loanAmount').value));
+            localStorage.setItem('loanAmortization', unformatNumber(document.getElementById('loanAmortization').value));
+            localStorage.setItem('loanInterestRate', unformatNumber(document.getElementById('loanInterestRate').value));
         }
 
         function clearAllInputs() {
-            document.getElementById('startAmount').value = '';
-            document.getElementById('interestRate').value = '';
-            document.getElementById('monthlySavings').value = '';
-            document.getElementById('yearlyDeposit').value = '';
-            document.getElementById('annualIncome').value = '';
-            document.getElementById('salaryIncrease').value = '';
-            document.getElementById('savingsPercent').value = '';
-
-            localStorage.removeItem('startAmount');
-            localStorage.removeItem('interestRate');
-            localStorage.removeItem('monthlySavings');
-            localStorage.removeItem('yearlyDeposit');
-            localStorage.removeItem('annualIncome');
-            localStorage.removeItem('salaryIncrease');
-            localStorage.removeItem('savingsPercent');
+            document.getElementById('salaryIncrease').value = '2';
+            document.getElementById('savingsPercent').value = '1.2';
 
             clearErrors();
 
@@ -1406,6 +1468,19 @@
             const savedLang = localStorage.getItem('lang') || 'sv';
             applyLanguage(savedLang);
             loadFinanceData();
+            
+            // Add thousand delimiter formatting to all number inputs
+            addNumberFormatting('startAmount');
+            addNumberFormatting('interestRate');
+            addNumberFormatting('monthlySavings');
+            addNumberFormatting('yearlyDeposit');
+            addNumberFormatting('annualIncome');
+            addNumberFormatting('salaryIncrease');
+            addNumberFormatting('savingsPercent');
+            addNumberFormatting('loanAmount');
+            addNumberFormatting('loanAmortization');
+            addNumberFormatting('loanInterestRate');
+            
             const footerTimestamp = document.getElementById('footer-timestamp');
             if (footerTimestamp) {
                 footerTimestamp.textContent = new Date().toLocaleString('sv-SE');
