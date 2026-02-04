@@ -31,13 +31,13 @@
 
     <!-- Main Content -->
     <main class="content">
-        <p class="description">Calculate income and savings projection over 40 years with salary increases and savings percentage. * This is a happy calculation :-) - See <a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener">Kyrkoskatt SE</a></p>
-        <p class="description"><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener">Exit Church SE</a></p>
+        <p class="description" data-lang-sv="Räkna ut inkomst- och sparbesparingsprognos över 40 år med löneökningar och sparande i procent. * Det här är en glad beräkning :-) - Se" data-lang-en="Calculate income and savings projection over 40 years with salary increases and savings percentage. * This is a happy calculation :-) - See"> <a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener" data-lang-sv="Kyrkoskatt SE" data-lang-en="Church Tax SE">Kyrkoskatt SE</a></p>
+        <p class="description"><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener" data-lang-sv="Lämna kyrkan SE" data-lang-en="Exit Church SE">Exit Church SE</a></p>
 
         <!-- Calculator Inputs Section -->
         <div class="calculator-inputs">
             <div class="input-group">
-                <label for="annualIncome">Årsinkomst (kr) <span class="required">*</span></label>
+                <label for="annualIncome" data-lang-sv="Årsinkomst (kr)" data-lang-en="Annual Income (kr)">Årsinkomst (kr) <span class="required">*</span></label>
                 <input
                     type="number"
                     id="annualIncome"
@@ -51,7 +51,7 @@
             </div>
 
             <div class="input-group">
-                <label for="salaryIncrease">Förväntad Löneökning (%) per år <span class="required">*</span></label>
+                <label for="salaryIncrease" data-lang-sv="Förväntad Löneökning (%) per år" data-lang-en="Expected Salary Increase (%) per year">Förväntad Löneökning (%) per år <span class="required">*</span></label>
                 <input
                     type="number"
                     id="salaryIncrease"
@@ -65,7 +65,7 @@
             </div>
 
             <div class="input-group">
-                <label for="savingsPercent">Avgift / Besparingsprocent (%) <span class="required">*</span></label>
+                <label for="savingsPercent" data-lang-sv="Avgift / Besparingsprocent (%)" data-lang-en="Fee / Savings Percentage (%)">Avgift / Besparingsprocent (%) <span class="required">*</span></label>
                 <input
                     type="number"
                     id="savingsPercent"
@@ -80,9 +80,9 @@
 
             <div class="action-buttons">
                 <button class="btn-primary" onclick="calculateSavings()" title="Calculate savings projection">
-                    <span id="calculateBtnText">Calculate</span>
+                    <span id="calculateBtnText" data-lang-sv="Räkna" data-lang-en="Calculate">Calculate</span>
                 </button>
-                <button class="btn-secondary" onclick="clearChurchTaxInputs()" title="Clear all inputs">Clear</button>
+                <button class="btn-secondary" onclick="clearChurchTaxInputs()" title="Clear all inputs" data-lang-sv="Rensa" data-lang-en="Clear">Clear</button>
             </div>
         </div>
 
@@ -90,37 +90,33 @@
         <div class="results-section" id="resultsSection" style="display: none;">
             <!-- Summary -->
             <div class="summary-box">
-                <h3>Summary</h3>
+                <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Summary</h3>
                 <div class="summary-row">
-                    <span class="summary-label">Total Savings after 10 years:</span>
+                    <span class="summary-label" data-lang-sv="Total sparande efter 10 år:" data-lang-en="Total Savings after 10 years:">Total Savings after 10 years:</span>
                     <span class="summary-value" id="summary10">0.00</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">Total Savings after 30 years:</span>
+                    <span class="summary-label" data-lang-sv="Total sparande efter 30 år:" data-lang-en="Total Savings after 30 years:">Total Savings after 30 years:</span>
                     <span class="summary-value" id="summary30">0.00</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">Total Savings after 40 years:</span>
+                    <span class="summary-label" data-lang-sv="Total sparande efter 40 år:" data-lang-en="Total Savings after 40 years:">Total Savings after 40 years:</span>
                     <span class="summary-value" id="summary40">0.00</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">Total Salary Increase over 40 years:</span>
+                    <span class="summary-label" data-lang-sv="Total löneökning över 40 år:" data-lang-en="Total Salary Increase over 40 years:">Total Salary Increase over 40 years:</span>
                     <span class="summary-value" id="summaryIncreaseTotal">0.00</span>
                 </div>
                 <div class="summary-row">
-                    <span class="summary-label">Final Annual Income after 40 years:</span>
+                    <span class="summary-label" data-lang-sv="Slutlig årsinkomst efter 40 år:" data-lang-en="Final Annual Income after 40 years:">Final Annual Income after 40 years:</span>
                     <span class="summary-value" id="summaryFinalIncome">0.00</span>
                 </div>
             </div>
 
             <!-- Export Buttons -->
             <div class="export-buttons">
-                <button class="btn-export" onclick="exportChurchTaxToCSV()" title="Export table to CSV file">
-                    Export to CSV
-                </button>
-                <button class="btn-export" onclick="copyChurchTaxToClipboard()" title="Copy table data to clipboard">
-                    Copy to Clipboard
-                </button>
+                <button class="btn-export" onclick="exportChurchTaxToCSV()" title="Export table to CSV file" data-lang-sv="Exportera till CSV" data-lang-en="Export to CSV">Export to CSV</button>
+                <button class="btn-export" onclick="copyChurchTaxToClipboard()" title="Copy table data to clipboard" data-lang-sv="Kopiera till urklipp" data-lang-en="Copy to Clipboard">Copy to Clipboard</button>
             </div>
 
             <!-- Collapsible Table Groups -->
@@ -128,7 +124,7 @@
                 <!-- Group 1: Years 1-10 -->
                 <div class="table-group">
                     <div class="group-header" onclick="toggleGroup('ctGroup1')" title="Click to expand/collapse">
-                        <h3>Years 1-10</h3>
+                        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">Years 1-10</h3>
                         <span class="toggle-icon" id="ctGroup1Toggle">▼</span>
                     </div>
                     <div class="group-content" id="ctGroup1Content">
@@ -136,12 +132,12 @@
                             <table class="results-table">
                                 <thead>
                                     <tr>
-                                        <th>Year</th>
-                                        <th>Income</th>
-                                        <th>Salary Increase</th>
-                                        <th>Annual Savings</th>
-                                        <th>Monthly Savings</th>
-                                        <th>Total Accumulated</th>
+                                        <th data-lang-sv="År" data-lang-en="Year">Year</th>
+                                        <th data-lang-sv="Inkomst" data-lang-en="Income">Income</th>
+                                        <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Salary Increase</th>
+                                        <th data-lang-sv="Årlig besparing" data-lang-en="Annual Savings">Annual Savings</th>
+                                        <th data-lang-sv="Månatlig besparing" data-lang-en="Monthly Savings">Monthly Savings</th>
+                                        <th data-lang-sv="Total ackumulerad" data-lang-en="Total Accumulated">Total Accumulated</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ctTableBody1"></tbody>
@@ -153,7 +149,7 @@
                 <!-- Group 2: Years 11-30 -->
                 <div class="table-group">
                     <div class="group-header" onclick="toggleGroup('ctGroup2')" title="Click to expand/collapse">
-                        <h3>Years 11-30</h3>
+                        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">Years 11-30</h3>
                         <span class="toggle-icon" id="ctGroup2Toggle">▼</span>
                     </div>
                     <div class="group-content" id="ctGroup2Content">
@@ -161,12 +157,12 @@
                             <table class="results-table">
                                 <thead>
                                     <tr>
-                                        <th>Year</th>
-                                        <th>Income</th>
-                                        <th>Salary Increase</th>
-                                        <th>Annual Savings</th>
-                                        <th>Monthly Savings</th>
-                                        <th>Total Accumulated</th>
+                                        <th data-lang-sv="År" data-lang-en="Year">Year</th>
+                                        <th data-lang-sv="Inkomst" data-lang-en="Income">Income</th>
+                                        <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Salary Increase</th>
+                                        <th data-lang-sv="Årlig besparing" data-lang-en="Annual Savings">Annual Savings</th>
+                                        <th data-lang-sv="Månatlig besparing" data-lang-en="Monthly Savings">Monthly Savings</th>
+                                        <th data-lang-sv="Total ackumulerad" data-lang-en="Total Accumulated">Total Accumulated</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ctTableBody2"></tbody>
@@ -178,7 +174,7 @@
                 <!-- Group 3: Years 31-40 -->
                 <div class="table-group">
                     <div class="group-header" onclick="toggleGroup('ctGroup3')" title="Click to expand/collapse">
-                        <h3>Years 31-40</h3>
+                        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">Years 31-40</h3>
                         <span class="toggle-icon" id="ctGroup3Toggle">▼</span>
                     </div>
                     <div class="group-content" id="ctGroup3Content">
@@ -186,12 +182,12 @@
                             <table class="results-table">
                                 <thead>
                                     <tr>
-                                        <th>Year</th>
-                                        <th>Income</th>
-                                        <th>Salary Increase</th>
-                                        <th>Annual Savings</th>
-                                        <th>Monthly Savings</th>
-                                        <th>Total Accumulated</th>
+                                        <th data-lang-sv="År" data-lang-en="Year">Year</th>
+                                        <th data-lang-sv="Inkomst" data-lang-en="Income">Income</th>
+                                        <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Salary Increase</th>
+                                        <th data-lang-sv="Årlig besparing" data-lang-en="Annual Savings">Annual Savings</th>
+                                        <th data-lang-sv="Månatlig besparing" data-lang-en="Monthly Savings">Monthly Savings</th>
+                                        <th data-lang-sv="Total ackumulerad" data-lang-en="Total Accumulated">Total Accumulated</th>
                                     </tr>
                                 </thead>
                                 <tbody id="ctTableBody3"></tbody>
@@ -206,7 +202,7 @@
     <!-- Loading Overlay -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <p>Calculating...</p>
+        <p data-lang-sv="Räknar..." data-lang-en="Calculating...">Calculating...</p>
     </div>
 
     <!-- Toast Container -->

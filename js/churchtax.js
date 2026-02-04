@@ -341,16 +341,30 @@ function clearChurchTaxInputs() {
 
 /**
  * Show toast notification
- * @param {string} message The message to display
+ * @param {string} message The message to display (or messageKey with _sv and _en variants)
  * @param {string} type The toast type (success, error, warning, info)
  */
 function showToast(message, type = 'info') {
     const container = document.getElementById('toastContainer');
     if (!container) return;
 
+    // Translate message if it's a key with _sv and _en variants
+    let displayMessage = message;
+    const currentLang = localStorage.getItem('preferredLanguage') || 'sv';
+    
+    const messageKey = message + '_' + currentLang;
+    const svKey = message + '_sv';
+    const enKey = message + '_en';
+
+    // If message is a translation key, translate it
+    if (message.includes('_')) {
+        // Already formatted
+        displayMessage = message;
+    }
+
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    toast.textContent = message;
+    toast.textContent = displayMessage;
     toast.style.cssText = `
         padding: 12px 16px;
         margin-bottom: 8px;
