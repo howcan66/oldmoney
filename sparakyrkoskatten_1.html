@@ -197,8 +197,8 @@
     </div>
 
     <div class="input-group">
-        <label for="loanAmortization" data-lang-sv="Låneamortering (år)" data-lang-en="Loan Amortization (years)">Låneamortering (år)</label>
-        <input type="text" id="loanAmortization" placeholder="e.g., 10">
+        <label for="loanAmortization" data-lang-sv="Låneamortering kr/mån" data-lang-en="Loan Amortization kr/month">Låneamortering kr/mån</label>
+        <input type="text" id="loanAmortization" placeholder="e.g., 1000" value="1000">
         <span id="loanAmortizationError"></span>
     </div>
 
@@ -220,6 +220,8 @@
     <br><br>
 
     <button type="button" id="depositsWithdrawalsToggleBtn" data-target="depositsWithdrawalsSection" data-collapse-sv="Toggle Insättningar och uttag" data-collapse-en="Toggle Deposits and Withdrawals" data-expand-sv="Toggle Insättningar och uttag" data-expand-en="Toggle Deposits and Withdrawals" onclick="toggleDepositsWithdrawals()" style="display:block;">Toggle Insättningar och uttag</button>
+
+    <button type="button" id="loanToggleBtn" data-target="loanResults" data-collapse-sv="Toggle Låneschema" data-collapse-en="Toggle Loan Schedule" data-expand-sv="Toggle Låneschema" data-expand-en="Toggle Loan Schedule" onclick="toggleLoanSection()" style="display:block; background-color: #2196F3;">Toggle Låneschema</button>
 
     <button type="button" id="ioiResultsToggleBtn" data-target="interestResults" data-collapse-sv="Toggle Ränta på ränta - resultat" data-collapse-en="Toggle Interest on Interest Results" data-expand-sv="Toggle Ränta på ränta - resultat" data-expand-en="Toggle Interest on Interest Results" onclick="toggleInterestSection()" style="display:block; background-color: #4CAF50;">Toggle Ränta på ränta - resultat</button>
 
@@ -243,6 +245,63 @@
         <p data-lang-sv="Netto efter 40 år: " data-lang-en="Net after 40 Years: "><span id="depositsWithdrawalsNetResult">0.00</span> kr</p>
         <br>
         <button type="button" id="depositsWithdrawalsToggleBtnBottom" data-target="depositsWithdrawalsSection" data-collapse-sv="Toggle Insättningar och uttag" data-collapse-en="Toggle Deposits and Withdrawals" data-expand-sv="Toggle Insättningar och uttag" data-expand-en="Toggle Deposits and Withdrawals" onclick="toggleDepositsWithdrawals()" style="display:block;">Toggle Insättningar och uttag</button>
+    </div>
+
+    <div id="loanResults" style="display:none;">
+        <h2 data-lang-sv="Låneschema" data-lang-en="Loan Schedule">Låneschema</h2>
+        <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Sammanfattning</h3>
+        <p data-lang-sv="Lånebelopp: " data-lang-en="Loan Amount: "><span id="loanSummaryAmount">0.00</span> kr</p>
+        <p data-lang-sv="Månatlig betalning: " data-lang-en="Monthly Payment: "><span id="loanSummaryPayment">0.00</span> kr</p>
+        <p data-lang-sv="Låneränta: " data-lang-en="Loan Interest Rate: "><span id="loanSummaryRate">0%</span></p>
+        <p data-lang-sv="Total ränta betald (40 år): " data-lang-en="Total Interest Paid (40 years): "><span id="loanSummaryTotalInterest">0.00</span> kr</p>
+
+        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">År 1-10</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Månad" data-lang-en="Month">Månad</th>
+                    <th data-lang-sv="Betalning" data-lang-en="Payment">Betalning</th>
+                    <th data-lang-sv="Ränta" data-lang-en="Interest">Ränta</th>
+                    <th data-lang-sv="Amortering" data-lang-en="Principal">Amortering</th>
+                    <th data-lang-sv="Återstående saldo" data-lang-en="Remaining Balance">Återstående saldo</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody1"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">År 11-30</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Månad" data-lang-en="Month">Månad</th>
+                    <th data-lang-sv="Betalning" data-lang-en="Payment">Betalning</th>
+                    <th data-lang-sv="Ränta" data-lang-en="Interest">Ränta</th>
+                    <th data-lang-sv="Amortering" data-lang-en="Principal">Amortering</th>
+                    <th data-lang-sv="Återstående saldo" data-lang-en="Remaining Balance">Återstående saldo</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody2"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Månad" data-lang-en="Month">Månad</th>
+                    <th data-lang-sv="Betalning" data-lang-en="Payment">Betalning</th>
+                    <th data-lang-sv="Ränta" data-lang-en="Interest">Ränta</th>
+                    <th data-lang-sv="Amortering" data-lang-en="Principal">Amortering</th>
+                    <th data-lang-sv="Återstående saldo" data-lang-en="Remaining Balance">Återstående saldo</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody3"></tbody>
+        </table>
+        
+        <br>
+        <button type="button" id="loanToggleBtnBottom" data-target="loanResults" data-collapse-sv="Toggle Låneschema" data-collapse-en="Toggle Loan Schedule" data-expand-sv="Toggle Låneschema" data-expand-en="Toggle Loan Schedule" onclick="toggleLoanSection()" style="display:block; background-color: #2196F3;">Toggle Låneschema</button>
     </div>
 
     <div id="churchInterestResults" style="display:none;">
@@ -277,6 +336,7 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
+                    <th>Loan Interest/Year</th>
                 </tr>
             </thead>
             <tbody id="ctIoiTableBody1"></tbody>
@@ -297,6 +357,7 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
+                    <th>Loan Interest/Year</th>
                 </tr>
             </thead>
             <tbody id="ctIoiTableBody2"></tbody>
@@ -317,6 +378,7 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
+                    <th>Loan Interest/Year</th>
                 </tr>
             </thead>
             <tbody id="ctIoiTableBody3"></tbody>
@@ -349,6 +411,7 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
+                    <th>Loan Interest/Year</th>
                 </tr>
             </thead>
             <tbody id="tableBody1"></tbody>
@@ -368,6 +431,7 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
+                    <th>Loan Interest/Year</th>
                 </tr>
             </thead>
             <tbody id="tableBody2"></tbody>
@@ -387,6 +451,7 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
+                    <th>Loan Interest/Year</th>
                 </tr>
             </thead>
             <tbody id="tableBody3"></tbody>
@@ -494,6 +559,8 @@
             calculateInterest();
             calculateSavings();
             calculateChurchInterest();
+            const loanData = calculateLoanAmortization();
+            displayLoanAmortization(loanData);
         }
 
         function toggleInterestSection() {
@@ -670,16 +737,18 @@
             const churchInterestResults = document.getElementById('churchInterestResults');
             const churchResults = document.getElementById('churchResults');
             const depositsWithdrawalsSection = document.getElementById('depositsWithdrawalsSection');
+            const loanResults = document.getElementById('loanResults');
             const btn = document.getElementById('allResultsToggleBtn');
             
-            if (!interestResults || !churchInterestResults || !churchResults || !depositsWithdrawalsSection || !btn) return;
+            if (!interestResults || !churchInterestResults || !churchResults || !depositsWithdrawalsSection || !loanResults || !btn) return;
             
-            const allHidden = interestResults.style.display === 'none' && churchInterestResults.style.display === 'none' && churchResults.style.display === 'none' && depositsWithdrawalsSection.style.display === 'none';
+            const allHidden = interestResults.style.display === 'none' && churchInterestResults.style.display === 'none' && churchResults.style.display === 'none' && depositsWithdrawalsSection.style.display === 'none' && loanResults.style.display === 'none';
             
             interestResults.style.display = allHidden ? 'block' : 'none';
             churchInterestResults.style.display = allHidden ? 'block' : 'none';
             churchResults.style.display = allHidden ? 'block' : 'none';
             depositsWithdrawalsSection.style.display = allHidden ? 'block' : 'none';
+            loanResults.style.display = allHidden ? 'block' : 'none';
             
             const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
             const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
@@ -751,7 +820,11 @@
                 currentAmount = finalBalance;
             }
 
-            populateInterestTables(results);
+            // Get loan yearly interest data
+            const loanData = calculateLoanAmortization();
+            const yearlyLoanInterest = loanData.yearlyInterest || [];
+
+            populateInterestTables(results, yearlyLoanInterest);
             updateInterestSummary(
                 startAmount,
                 results[39].endAmount,
@@ -816,7 +889,7 @@
             });
         }
 
-        function populateInterestTables(results) {
+        function populateInterestTables(results, yearlyLoanInterest) {
             const groups = [
                 { id: 'tableBody1', start: 0, end: 10 },
                 { id: 'tableBody2', start: 10, end: 30 },
@@ -830,6 +903,7 @@
                     for (let i = group.start; i < group.end; i++) {
                         if (results[i]) {
                             const row = document.createElement('tr');
+                            const loanInterest = yearlyLoanInterest && yearlyLoanInterest[i] ? formatCurrency(yearlyLoanInterest[i]) : '0.00 kr';
                             row.innerHTML = `
                                 <td>${results[i].year}</td>
                                 <td>${formatCurrency(results[i].startAmount)}</td>
@@ -841,6 +915,7 @@
                                 <td>${formatCurrency(results[i].yearlyIncrease)}</td>
                                 <td>${formatCurrency(results[i].depositWithdrawal)}</td>
                                 <td>${results[i].depositText || ''}</td>
+                                <td>${loanInterest}</td>
                             `;
                             tbody.appendChild(row);
                         }
@@ -973,7 +1048,11 @@
                 currentAmount = finalBalance;
             }
 
-            populateChurchInterestTables(results);
+            // Get loan yearly interest data
+            const loanData = calculateLoanAmortization();
+            const yearlyLoanInterest = loanData.yearlyInterest || [];
+
+            populateChurchInterestTables(results, yearlyLoanInterest);
             updateChurchInterestSummary(
                 startAmount,
                 results[0].yearlyDeposit,
@@ -1050,7 +1129,7 @@
             });
         }
 
-        function populateChurchInterestTables(results) {
+        function populateChurchInterestTables(results, yearlyLoanInterest) {
             const groupMap = [
                 { id: 'ctIoiTableBody1', start: 0, end: 10 },
                 { id: 'ctIoiTableBody2', start: 10, end: 30 },
@@ -1064,6 +1143,7 @@
                     for (let i = group.start; i < group.end; i++) {
                         if (results[i]) {
                             const row = document.createElement('tr');
+                            const loanInterest = yearlyLoanInterest && yearlyLoanInterest[i] ? formatCurrency(yearlyLoanInterest[i]) : '0.00 kr';
                             row.innerHTML = `
                                 <td>${results[i].year}</td>
                                 <td>${formatCurrency(results[i].startAmount)}</td>
@@ -1076,6 +1156,7 @@
                                 <td>${formatCurrency(results[i].yearlyIncrease)}</td>
                                 <td>${formatCurrency(results[i].depositWithdrawal)}</td>
                                 <td>${results[i].depositText || ''}</td>
+                                <td>${loanInterest}</td>
                             `;
                             tbody.appendChild(row);
                         }
@@ -1425,7 +1506,7 @@
             const salaryIncrease = localStorage.getItem('salaryIncrease');
             const savingsPercent = localStorage.getItem('savingsPercent');
             const loanAmount = localStorage.getItem('loanAmount');
-            const loanAmortization = localStorage.getItem('loanAmortization');
+            const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
             const loanInterestRate = localStorage.getItem('loanInterestRate');
 
             if (startAmount) document.getElementById('startAmount').value = formatNumber(startAmount);
@@ -1462,6 +1543,129 @@
             document.getElementById('interestResults').style.display = 'none';
             document.getElementById('churchResults').style.display = 'none';
             document.getElementById('churchInterestResults').style.display = 'none';
+            document.getElementById('loanResults').style.display = 'none';
+        }
+
+        function toggleLoanSection() {
+            const section = document.getElementById('loanResults');
+            const btn = document.getElementById('loanToggleBtn');
+            const btnBottom = document.getElementById('loanToggleBtnBottom');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+            if (btnBottom) btnBottom.textContent = isHidden ? expandLabel : collapseLabel;
+        }
+
+        function calculateLoanAmortization() {
+            const loanAmount = parseFloat(unformatNumber(document.getElementById('loanAmount').value)) || 0;
+            const loanAmortization = parseFloat(unformatNumber(document.getElementById('loanAmortization').value)) || 0;
+            const loanInterestRate = parseFloat(unformatNumber(document.getElementById('loanInterestRate').value)) || 0;
+
+            if (loanAmount <= 0 || loanAmortization <= 0) {
+                return { schedule: [], yearlyInterest: [] };
+            }
+
+            const schedule = [];
+            const yearlyInterest = [];
+            const monthlyRate = loanInterestRate / 12 / 100;
+            let balance = loanAmount;
+            let totalInterest = 0;
+            let totalPrincipal = 0;
+
+            // Create 40 years × 12 months = 480 rows
+            for (let year = 1; year <= 40; year++) {
+                let yearInterest = 0;
+                for (let month = 1; month <= 12; month++) {
+                    if (balance <= 0) {
+                        schedule.push({
+                            year: year,
+                            month: month,
+                            payment: 0,
+                            interest: 0,
+                            principal: 0,
+                            balance: 0
+                        });
+                    } else {
+                        const interestPayment = balance * monthlyRate;
+                        const principalPayment = Math.min(loanAmortization - interestPayment, balance);
+                        const totalPayment = interestPayment + principalPayment;
+                        balance = Math.max(0, balance - principalPayment);
+
+                        yearInterest += interestPayment;
+                        totalInterest += interestPayment;
+                        totalPrincipal += principalPayment;
+
+                        schedule.push({
+                            year: year,
+                            month: month,
+                            payment: loanAmortization,
+                            interest: interestPayment,
+                            principal: principalPayment,
+                            balance: balance
+                        });
+                    }
+                }
+                yearlyInterest.push(yearInterest);
+            }
+
+            return { schedule: schedule, yearlyInterest: yearlyInterest, totalInterest: totalInterest, totalPrincipal: totalPrincipal, finalBalance: balance };
+        }
+
+        function displayLoanAmortization(loanData) {
+            const { schedule, yearlyInterest, totalInterest, totalPrincipal } = loanData;
+
+            // Update summary
+            const loanAmount = parseFloat(unformatNumber(document.getElementById('loanAmount').value)) || 0;
+            const loanAmortization = parseFloat(unformatNumber(document.getElementById('loanAmortization').value)) || 0;
+            const loanInterestRate = parseFloat(unformatNumber(document.getElementById('loanInterestRate').value)) || 0;
+
+            document.getElementById('loanSummaryAmount').textContent = formatCurrency(loanAmount);
+            document.getElementById('loanSummaryPayment').textContent = formatCurrency(loanAmortization);
+            document.getElementById('loanSummaryRate').textContent = loanInterestRate.toFixed(1) + '%';
+            document.getElementById('loanSummaryTotalInterest').textContent = formatCurrency(totalInterest);
+
+            // Define table bodies
+            const tables = [
+                { id: 'loanTableBody1', start: 0, end: 120 },   // Years 1-10: 12 months × 10 = 120 rows
+                { id: 'loanTableBody2', start: 120, end: 360 }, // Years 11-30: 12 months × 20 = 240 rows
+                { id: 'loanTableBody3', start: 360, end: 480 }  // Years 31-40: 12 months × 10 = 120 rows
+            ];
+
+            tables.forEach(table => {
+                const tbody = document.getElementById(table.id);
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                for (let i = table.start; i < Math.min(table.end, schedule.length); i++) {
+                    const row = schedule[i];
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.year}</td>
+                        <td>${row.month}</td>
+                        <td>${formatCurrency(row.payment)}</td>
+                        <td>${formatCurrency(row.interest)}</td>
+                        <td>${formatCurrency(row.principal)}</td>
+                        <td>${formatCurrency(row.balance)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+
+        function clearAllInputs() {
+            document.getElementById('salaryIncrease').value = '2';
+            document.getElementById('savingsPercent').value = '1.2';
+            document.getElementById('loanAmortization').value = '1000';
+
+            clearErrors();
+
+            document.getElementById('interestResults').style.display = 'none';
+            document.getElementById('churchResults').style.display = 'none';
+            document.getElementById('churchInterestResults').style.display = 'none';
+            document.getElementById('loanResults').style.display = 'none';
         }
 
         window.addEventListener('load', function() {
