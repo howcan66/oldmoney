@@ -1,0 +1,22 @@
+INSTRUCTIONS: Open Workspace + Next Steps
+
+Why I asked:
+- I need the project folder opened as the VS Code workspace to edit files safely.
+- Without the workspace, I can’t read or change the files.
+
+What I need you to do (once):
+1) Close any untitled editor tabs.
+2) In VS Code, click: File -> Open Folder...
+3) Choose this folder: C:\Git\oldmoney
+4) Click Open Folder (this opens the workspace).
+
+If a Save dialog appears:
+- Cancel it.
+- Make sure no untitled tabs are open.
+- Try File -> Open Folder... again.
+
+After the folder opens, tell me “workspace opened”.
+
+Then I will:
+- Implement the modern email sending option (serverless function + SendGrid) you approved.
+- Remove external links if still desired.

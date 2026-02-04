@@ -27,6 +27,13 @@ Create or update HTML pages:
   - Read html_structure_guide.txt first
   - Then design_style_guide.txt for CSS/layout details
 
+Create HTML pages with calculations (calculator pages):
+  - Read html_structure_guide.txt first
+  - IMPORTANT: Always create corresponding JavaScript file (e.g., churchtax.js)
+  - Include the JS file with <script src="js/filename.js"></script> in HTML
+  - Implement calculation functions, validation, export (CSV/clipboard)
+  - Then design_style_guide.txt for CSS/layout details
+
 Choose or verify colors:
   - Read color_palette_guide.txt
   - Then design_style_guide.txt for application rules

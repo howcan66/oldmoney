@@ -1,0 +1,35 @@
+CSV + Email Workflow (Interest Calculator)
+
+1) Open the calculator:
+   - interestoninterest.html
+
+2) Enter values:
+   - Saving Start Amount
+   - Yearly Average Interest
+   - Monthly Savings
+   - Yearly Deposit
+
+3) Click Calculate.
+   - Results tables and summary appear.
+
+CSV Export:
+4) Click "Export to CSV" to download a CSV file.
+   - The file includes all 40 years.
+
+Email Results:
+5) Enter recipient email in the Email Results field.
+6) Click "Send Email".
+   - Requires serverless email function configured.
+
+Serverless Email Setup (Netlify):
+7) Set environment variables:
+   - SENDGRID_API_KEY
+   - SENDGRID_FROM (verified sender)
+8) Run locally with Netlify CLI:
+   netlify dev
+9) The endpoint used is:
+   /.netlify/functions/send-email
+
+Notes:
+- Email sends summary + CSV content in plain text.
+- If not configured, "Send Email" will show an error.

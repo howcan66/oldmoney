@@ -2,6 +2,9 @@
 /* Used by: interestoninterest.html */
 /* See design_style_guide.txt Section 16 for specifications */
 
+let lastResults = null;
+let lastSummary = null;
+
 /**
  * Calculate compound interest and populate tables
  */
@@ -67,12 +70,29 @@ function calculateInterest() {
                 
                 currentAmount = endBalance;
             }
+
+            lastResults = results;
+            lastSummary = {
+                startAmount,
+                endAmount: results[39].endAmount,
+                growth: results[39].endAmount - startAmount,
+                interestRate,
+                monthlySavings,
+                yearlyDeposit
+            };
             
             // Populate tables
             populateTables(results);
             
             // Update summary
-            updateSummary(startAmount, results[39].endAmount, results[39].endAmount - startAmount, interestRate);
+            updateSummary(
+                startAmount,
+                results[39].endAmount,
+                results[39].endAmount - startAmount,
+                interestRate,
+                monthlySavings,
+                yearlyDeposit
+            );
             
             // Show results section
             const resultsSection = document.getElementById('resultsSection');
@@ -109,6 +129,9 @@ function validateInputs(startAmount, interestRate, monthlySavings, yearlyDeposit
     const interestRateError = document.getElementById('interestRateError');
     const monthlySavingsError = document.getElementById('monthlySavingsError');
     const yearlyDepositError = document.getElementById('yearlyDepositError');
+
+    // Validate start amount
+    if (isNaN(startAmount) || startAmount < 0 || startAmount > 999999999) {
         if (startAmountError) {
             startAmountError.textContent = 'Please enter a valid amount (0-999,999,999)';
         }
@@ -159,7 +182,7 @@ function validateInputs(startAmount, interestRate, monthlySavings, yearlyDeposit
  */
 function clearErrors() {
     const errorElements = document.querySelectorAll('.error-message');
-    const inputs = document.querySelectorAll('.input-group input');
+    const inputs = document.querySelectorAll('.input-group input, .email-export-controls input');
     
     errorElements.forEach(el => {
         el.textContent = '';
@@ -214,11 +237,14 @@ function createTableRow(data) {
 /**
  * Update summary box with results
  */
-function updateSummary(initial, final, growth, interestRate) {
+function updateSummary(initial, final, growth, interestRate, monthlySavings, yearlyDeposit) {
     const summaryInitial = document.getElementById('summaryInitial');
     const summaryFinal = document.getElementById('summaryFinal');
     const summaryGrowth = document.getElementById('summaryGrowth');
     const summaryPercent = document.getElementById('summaryPercent');
+    const summaryRate = document.getElementById('summaryRate');
+    const summaryMonthly = document.getElementById('summaryMonthly');
+    const summaryYearlyDeposit = document.getElementById('summaryYearlyDeposit');
     
     if (summaryInitial) {
         summaryInitial.textContent = formatCurrency(initial);
@@ -226,6 +252,18 @@ function updateSummary(initial, final, growth, interestRate) {
     
     if (summaryFinal) {
         summaryFinal.textContent = formatCurrency(final);
+    }
+
+    if (summaryRate) {
+        summaryRate.textContent = `${interestRate}%`;
+    }
+
+    if (summaryMonthly) {
+        summaryMonthly.textContent = formatCurrency(monthlySavings);
+    }
+
+    if (summaryYearlyDeposit) {
+        summaryYearlyDeposit.textContent = formatCurrency(yearlyDeposit);
     }
     
     if (summaryGrowth) {
@@ -258,7 +296,112 @@ function clearInputs() {
     document.getElementById('interestRate').value = '';
     document.getElementById('monthlySavings').value = '';
     document.getElementById('yearlyDeposit').value = '';
+    const emailInput = document.getElementById('emailRecipient');
+    const emailError = document.getElementById('emailError');
+    const resultsSection = document.getElementById('resultsSection');
+
+    if (emailInput) {
+        emailInput.value = '';
+        emailInput.style.borderColor = '#ccc';
+    }
+    if (emailError) {
+        emailError.textContent = '';
+    }
+    if (resultsSection) {
+        resultsSection.style.display = 'none';
+    }
+
+    lastResults = null;
+    lastSummary = null;
+    clearErrors();
     showToast('Form cleared', 'success');
+}
+
+function buildCsvFromResults(results) {
+    let csvContent = 'Year,Start Amount,Interest,End Amount,Monthly Equiv.,Yearly Increase\n';
+
+    results.forEach(item => {
+        csvContent += [
+            item.year,
+            formatCurrency(item.startAmount),
+            formatCurrency(item.interest),
+            formatCurrency(item.endAmount),
+            formatCurrency(item.monthlyEquiv),
+            formatCurrency(item.yearlyIncrease)
+        ].join(',') + '\n';
+    });
+
+    return csvContent;
+}
+
+function buildSummaryText(summary) {
+    return [
+        `Initial Amount: ${formatCurrency(summary.startAmount)}`,
+        `After 40 Years: ${formatCurrency(summary.endAmount)}`,
+        `Total Growth: ${formatCurrency(summary.growth)}`,
+        `Yearly Average Interest: ${summary.interestRate}%`,
+        `Monthly Savings: ${formatCurrency(summary.monthlySavings)}`,
+        `Yearly Deposit: ${formatCurrency(summary.yearlyDeposit)}`
+    ].join('\n');
+}
+
+async function sendResultsByEmail() {
+    const emailInput = document.getElementById('emailRecipient');
+    const emailError = document.getElementById('emailError');
+
+    if (emailError) {
+        emailError.textContent = '';
+    }
+
+    if (!lastResults || !lastSummary) {
+        showToast('Please calculate results before sending email', 'error');
+        return;
+    }
+
+    const recipient = emailInput ? emailInput.value.trim() : '';
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!recipient || !emailPattern.test(recipient)) {
+        if (emailError) {
+            emailError.textContent = 'Please enter a valid email address';
+        }
+        if (emailInput) {
+            emailInput.style.borderColor = '#e74c3c';
+        }
+        return;
+    }
+
+    if (emailInput) {
+        emailInput.style.borderColor = '#ccc';
+    }
+
+    try {
+        const csvContent = buildCsvFromResults(lastResults);
+        const summaryText = buildSummaryText(lastSummary);
+
+        const response = await fetch('/.netlify/functions/send-email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: recipient,
+                subject: 'Interest Calculator Results',
+                text: summaryText,
+                csv: csvContent
+            })
+        });
+
+        if (!response.ok) {
+            const message = await response.text();
+            throw new Error(message || 'Email failed');
+        }
+
+        showToast('Email sent successfully!', 'success');
+    } catch (error) {
+        console.error('Email error:', error);
+        showToast('Error sending email', 'error');
+    }
 }
 
 /**

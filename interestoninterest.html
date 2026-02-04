@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Old Money - Interest Calculator</title>
+    <title>Old Money Genarational Money - Interest on Interest Calculator</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/calculator.css">
 </head>
 <body>
     <!-- Header -->
     <header class="header">
-        <div class="title">Old Money - Interest Calculator</div>
+        <div class="title">Old Money Genarational Money - Interest on Interest Calculator</div>
         <div class="nav-buttons">
             <div class="language-switcher">
                 <button class="lang-btn active" data-lang="sv" 
@@ -41,7 +41,8 @@
                 <input
                     type="number"
                     id="startAmount"
-                    value="1000"                    value="1000"                    placeholder="e.g., 10000"
+                    value="1000"
+                    placeholder="e.g., 1000"
                     min="0"
                     max="999999999"
                     step="0.01"
@@ -54,7 +55,8 @@
                 <input
                     type="number"
                     id="interestRate"
-                    value="3"                    value="3"                    placeholder="e.g., 7.5"
+                    value="3"
+                    placeholder="e.g., 3"
                     min="0"
                     max="100"
                     step="0.01"
@@ -68,7 +70,6 @@
                     type="number"
                     id="monthlySavings"
                     value="100"
-                    value="100"
                     placeholder="e.g., 1000"
                     min="0"
                     max="999999999"
@@ -76,7 +77,7 @@
                     aria-required="false">
                 <span class="error-message" id="monthlySavingsError"></span>
             </div>
-              <div class="input-group">
+            <div class="input-group">
                 <label for="yearlyDeposit">Yearly Deposit</label>
                 <input
                     type="number"
@@ -107,6 +108,18 @@
                     <span class="summary-value" id="summaryInitial">0.00</span>
                 </div>
                 <div class="summary-row">
+                    <span class="summary-label">Est. Yearly Average Interest (%):</span>
+                    <span class="summary-value" id="summaryRate">0%</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Est. Monthly Savings:</span>
+                    <span class="summary-value" id="summaryMonthly">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Est. Yearly Deposit:</span>
+                    <span class="summary-value" id="summaryYearlyDeposit">0.00</span>
+                </div>
+                <div class="summary-row">
                     <span class="summary-label">After 40 Years:</span>
                     <span class="summary-value" id="summaryFinal">0.00</span>
                 </div>
@@ -128,6 +141,21 @@
                 <button class="btn-export" onclick="copyToClipboard()" title="Copy table data to clipboard">
                     Copy to Clipboard
                 </button>
+            </div>
+
+            <div class="email-export">
+                <label for="emailRecipient">Email Results</label>
+                <div class="email-export-controls">
+                    <input
+                        type="email"
+                        id="emailRecipient"
+                        placeholder="name@example.com"
+                        aria-required="false">
+                    <button class="btn-export" onclick="sendResultsByEmail()" title="Send results by email">
+                        Send Email
+                    </button>
+                </div>
+                <span class="error-message" id="emailError"></span>
             </div>
 
             <!-- Collapsible Table Groups -->
@@ -209,25 +237,6 @@
             </div>
         </div>
 
-        <!-- Collapsible Links Section -->
-        <div class="links-section-container">
-            <div class="links-header" onclick="toggleLinks()" title="Click to expand/collapse">
-                <h3>External Links</h3>
-                <span class="toggle-icon" id="linksToggle">▼</span>
-            </div>
-            <div class="links-content" id="linksContent">
-                <ul class="links-list">
-                    <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL1</a></li>
-                    <li><a href="https://www.avanza.com" target="_blank" rel="noopener noreferrer">Test URL2</a></li>
-                    <li><a href="https://www.avanza.com" target="_blank" rel="noopener noreferrer">Test URL3</a></li>
-                    <li><a href="https://www.lysa.com" target="_blank" rel="noopener noreferrer">Test URL4</a></li>
-                    <li><a href="https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan" target="_blank" rel="noopener noreferrer">Test URL5</a></li>
-                    <li><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener noreferrer">Test URL6</a></li>
-                    <li><a href="https://www.dn.se" target="_blank" rel="noopener noreferrer">Test URL7</a></li>
-                    <li><a href="open_blank.html" target="_blank" rel="noopener noreferrer">Open Blank</a></li>
-                </ul>
-            </div>
-        </div>
     </main>
 
     <!-- Loading Overlay -->

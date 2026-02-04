@@ -4,18 +4,18 @@
 
 /* Calculator Inputs */
 .calculator-inputs {
-    margin: 20px 0;
+    margin: 12px 0;
     text-align: left;
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     text-align: left;
 }
 
 .input-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     font-weight: 500;
     text-align: left;
 }
@@ -27,7 +27,7 @@
 .input-group input {
     width: 100%;
     max-width: 300px;
-    padding: 8px 12px;
+    padding: 6px 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
@@ -38,18 +38,18 @@
     color: #e74c3c;
     font-size: 12px;
     display: block;
-    margin-top: 4px;
+    margin-top: 2px;
     text-align: left;
 }
 
 .action-buttons {
     display: flex;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 4px;
+    margin-top: 12px;
 }
 
 .btn-primary, .btn-secondary {
-    padding: 10px 20px;
+    padding: 6px 12px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -84,8 +84,8 @@
     background-color: #F5F5FA;
     border: 1px solid #283046;
     border-radius: 4px;
-    padding: 15px;
-    margin-bottom: 20px;
+    padding: 10px;
+    margin-bottom: 12px;
     text-align: left;
 }
 
@@ -97,7 +97,7 @@
 .summary-row {
     display: flex;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 6px 0;
     border-bottom: 1px solid #ddd;
     text-align: left;
 }
@@ -120,12 +120,12 @@
 /* Export Buttons */
 .export-buttons {
     display: flex;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: 4px;
+    margin-bottom: 12px;
 }
 
 .btn-export {
-    padding: 8px 16px;
+    padding: 6px 12px;
     background-color: #28a745;
     color: white;
     border: none;
@@ -138,13 +138,42 @@
     background-color: #218838;
 }
 
+.email-export {
+    margin-bottom: 12px;
+    text-align: left;
+}
+
+.email-export label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    text-align: left;
+}
+
+.email-export-controls {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.email-export-controls input {
+    flex: 1 1 240px;
+    max-width: 360px;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    text-align: left;
+}
+
 /* Table Groups */
 .table-groups {
     margin-top: 20px;
 }
 
 .table-group {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 4px;
 }
@@ -152,7 +181,7 @@
 .group-header {
     background-color: #283046;
     color: white;
-    padding: 12px 15px;
+    padding: 8px 10px;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
@@ -170,7 +199,7 @@
 }
 
 .group-content {
-    padding: 15px;
+    padding: 10px;
     text-align: left;
     display: none;
 }
@@ -192,7 +221,7 @@
 
 .results-table th,
 .results-table td {
-    padding: 10px;
+    padding: 6px;
     border: 1px solid #ddd;
     text-align: left;
 }

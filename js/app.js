@@ -48,3 +48,8 @@ function toggleLinks() {
         linksToggle.classList.toggle('expanded');
     }
 }
+
+// Generate timestamp helper
+function generateTimestamp() {
+    return new Date().toLocaleString();
+}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Money by Ommiting Out of Paying Church Tax - Are tou a strong believer Keep on Paying!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/calculator.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="title">Save Money by Ommiting Out of Paying Church Tax - Are tou a strong believer Keep on Paying!</div>
+        <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" 
+                        onclick="switchLanguage('sv')" 
+                        title="Byt till Svenska" 
+                        aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" 
+                        onclick="switchLanguage('en')" 
+                        title="Switch to English" 
+                        aria-pressed="false">EN</button>
+            </div>
+            <button class="refresh-btn" onclick="refreshPage()" 
+                    title="Refresh page">Refresh</button>
+            <button class="close-btn" onclick="closePage()" 
+                    title="Close window">Close</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <p class="description">Calculate income and savings projection over 40 years with salary increases and savings percentage.</p>
+
+        <!-- Calculator Inputs Section -->
+        <div class="calculator-inputs">
+            <div class="input-group">
+                <label for="annualIncome">Årsinkomst (kr) <span class="required">*</span></label>
+                <input
+                    type="number"
+                    id="annualIncome"
+                    value="300000"
+                    placeholder="e.g., 300000"
+                    min="0"
+                    max="999999999"
+                    step="0.01"
+                    aria-required="true">
+                <span class="error-message" id="annualIncomeError"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="salaryIncrease">Förväntad Löneökning (%) per år <span class="required">*</span></label>
+                <input
+                    type="number"
+                    id="salaryIncrease"
+                    value="2"
+                    placeholder="e.g., 2"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    aria-required="true">
+                <span class="error-message" id="salaryIncreaseError"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="savingsPercent">Avgift / Besparingsprocent (%) <span class="required">*</span></label>
+                <input
+                    type="number"
+                    id="savingsPercent"
+                    value="1.2"
+                    placeholder="e.g., 1.2"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    aria-required="true">
+                <span class="error-message" id="savingsPercentError"></span>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="calculateSavings()" title="Calculate savings projection">
+                    <span id="calculateBtnText">Calculate</span>
+                </button>
+                <button class="btn-secondary" onclick="clearChurchTaxInputs()" title="Clear all inputs">Clear</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <!-- Summary -->
+            <div class="summary-box">
+                <h3>Summary</h3>
+                <div class="summary-row">
+                    <span class="summary-label">Total Savings after 10 years:</span>
+                    <span class="summary-value" id="summary10">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total Savings after 30 years:</span>
+                    <span class="summary-value" id="summary30">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total Savings after 40 years:</span>
+                    <span class="summary-value" id="summary40">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total Salary Increase over 40 years:</span>
+                    <span class="summary-value" id="summaryIncreaseTotal">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Final Annual Income after 40 years:</span>
+                    <span class="summary-value" id="summaryFinalIncome">0.00</span>
+                </div>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="export-buttons">
+                <button class="btn-export" onclick="exportChurchTaxToCSV()" title="Export table to CSV file">
+                    Export to CSV
+                </button>
+                <button class="btn-export" onclick="copyChurchTaxToClipboard()" title="Copy table data to clipboard">
+                    Copy to Clipboard
+                </button>
+            </div>
+
+            <!-- Collapsible Table Groups -->
+            <div class="table-groups">
+                <!-- Group 1: Years 1-10 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('ctGroup1')" title="Click to expand/collapse">
+                        <h3>Years 1-10</h3>
+                        <span class="toggle-icon" id="ctGroup1Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="ctGroup1Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Income</th>
+                                        <th>Salary Increase</th>
+                                        <th>Annual Savings</th>
+                                        <th>Monthly Savings</th>
+                                        <th>Total Accumulated</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ctTableBody1"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Years 11-30 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('ctGroup2')" title="Click to expand/collapse">
+                        <h3>Years 11-30</h3>
+                        <span class="toggle-icon" id="ctGroup2Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="ctGroup2Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Income</th>
+                                        <th>Salary Increase</th>
+                                        <th>Annual Savings</th>
+                                        <th>Monthly Savings</th>
+                                        <th>Total Accumulated</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ctTableBody2"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Years 31-40 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('ctGroup3')" title="Click to expand/collapse">
+                        <h3>Years 31-40</h3>
+                        <span class="toggle-icon" id="ctGroup3Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="ctGroup3Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Income</th>
+                                        <th>Salary Increase</th>
+                                        <th>Annual Savings</th>
+                                        <th>Monthly Savings</th>
+                                        <th>Total Accumulated</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ctTableBody3"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Calculating...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>&copy; CoolPortals | 
+              <span id="footer-filename">kyrkoskatt.html</span> | 
+              <span id="footer-timestamp"></span></span>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/churchtax.js"></script>
+    <script>
+        document.getElementById('footer-timestamp').textContent = generateTimestamp();
+    </script>
+</body>
+</html>
