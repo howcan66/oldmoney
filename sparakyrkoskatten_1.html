@@ -899,6 +899,15 @@
             const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
 
             populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
+            
+            // Populate Monthly Loan Cost field with Year 1 loan cost
+            if (yearlyLoanInterest.length > 0 && yearlyLoanInterest[0]) {
+                const monthlyLoanCost = yearlyLoanInterest[0] / 12;
+                document.getElementById('monthlyLoanCost').value = formatCurrency(monthlyLoanCost);
+            } else {
+                document.getElementById('monthlyLoanCost').value = '0 kr';
+            }
+            
             updateInterestSummary(
                 startAmount,
                 results[39].endAmount,
