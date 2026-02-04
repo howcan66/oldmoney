@@ -186,6 +186,12 @@
     </div>
 
     <div class="input-group">
+        <label for="grossMonthlySavings" data-lang-sv="Månatligt sparande brutto" data-lang-en="Monthly Gross Savings">Månatligt sparande brutto</label>
+        <input type="text" id="grossMonthlySavings" placeholder="0.00" readonly>
+        <span id="grossMonthlySavingsError"></span>
+    </div>
+
+    <div class="input-group">
         <label for="yearlyDeposit" data-lang-sv="Årlig insättning" data-lang-en="Yearly Deposit">Årlig insättning</label>
         <input type="text" id="yearlyDeposit" placeholder="e.g., 1000" step="0.01">
         <span id="yearlyDepositError"></span>
@@ -876,12 +882,10 @@
             }
 
             // Get loan yearly interest data
-            const loanData = calculateLoanAmortization();
             if (yearlyLoanInterest.length === 0) {
                 yearlyLoanInterest = loanData.yearlyInterest || [];
             }
             const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
-
             populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
             
             // Populate Monthly Loan Cost field with Year 1 loan cost
@@ -890,6 +894,10 @@
             } else {
                 document.getElementById('monthlyLoanCost').value = '0 kr';
             }
+            
+            // Populate Monthly Gross Savings field (Monthly Savings - Monthly Loan Cost)
+            const monthlySavingsValue = baseMonthlySavings - monthlyLoanCostAvg;
+            document.getElementById('grossMonthlySavings').value = formatCurrency(monthlySavingsValue);
             
             updateInterestSummary(
                 startAmount,
@@ -1611,9 +1619,10 @@
         // - Låneränta: 3%
         
         function loadFinanceData() {
+            alert('VERSION CONFIRMATION: Commit 8f0ed5e - Problem version with alerts');
             const startAmount = localStorage.getItem('startAmount') || '50000';
             const interestRate = localStorage.getItem('interestRate') || '3';
-            const monthlySavings = localStorage.getItem('monthlySavings') || '2000';
+            const monthlySavings = localStorage.getItem('monthlySavings') || '0';
             alert('A) monthlySavings (default): ' + monthlySavings);
             const yearlyDeposit = localStorage.getItem('yearlyDeposit') || '0';
             const annualIncome = localStorage.getItem('annualIncome') || '300000';
@@ -1733,6 +1742,11 @@
         }
 
         function displayLoanAmortization(loanData) {
+            // Safety check - if elements don't exist, skip
+            if (!document.getElementById('loanSummaryAmount')) {
+                return;
+            }
+
             const { schedule, yearlyInterest, totalInterest, totalPrincipal } = loanData;
 
             // Update summary
