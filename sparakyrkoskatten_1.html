@@ -133,6 +133,20 @@
         button[id$="CollapseBtn"]:hover {
             background-color: #45a049;
         }
+
+        /* Toggle buttons - same width as Beräkna alla + Rensa combined */
+        button[id$="ToggleBtn"],
+        button[id$="CollapseBtn"] {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        /* Calculate and Clear buttons - each is half of toggle button width */
+        button[onclick="calculateBoth()"],
+        button[onclick="clearAllInputs()"] {
+            width: calc(50% - 5px);
+            max-width: 270px;
+        }
     </style>
 </head>
 <body>
@@ -164,6 +178,16 @@
         <label for="monthlySavings" data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</label>
         <input type="text" id="monthlySavings" placeholder="e.g., 100" step="0.01">
         <span id="monthlySavingsError"></span>
+        <div style="margin-top: 8px;">
+            <label style="font-weight: normal; margin-right: 15px;">
+                <input type="radio" name="savingsDeduction" value="0" checked>
+                <span data-lang-sv="Inget avdrag" data-lang-en="No deduction">Inget avdrag</span>
+            </label>
+            <label style="font-weight: normal;">
+                <input type="radio" name="savingsDeduction" value="loan">
+                <span data-lang-sv="Dra av låneavdrag" data-lang-en="Deduct loan payment">Dra av låneavdrag</span>
+            </label>
+        </div>
     </div>
 
     <div class="input-group">
@@ -192,7 +216,7 @@
 
     <div class="input-group">
         <label for="loanAmount" data-lang-sv="Lånebelopp" data-lang-en="Loan Amount">Lånebelopp</label>
-        <input type="text" id="loanAmount" value="100000" placeholder="e.g., 100000">
+        <input type="text" id="loanAmount" value="2500000" placeholder="e.g., 2500000">
         <span id="loanAmountError"></span>
     </div>
 
@@ -254,6 +278,23 @@
         <p data-lang-sv="Månatlig betalning: " data-lang-en="Monthly Payment: "><span id="loanSummaryPayment">0.00</span> kr</p>
         <p data-lang-sv="Låneränta: " data-lang-en="Loan Interest Rate: "><span id="loanSummaryRate">0%</span></p>
         <p data-lang-sv="Total ränta betald (40 år): " data-lang-en="Total Interest Paid (40 years): "><span id="loanSummaryTotalInterest">0.00</span> kr</p>
+
+        <h3 data-lang-sv="Årlig översikt (40 år)" data-lang-en="Yearly Overview (40 years)">Årlig översikt (40 år)</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Ingående saldo" data-lang-en="Beginning Balance">Ingående saldo</th>
+                    <th data-lang-sv="Årlig amortering" data-lang-en="Yearly Principal">Årlig amortering</th>
+                    <th data-lang-sv="Utgående saldo" data-lang-en="Ending Balance">Utgående saldo</th>
+                    <th data-lang-sv="Årsränta" data-lang-en="Loan Interest/Year">Årsränta</th>
+                    <th data-lang-sv="Snitt månadskostnad" data-lang-en="Avg Monthly Cost">Snitt månadskostnad</th>
+                </tr>
+            </thead>
+            <tbody id="loanYearlySummaryBody"></tbody>
+        </table>
+
+        <h3 data-lang-sv="Detaljerat månadsschema" data-lang-en="Detailed Monthly Schedule">Detaljerat månadsschema</h3>
 
         <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">År 1-10</h3>
         <table border="1">
@@ -413,7 +454,8 @@
                     <th>IoI Yearly Increase</th>
                     <th>Deposit/Withdrawal</th>
                     <th>Description</th>
-                    <th>Loan Interest/Year</th>
+                    <th>Loan Beginning Balance</th>
+                    <th>Loan Cost/month (avg)</th>
                 </tr>
             </thead>
             <tbody id="tableBody1"></tbody>
@@ -435,6 +477,12 @@
                     <th>Description</th>
                     <th>Loan Beginning Balance</th>
                     <th>Loan Cost/month (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody2"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
         <table border="1">
             <thead>
                 <tr>
@@ -450,7 +498,6 @@
                     <th>Description</th>
                     <th>Loan Beginning Balance</th>
                     <th>Loan Cost/month (avg)</th>
-                </tr>
                 </tr>
             </thead>
             <tbody id="tableBody3"></tbody>
@@ -757,11 +804,19 @@
         function calculateInterest() {
             const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
             const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
-            let monthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            const baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
             let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
 
-            if (isNaN(monthlySavings)) {
-                monthlySavings = 0;
+            // Get loan data for deduction calculation
+            const deductionType = document.querySelector('input[name="savingsDeduction"]:checked').value;
+            let yearlyLoanInterest = [];
+            if (deductionType === 'loan') {
+                const loanData = calculateLoanAmortization();
+                yearlyLoanInterest = loanData.yearlyInterest || [];
+            }
+
+            if (isNaN(baseMonthlySavings)) {
+                baseMonthlySavings = 0;
             }
             if (isNaN(yearlyDeposit)) {
                 yearlyDeposit = 0;
@@ -769,7 +824,7 @@
 
             clearErrors();
 
-            if (!validateInterestInputs(startAmount, interestRate, monthlySavings, yearlyDeposit)) {
+            if (!validateInterestInputs(startAmount, interestRate, baseMonthlySavings, yearlyDeposit)) {
                 return;
             }
 
@@ -778,6 +833,12 @@
             const monthlyRate = (interestRate / 100) / 12;
 
             for (let year = 1; year <= 40; year++) {
+                // Calculate monthly savings with deduction for this year
+                let monthlySavings = baseMonthlySavings;
+                if (deductionType === 'loan' && yearlyLoanInterest[year - 1]) {
+                    const monthlyInterestCost = yearlyLoanInterest[year - 1] / 12;
+                    monthlySavings = baseMonthlySavings - monthlyInterestCost;
+                }
                 const startBalance = currentAmount;
                 let totalInterest = 0;
                 let balance = startBalance + yearlyDeposit;
@@ -995,6 +1056,14 @@
             const salaryIncrease = parseFloat(unformatNumber(document.getElementById('salaryIncrease').value));
             const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
 
+            // Get loan data for deduction calculation
+            const deductionType = document.querySelector('input[name="savingsDeduction"]:checked').value;
+            let yearlyLoanInterest = [];
+            if (deductionType === 'loan') {
+                const loanData = calculateLoanAmortization();
+                yearlyLoanInterest = loanData.yearlyInterest || [];
+            }
+
             if (isNaN(monthlySavings)) {
                 monthlySavings = 0;
             }
@@ -1011,6 +1080,12 @@
             const monthlyRate = (interestRate / 100) / 12;
 
             for (let year = 1; year <= 40; year++) {
+                // Calculate monthly savings with deduction for this year
+                let yearMonthlySavings = monthlySavings;
+                if (deductionType === 'loan' && yearlyLoanInterest[year - 1]) {
+                    const monthlyInterestCost = yearlyLoanInterest[year - 1] / 12;
+                    yearMonthlySavings = monthlySavings - monthlyInterestCost;
+                }
                 if (year > 1) {
                     currentIncome = currentIncome * (1 + salaryIncrease / 100);
                 }
@@ -1022,7 +1097,7 @@
                 let balance = startBalance + yearlyDeposit;
 
                 for (let month = 1; month <= 12; month++) {
-                    balance += monthlySavings;
+                    balance += yearMonthlySavings;
                     const interest = balance * monthlyRate;
                     totalInterest += interest;
                     balance += interest;
@@ -1239,12 +1314,15 @@
         }
 
         function formatCurrency(value) {
-            return new Intl.NumberFormat('sv-SE', {
+            const isNegative = value < 0;
+            const absValue = Math.abs(value);
+            const formatted = new Intl.NumberFormat('sv-SE', {
                 style: 'currency',
                 currency: 'SEK',
                 minimumFractionDigits: 0,
                 maximumFractionDigits: 0
-            }).format(value);
+            }).format(absValue);
+            return isNegative ? '-' + formatted : formatted;
         }
 
         function formatNumber(value) {
@@ -1524,7 +1602,7 @@
             const annualIncome = localStorage.getItem('annualIncome');
             const salaryIncrease = localStorage.getItem('salaryIncrease');
             const savingsPercent = localStorage.getItem('savingsPercent');
-            const loanAmount = localStorage.getItem('loanAmount') || '100000';
+            const loanAmount = localStorage.getItem('loanAmount') || '2500000';
             const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
             const loanInterestRate = localStorage.getItem('loanInterestRate');
 
@@ -1611,9 +1689,10 @@
                             balance: 0
                         });
                     } else {
+                        // Calculate interest on current balance
                         const interestPayment = balance * monthlyRate;
-                        const principalPayment = Math.min(loanAmortization - interestPayment, balance);
-                        const totalPayment = interestPayment + principalPayment;
+                        // Amortization reduces the principal directly
+                        const principalPayment = Math.min(loanAmortization, balance);
                         balance = Math.max(0, balance - principalPayment);
 
                         yearInterest += interestPayment;
@@ -1648,6 +1727,39 @@
             document.getElementById('loanSummaryPayment').textContent = formatCurrency(loanAmortization);
             document.getElementById('loanSummaryRate').textContent = loanInterestRate.toFixed(1) + '%';
             document.getElementById('loanSummaryTotalInterest').textContent = formatCurrency(totalInterest);
+
+            // Populate yearly summary table
+            const yearlySummaryBody = document.getElementById('loanYearlySummaryBody');
+            if (yearlySummaryBody) {
+                yearlySummaryBody.innerHTML = '';
+                for (let year = 1; year <= 40; year++) {
+                    // Get the first month of this year to find beginning balance
+                    const monthIndex = (year - 1) * 12;
+                    if (monthIndex >= schedule.length) break;
+                    
+                    const firstMonth = schedule[monthIndex];
+                    const lastMonthIndex = Math.min(monthIndex + 11, schedule.length - 1);
+                    const lastMonth = schedule[lastMonthIndex];
+                    
+                    // Calculate beginning balance (before first payment of the year)
+                    const beginningBalance = monthIndex === 0 ? loanAmount : schedule[monthIndex - 1].balance;
+                    const endingBalance = lastMonth.balance;
+                    const yearlyPrincipal = loanAmortization * 12;
+                    const yearInterest = yearlyInterest[year - 1] || 0;
+                    const monthlyAvgCost = yearInterest / 12;
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${year}</td>
+                        <td>${formatCurrency(beginningBalance)}</td>
+                        <td>${formatCurrency(yearlyPrincipal)}</td>
+                        <td>${formatCurrency(endingBalance)}</td>
+                        <td>${formatCurrency(yearInterest)}</td>
+                        <td>${formatCurrency(monthlyAvgCost)}</td>
+                    `;
+                    yearlySummaryBody.appendChild(tr);
+                }
+            }
 
             // Define table bodies
             const tables = [
