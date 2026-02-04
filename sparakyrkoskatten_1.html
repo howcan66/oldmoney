@@ -180,11 +180,11 @@
         <span id="monthlySavingsError"></span>
         <div style="margin-top: 8px;">
             <label style="font-weight: normal; margin-right: 15px;">
-                <input type="radio" name="savingsDeduction" value="0">
+                <input type="radio" name="savingsDeduction" value="0" checked>
                 <span data-lang-sv="Inget avdrag" data-lang-en="No deduction">Inget avdrag</span>
             </label>
             <label style="font-weight: normal;">
-                <input type="radio" name="savingsDeduction" value="loan" checked>
+                <input type="radio" name="savingsDeduction" value="loan">
                 <span data-lang-sv="Dra av låneavdrag" data-lang-en="Deduct loan payment">Dra av låneavdrag</span>
             </label>
         </div>
@@ -1802,28 +1802,6 @@
             document.getElementById('loanResults').style.display = 'none';
         }
 
-        function updateMonthlySavingsOnButtonChange() {
-            const radioButtons = document.querySelectorAll('input[name="savingsDeduction"]');
-            radioButtons.forEach(button => {
-                button.addEventListener('change', function() {
-                    if (this.value === 'loan') {
-                        // Button 2 selected: calculate and display the negative result
-                        const loanData = calculateLoanAmortization();
-                        const yearlyLoanInterest = loanData.yearlyInterest || [];
-                        if (yearlyLoanInterest[0]) {
-                            const monthlyInterestCost = yearlyLoanInterest[0] / 12;
-                            const baseSavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value)) || 0;
-                            const result = baseSavings - monthlyInterestCost;
-                            document.getElementById('monthlySavings').value = formatNumber(result.toString());
-                        }
-                    } else {
-                        // Button 1 selected: restore original value (if needed)
-                        loadFinanceData();
-                    }
-                });
-            });
-        }
-
         window.addEventListener('load', function() {
             const savedLang = localStorage.getItem('lang') || 'sv';
             applyLanguage(savedLang);
@@ -1840,9 +1818,6 @@
             addNumberFormatting('loanAmount');
             addNumberFormatting('loanAmortization');
             addNumberFormatting('loanInterestRate');
-            
-            // Setup radio button change listener for monthly savings calculation
-            updateMonthlySavingsOnButtonChange();
             
             const footerTimestamp = document.getElementById('footer-timestamp');
             if (footerTimestamp) {
