@@ -804,7 +804,7 @@
         function calculateInterest() {
             const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
             const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
-            const baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            let baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
             let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
 
             // Get loan data for deduction calculation
