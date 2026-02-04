@@ -1595,7 +1595,7 @@
         }
 
         function loadFinanceData() {
-            const startAmount = localStorage.getItem('startAmount');
+            const startAmount = localStorage.getItem('startAmount') || '50000';
             const interestRate = localStorage.getItem('interestRate');
             const monthlySavings = localStorage.getItem('monthlySavings');
             const yearlyDeposit = localStorage.getItem('yearlyDeposit');
