@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clean Time Design</title>
+    <style>
+        :root {
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #0f172a;
+            --muted: #64748b;
+            --accent: #2563eb;
+        }
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        header, footer {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 20px;
+        }
+        footer { border-top: 1px solid var(--border); border-bottom: none; }
+        header h1 { margin: 0 0 4px 0; font-size: 20px; }
+        header p { margin: 0; color: var(--muted); font-size: 13px; }
+
+        main {
+            padding: 20px;
+            display: flex;
+            gap: 16px;
+            align-items: stretch;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .swimlane {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 260px;
+            transition: width 0.2s ease, min-width 0.2s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0;
+        }
+        .swimlane-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+        }
+        .swimlane-title { font-weight: 600; }
+        .swimlane-toggle {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--accent);
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .swimlane-content {
+            padding: 16px;
+            display: block;
+            min-height: 120px;
+            flex: 1;
+        }
+        .swimlane.collapsed {
+            min-width: 48px;
+            max-width: 48px;
+            width: 48px;
+            flex: 0 0 48px;
+        }
+        .swimlane.collapsed .swimlane-content { display: none; }
+        .swimlane.collapsed .swimlane-header {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 6px;
+            border-bottom: none;
+        }
+        .swimlane.collapsed .swimlane-title {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+        }
+        .swimlane.collapsed .swimlane-toggle {
+            padding: 4px 6px;
+            font-size: 11px;
+        }
+
+        .column {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .column h3 { margin: 0 0 8px 0; font-size: 14px; color: var(--muted); }
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .card:last-child { margin-bottom: 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Time Design</h1>
+        <p>Clean layout with collapsible swimlanes and columns.</p>
+    </header>
+
+    <main>
+        <section class="swimlane" id="swimlane-idea">
+            <div class="swimlane-header">
+                <div class="swimlane-title">Swimlane: Discovery</div>
+                <button class="swimlane-toggle" onclick="toggleLane('swimlane-idea')">Collapse</button>
+            </div>
+            <div class="swimlane-content">
+            </div>
+        </section>
+
+        <section class="swimlane" id="swimlane-build">
+            <div class="swimlane-header">
+                <div class="swimlane-title">Swimlane: Build</div>
+                <button class="swimlane-toggle" onclick="toggleLane('swimlane-build')">Collapse</button>
+            </div>
+            <div class="swimlane-content">
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <small>Clean Time Design • Collapsible swimlanes</small>
+    </footer>
+
+    <script>
+        function toggleLane(id) {
+            const lane = document.getElementById(id);
+            if (!lane) return;
+            lane.classList.toggle('collapsed');
+            const btn = lane.querySelector('.swimlane-toggle');
+            if (btn) btn.textContent = lane.classList.contains('collapsed') ? 'Expand' : 'Collapse';
+            
+            // Exclusive collapse logic: when one expands, collapse the other
+            const otherLaneId = id === 'swimlane-idea' ? 'swimlane-build' : 'swimlane-idea';
+            const otherLane = document.getElementById(otherLaneId);
+            if (!otherLane) return;
+            
+            // If current lane is now expanded (no 'collapsed' class), collapse the other
+            if (!lane.classList.contains('collapsed')) {
+                otherLane.classList.add('collapsed');
+                const otherBtn = otherLane.querySelector('.swimlane-toggle');
+                if (otherBtn) otherBtn.textContent = 'Expand';
+            }
+            // If current lane is now collapsed, expand the other
+            else {
+                otherLane.classList.remove('collapsed');
+                const otherBtn = otherLane.querySelector('.swimlane-toggle');
+                if (otherBtn) otherBtn.textContent = 'Collapse';
+            }
+        }
+    </script>
+</body>
+</html>

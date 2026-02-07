@@ -1,0 +1,105 @@
+ERROR REPORT: DESTROYED REPORT FILES - ANALYSIS AND SOLUTIONS
+================================================================
+
+MAIN PROBLEM:
+- Reports (interest calculation tables) are not displaying data
+- JavaScript errors prevent page from loading properly
+- Calculator appears broken/destroyed
+
+PRIMARY ERROR FOUND:
+- Line 879: Duplicate variable declaration "const loanData"
+- Error message: "Identifier 'loanData' has already been declared"
+- Cause: loanData was declared twice:
+  * Line 813: First declaration in calculateInterest() function
+  * Line 879: Second declaration (duplicate) - THIS BREAKS THE CODE
+- Solution: Remove second declaration on line 879, reuse first one from line 813
+
+CODE LOCATIONS INVOLVED:
+1. Line 813: const loanData = calculateLoanAmortization();
+   - First declaration - this is correct, keep this one
+   
+2. Line 879: const loanData = calculateLoanAmortization();
+   - Duplicate declaration - CAUSES SYNTAX ERROR, must be removed
+   - Already fixed by removing this line
+
+3. Function loadFinanceData() (line ~1613):
+   - Loads data from localStorage with defaults
+   - monthlySavings default: 2000 (should be 0)
+   - Called on page load via window.addEventListener('load')
+
+4. Function calculateInterest() (line ~800):
+   - Reads baseMonthlySavings from input field
+   - Calculates monthly savings minus loan cost
+   - Builds results array with 40 years of data
+   - Calls populateInterestTables() to display results
+
+5. Function populateInterestTables() (line ~957):
+   - Takes results array and populates HTML tables
+   - Groups data into 3 tables (years 0-10, 10-30, 30-40)
+   - If results array is empty or undefined, tables show nothing
+
+CONTRIBUTING ISSUES:
+1. Browser Cache Problem:
+   - Old broken versions cached in browser
+   - Hard refresh (Ctrl+Shift+R) may not clear it fully
+   - Solution: Clear browser storage (F12 → Application → Clear All)
+   - Or use private/incognito window
+
+2. localStorage Corruption:
+   - Old broken data stored locally may cause issues
+   - Fix: Clear localStorage via console.log:
+     localStorage.clear();
+     location.reload();
+
+3. Multiple Alert Statements:
+   - Line 1614: alert('VERSION CONFIRMATION: Commit 8f0ed5e...')
+   - Line 1617: alert('A) monthlySavings (default): ' + monthlySavings)
+   - Alerts block JavaScript execution
+   - Can prevent proper table population
+   - Solution: Remove alerts or use console.log instead
+
+4. Variable Name Confusion:
+   - monthlySavings = default value (from localStorage or 2000)
+   - baseMonthlySavings = actual user input from field
+   - monthlyLoanCostAvg = calculated from yearly loan interest
+   - adjustedMonthlySavings = baseMonthlySavings - monthlyLoanCostAvg
+   - Code must use correct variable in calculations
+
+GIT HISTORY RELEVANT COMMITS:
+- c28d36a: Last fully working version ("Apply monthly loan cost average...")
+- 8f0ed5e: Where problem started (alerts added, duplicate loanData introduced)
+- 0dd52c7: Earlier version (monthly savings renamed to "Monthly Gross Savings")
+- Multiple debugging commits in between that added/removed alerts
+
+CURRENT STATE:
+- Checked out at commit 8f0ed5e (problem version)
+- Fixed: Removed duplicate loanData declaration on line 879
+- Pending: Test if reports now display after syntax error fix
+- Pending: Remove or replace alerts with console.log
+- Pending: Set default value from 2000 to 0 (user's original request)
+
+STEPS TO FULLY SOLVE:
+1. ✓ Fix duplicate loanData declaration (DONE)
+2. Test browser to confirm reports display
+3. Remove debug alerts (lines 1614, 1617)
+4. Change default monthlySavings from '2000' to '0' (line 1617)
+5. Test all functionality with clean localStorage
+6. Verify calculations work with user input
+7. Commit clean working version to main branch
+
+BROWSER DEBUGGING COMMANDS:
+To check localStorage in browser console (F12):
+  console.log('monthlySavings:', localStorage.getItem('monthlySavings'));
+  console.log('Field value:', document.getElementById('monthlySavings').value);
+
+To clear everything and restart:
+  localStorage.clear();
+  location.reload();
+
+To see calculation values:
+  Open F12 → Console tab and observe what values are loaded/calculated
+
+KEY INSIGHT:
+The syntax error (duplicate loanData) was BLOCKING all JavaScript execution,
+which is why the page appeared "destroyed" - not because the calculation
+logic is broken, but because the JavaScript couldn't even run!

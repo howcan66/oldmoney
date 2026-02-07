@@ -1,0 +1,1506 @@
+ALERT FUNCTIONALITY AND CALCULATION DOCUMENTATION
+===================================================
+
+This document traces the creation and implementation of alert functionality to solve 
+the Månatligt sparande (Monthly Savings) calculation issue, including all three related 
+fields and their real code.
+
+
+SECTION 1: THE THREE INTERCONNECTED FIELDS
+============================================
+
+1. MÅNATLIGT SPARANDE (Monthly Savings) - USER INPUT FIELD
+   - What: The amount user wants to save each month
+   - Default: 0 kr (changed from 2000)
+   - User can change this value
+   - Stored in localStorage as 'monthlySavings'
+   - HTML Element ID: monthlySavings
+
+2. MÅNATLIG LÅNEKOSTNAD (Monthly Loan Cost) - CALCULATED READ-ONLY FIELD
+   - What: Average monthly loan interest cost
+   - Calculated from: yearlyLoanInterest[0] / 12
+   - User CANNOT change this (read-only)
+   - Updated on each calculation
+   - HTML Element ID: monthlyLoanCost
+
+3. MÅNATLIGT SPARANDE BRUTTO (Monthly Gross Savings) - CALCULATED READ-ONLY FIELD
+   - What: Net monthly savings after loan cost deduction
+   - Formula: baseMonthlySavings - monthlyLoanCostAvg
+   - User CANNOT change this (read-only)
+   - Updated on each calculation
+   - HTML Element ID: grossMonthlySavings (NEWLY ADDED)
+
+
+SECTION 2: HTML INPUT FIELDS - REAL CODE
+==========================================
+
+<!-- MÅNATLIGT SPARANDE (Monthly Savings) - USER INPUT -->
+<div class="input-group">
+    <label for="monthlySavings" data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</label>
+    <input type="text" id="monthlySavings" placeholder="e.g., 5000" step="0.01">
+    <span id="monthlySavingsError"></span>
+</div>
+
+<!-- MÅNATLIG LÅNEKOSTNAD (Monthly Loan Cost) - CALCULATED READ-ONLY -->
+<div class="input-group">
+    <label for="monthlyLoanCost" data-lang-sv="Månatlig lånekostnad" data-lang-en="Monthly Loan Cost">Månatlig lånekostnad</label>
+    <input type="text" id="monthlyLoanCost" placeholder="0.00" readonly>
+</div>
+
+<!-- MÅNATLIGT SPARANDE BRUTTO (Monthly Gross Savings) - CALCULATED READ-ONLY (NEWLY ADDED) -->
+<div class="input-group">
+    <label for="grossMonthlySavings" data-lang-sv="Månatligt sparande brutto" data-lang-en="Monthly Gross Savings">Månatligt sparande brutto</label>
+    <input type="text" id="grossMonthlySavings" placeholder="0.00" readonly>
+    <span id="grossMonthlySavingsError"></span>
+</div>
+
+
+SECTION 3: DATA LOADING - MÅNATLIGT SPARANDE DEFAULT
+=====================================================
+
+Real Code - loadFinanceData() function (lines 1613-1642 in sparakyrkoskatten_3.html):
+
+function loadFinanceData() {
+    alert('VERSION CONFIRMATION: Commit 8f0ed5e - Problem version with alerts');
+    
+    // FORCE CLEAR old monthlySavings value to use new default of 0
+    if (localStorage.getItem('monthlySavings') && localStorage.getItem('monthlySavings') !== '0') {
+        localStorage.setItem('monthlySavings', '0');
+    }
+    
+    const startAmount = localStorage.getItem('startAmount') || '50000';
+    const interestRate = localStorage.getItem('interestRate') || '3';
+    const monthlySavings = localStorage.getItem('monthlySavings') || '0';  // DEFAULT CHANGED FROM 2000 TO 0
+    alert('A) monthlySavings (default): ' + monthlySavings);
+    const yearlyDeposit = localStorage.getItem('yearlyDeposit') || '0';
+    const annualIncome = localStorage.getItem('annualIncome') || '300000';
+    const salaryIncrease = localStorage.getItem('salaryIncrease') || '2';
+    const savingsPercent = localStorage.getItem('savingsPercent') || '1.2';
+    const loanAmount = localStorage.getItem('loanAmount') || '2500000';
+    const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
+    const loanInterestRate = localStorage.getItem('loanInterestRate') || '3';
+
+    // Display all values in HTML fields with formatting
+    document.getElementById('startAmount').value = formatNumber(startAmount);
+    document.getElementById('interestRate').value = formatNumber(interestRate);
+    document.getElementById('monthlySavings').value = formatNumber(monthlySavings);
+    document.getElementById('yearlyDeposit').value = formatNumber(yearlyDeposit);
+    document.getElementById('annualIncome').value = formatNumber(annualIncome);
+    document.getElementById('salaryIncrease').value = formatNumber(salaryIncrease);
+    document.getElementById('savingsPercent').value = formatNumber(savingsPercent);
+    document.getElementById('loanAmount').value = formatNumber(loanAmount);
+    document.getElementById('loanAmortization').value = formatNumber(loanAmortization);
+    document.getElementById('loanInterestRate').value = formatNumber(loanInterestRate);
+}
+
+KEY POINTS:
+- Line 1616: Default changed from '2000' to '0'
+- Lines 1617-1620: Force clear old 2000 value and replace with 0
+- This runs on page load via: window.addEventListener('load', ...)
+
+
+SECTION 4: CALCULATION - THE THREE FIELDS IN ACTION
+====================================================
+
+Real Code - calculateInterest() function (lines ~800-920 in sparakyrkoskatten_3.html):
+
+function calculateInterest() {
+    // ... validation code ...
+    
+    // READ USER INPUT FROM MÅNATLIGT SPARANDE FIELD
+    let baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+    
+    // GET LOAN DATA FOR MONTHLY LOAN COST CALCULATION
+    const loanData = calculateLoanAmortization();
+    const yearlyLoanInterest = loanData.yearlyInterest || [];
+    const monthlyLoanCostAvg = yearlyLoanInterest.length > 0 ? (yearlyLoanInterest[0] / 12) : 0;
+    
+    // VALIDATE
+    if (isNaN(baseMonthlySavings)) {
+        baseMonthlySavings = 0;
+    }
+    
+    // MAIN CALCULATION LOOP - USES GROSS SAVINGS
+    const results = [];
+    let currentAmount = startAmount;
+    const monthlyRate = (interestRate / 100) / 12;
+
+    for (let year = 1; year <= 40; year++) {
+        // **THIS IS WHERE GROSS SAVINGS IS CALCULATED AND USED**
+        // Formula: baseMonthlySavings - monthlyLoanCostAvg
+        const monthlySavings = baseMonthlySavings - monthlyLoanCostAvg;
+        
+        const startBalance = currentAmount;
+        let totalInterest = 0;
+        let balance = startBalance + yearlyDeposit;
+        let monthlyAccumulated = 0;
+
+        // Apply monthly savings for 12 months
+        for (let month = 1; month <= 12; month++) {
+            balance += monthlySavings;  // Uses the GROSS savings (after loan deduction)
+            monthlyAccumulated += monthlySavings;
+            const interest = balance * monthlyRate;
+            totalInterest += interest;
+            balance += interest;
+        }
+        
+        // Store result with the gross savings value
+        results.push({
+            year: year,
+            startAmount: startBalance,
+            monthlySavings: monthlySavings,  // This is the GROSS savings
+            accumulatedValue: monthlyAccumulated + yearlyDeposit,
+            interest: totalInterest,
+            endAmount: finalBalance,
+            // ... other data ...
+        });
+    }
+    
+    // ... rest of calculation ...
+}
+
+KEY POINTS:
+- Line 808: baseMonthlySavings = user input from field
+- Line 813: monthlyLoanCostAvg = calculated from loan
+- Line 835: monthlySavings = baseMonthlySavings - monthlyLoanCostAvg (THE GROSS SAVINGS CALCULATION)
+- This monthlySavings value is used in all 40-year calculations
+
+
+SECTION 5: DISPLAY - UPDATE THE MÅNATLIG LÅNEKOSTNAD AND MÅNATLIGT SPARANDE BRUTTO FIELDS
+==========================================================================================
+
+Real Code - Still in calculateInterest(), lines 894-905:
+
+// Populate Monthly Loan Cost field with Year 1 loan cost
+if (yearlyLoanInterest.length > 0 && yearlyLoanInterest[0]) {
+    document.getElementById('monthlyLoanCost').value = formatCurrency(monthlyLoanCostAvg);
+} else {
+    document.getElementById('monthlyLoanCost').value = '0 kr';
+}
+
+// **NEW CODE - Populate Monthly Gross Savings field (Monthly Savings - Monthly Loan Cost)**
+const monthlySavingsValue = baseMonthlySavings - monthlyLoanCostAvg;
+document.getElementById('grossMonthlySavings').value = formatCurrency(monthlySavingsValue);
+
+// Update summary
+updateInterestSummary(
+    startAmount,
+    results[39].endAmount,
+    results[39].endAmount - startAmount,
+    interestRate,
+    monthlySavings,  // Uses the calculated gross savings
+    yearlyDeposit
+);
+
+KEY POINTS:
+- Line 897: monthlyLoanCost field populated with calculated loan cost
+- Line 902-903: grossMonthlySavings field populated with the result of: baseMonthlySavings - monthlyLoanCostAvg
+- This happens after all 40 years of calculations
+
+
+SECTION 6: COMPLETE CALCULATION FLOW DIAGRAM
+==============================================
+
+USER INPUT:
+    Månatligt sparande field → baseMonthlySavings
+    (e.g., user types 10,000 kr)
+
+                    ↓
+
+LOAN CALCULATION:
+    calculateLoanAmortization() → yearlyLoanInterest[0] → monthlyLoanCostAvg (÷ 12)
+    (e.g., 5,805 kr / 12 = 483.75 kr per month)
+
+                    ↓
+
+GROSS SAVINGS CALCULATION:
+    monthlySavings = baseMonthlySavings - monthlyLoanCostAvg
+    monthlySavings = 10,000 - 483.75 = 9,516.25 kr
+
+                    ↓
+
+DISPLAY TO USER:
+    Field 1: Månatligt sparande = 10,000 kr (user's input, from field)
+    Field 2: Månatlig lånekostnad = 483.75 kr (calculated)
+    Field 3: Månatligt sparande brutto = 9,516.25 kr (calculated result of 1-2)
+
+                    ↓
+
+40-YEAR CALCULATION:
+    Each month: Apply 9,516.25 kr to savings account for 40 years
+    Results shown in tables
+
+
+SECTION 7: ALERT DEBUGGING - HOW ALERTS WERE USED
+==================================================
+
+Alert 1 - Line 1614:
+alert('VERSION CONFIRMATION: Commit 8f0ed5e - Problem version with alerts');
+Purpose: Confirm which version is loaded
+
+Alert 2 - Line 1617:
+alert('A) monthlySavings (default): ' + monthlySavings);
+Purpose: Show what default value is being loaded for monthlySavings
+
+These alerts helped verify:
+1. That the page was loading
+2. That localStorage was being read
+3. What default values were being applied
+4. Whether the new default of 0 was actually being used
+
+PROBLEM WITH ALERTS:
+- alert() blocks JavaScript execution
+- Prevented report tables from populating
+- Required all alerts to be removed for final working version
+
+
+SECTION 8: ERROR FIXES APPLIED
+===============================
+
+1. Duplicate loanData Declaration (Line 879):
+   BEFORE: const loanData = calculateLoanAmortization();  // Declared TWICE
+   AFTER: Removed second declaration, reused first one
+   Result: Fixed "Identifier 'loanData' has already been declared" error
+
+2. Null Check in displayLoanAmortization (Line 1744):
+   BEFORE: Direct access to document elements that might not exist
+   AFTER: Added null check to prevent "Cannot set properties of null" error
+   
+   if (!document.getElementById('loanSummaryAmount')) {
+       return;  // Skip if elements not ready
+   }
+   Result: Prevents crashes if called before page fully loads
+
+3. localStorage Clearing:
+   BEFORE: localStorage still contained old value 2000
+   AFTER: Code now forces update to new default 0
+   Result: New default actually displays instead of cached value
+
+
+SECTION 9: REAL CALCULATION EXAMPLE
+====================================
+
+Scenario: User opens page
+
+Step 1: PAGE LOADS
+- loadFinanceData() runs
+- localStorage.getItem('monthlySavings') returns '2000' (old saved value)
+- Code checks: if value != '0', then set it to '0'
+- localStorage now has '0'
+- Field displays: 0 kr
+
+Step 2: USER ENTERS MONTHLY SAVINGS
+- User types 15,000 in Månatligt sparande field
+- Field now shows: 15 000 kr
+
+Step 3: USER TRIGGERS CALCULATION
+- Click any button or change field
+- calculateInterest() runs
+
+Step 4: CALCULATION PROCESSES
+- baseMonthlySavings = parseFloat(unformatNumber("15 000")) = 15000
+- loanData = calculateLoanAmortization()
+- yearlyLoanInterest = [69660, 69120, ...]  (yearly interest values)
+- monthlyLoanCostAvg = 69660 / 12 = 5805 kr
+- monthlySavings (gross) = 15000 - 5805 = 9195 kr
+
+Step 5: FIELDS UPDATED
+- Månatligt sparande = 15 000 kr (shown as user entered)
+- Månatlig lånekostnad = 5 805 kr (calculated)
+- Månatligt sparande brutto = 9 195 kr (calculated: 15000 - 5805)
+
+Step 6: REPORTS GENERATED
+- All 40 years of tables use 9,195 kr as monthly savings
+- Interest compounded on 9,195 kr each month
+- Final amount calculated based on 9,195 kr monthly additions
+
+CONCLUSION:
+===========
+
+The three fields work together as a system:
+1. User enters: Månatligt sparande (Monthly Savings input)
+2. System calculates: Månatlig lånekostnad (Monthly Loan Cost)
+3. System displays result: Månatligt sparande brutto (Gross Savings = Input - Loan Cost)
+4. System uses the gross savings in all further calculations
+
+This ensures users see:
+- What they're saving (field 1)
+- What the loan costs monthly (field 2)
+- What's left after loan costs (field 3)
+- And all calculations use the correct "net" savings amount
+
+
+SECTION 10: SYSTEMATIC ALERT PLACEMENT PROCESS
+================================================
+
+PURPOSE: Use strategic alerts to trace the flow of Monthly Savings data through
+the calculation system to identify where problems occur.
+
+ALERT PLACEMENT STRATEGY:
+
+Phase 1: LOAD-TIME VERIFICATION (Page Load)
+-------------------------------------------
+Alert 1A - Confirm version loaded
+Location: loadFinanceData() - line 1614
+Code: alert('VERSION CONFIRMATION: Loaded version with alerts');
+What to look for: Does this alert appear on page load?
+Result: Confirms JavaScript is executing
+
+Alert 1B - Show default monthlySavings value
+Location: loadFinanceData() - line 1617
+Code: alert('monthlySavings (default from localStorage): ' + monthlySavings);
+What to look for: What value is displayed? (0 or 2000?)
+Result: Confirms if default was overridden by old localStorage value
+
+Alert 1C - Show field value after display
+Location: loadFinanceData() - after line 1630
+Code: alert('monthlySavings field now displays: ' + 
+           document.getElementById('monthlySavings').value);
+What to look for: Does field value match expected default?
+Result: Confirms HTML field received the value
+
+
+Phase 2: INPUT READING (When User Enters Value)
+------------------------------------------------
+Alert 2A - Show raw field value before formatting removed
+Location: calculateInterest() - line 808
+Code: alert('baseMonthlySavings RAW from field: ' + 
+           document.getElementById('monthlySavings').value);
+What to look for: Does it show user's input with formatting? (e.g., "15 000")
+Result: Confirms field contains user's entered value
+
+Alert 2B - Show value after unformatNumber()
+Location: calculateInterest() - after line 808
+Code: alert('baseMonthlySavings AFTER unformatNumber: ' + baseMonthlySavings);
+What to look for: Is formatting removed? (e.g., 15000 not "15 000")
+Result: Confirms unformatNumber() works correctly
+
+Alert 2C - Show if NaN check triggered
+Location: calculateInterest() - after line 819
+Code: if (isNaN(baseMonthlySavings)) {
+         alert('ERROR: baseMonthlySavings is NaN! Setting to 0');
+      }
+What to look for: Does this alert appear?
+Result: If yes = problem with number parsing
+
+
+Phase 3: LOAN COST CALCULATION (Getting Loan Data)
+---------------------------------------------------
+Alert 3A - Show loanData structure
+Location: calculateInterest() - after line 813
+Code: alert('loanData.yearlyInterest[0]: ' + 
+           (loanData.yearlyInterest ? loanData.yearlyInterest[0] : 'UNDEFINED'));
+What to look for: Is yearlyInterest[0] a number?
+Result: Confirms loan calculation is working
+
+Alert 3B - Show monthlyLoanCostAvg calculation
+Location: calculateInterest() - after line 815
+Code: alert('monthlyLoanCostAvg: ' + monthlyLoanCostAvg);
+What to look for: What value is calculated? (should be positive number)
+Result: Confirms loan cost is calculated correctly
+
+
+Phase 4: GROSS SAVINGS CALCULATION (The Critical Formula)
+----------------------------------------------------------
+Alert 4A - Show inputs to formula
+Location: calculateInterest() - in the loop at line 835
+Code: alert('Year 1 Calculation: baseMonthlySavings=' + baseMonthlySavings + 
+           ', monthlyLoanCostAvg=' + monthlyLoanCostAvg);
+What to look for: Are both values present and correct?
+Result: Confirms both inputs to formula are available
+
+Alert 4B - Show result of formula
+Location: calculateInterest() - after line 835
+Code: alert('Year 1 monthlySavings (GROSS): ' + monthlySavings);
+What to look for: Is result = baseMonthlySavings - monthlyLoanCostAvg?
+Result: Confirms formula calculated correctly
+
+Alert 4C - Show if negative (important!)
+Location: calculateInterest() - after line 835
+Code: if (monthlySavings < 0) {
+         alert('WARNING: Gross Savings is NEGATIVE: ' + monthlySavings + 
+               ' kr. Loan cost exceeds savings!');
+      }
+What to look for: Does this appear when it should?
+Result: Confirms detection of when savings go negative
+
+
+Phase 5: TABLE POPULATION (Display Results)
+--------------------------------------------
+Alert 5A - Show results array length
+Location: calculateInterest() - before populateInterestTables()
+Code: alert('results array has ' + results.length + ' years of data');
+What to look for: Should be 40
+Result: Confirms all 40 years calculated
+
+Alert 5B - Show first year data
+Location: calculateInterest() - before populateInterestTables()
+Code: alert('Year 1 results: startAmount=' + results[0].startAmount + 
+           ', monthlySavings=' + results[0].monthlySavings);
+What to look for: Does monthlySavings match calculated gross savings?
+Result: Confirms data structure is correct
+
+Alert 5C - Confirm field updates
+Location: calculateInterest() - after populating grossMonthlySavings field
+Code: alert('grossMonthlySavings field updated to: ' + 
+           document.getElementById('grossMonthlySavings').value);
+What to look for: Does it match the calculated value?
+Result: Confirms field was successfully updated
+
+
+SECTION 11: WHAT TO LOOK FOR - DIAGNOSTIC CHECKLIST
+=====================================================
+
+CRITICAL CHECKPOINTS:
+
+1. Version & Initialization:
+   ☐ Alert 1A appears? (Page loaded successfully)
+   ☐ Alert 1B shows 0 or 2000? (Default value check)
+   ☐ Alert 1C shows value in field? (Display successful)
+
+2. User Input Reception:
+   ☐ Alert 2A shows user's input? (e.g., "15 000")
+   ☐ Alert 2B shows unformatted? (e.g., 15000)
+   ☐ Alert 2C does NOT appear? (No NaN errors)
+
+3. Loan Data:
+   ☐ Alert 3A shows yearlyInterest[0]? (Loan data exists)
+   ☐ Alert 3B shows positive monthlyLoanCostAvg? (Loan cost calculated)
+
+4. Gross Savings Formula (MOST CRITICAL):
+   ☐ Alert 4A shows both inputs? (baseMonthlySavings AND monthlyLoanCostAvg)
+   ☐ Alert 4B shows correct result? (Should equal: input - loan cost)
+   ☐ Alert 4C appears if negative? (Detects negative savings)
+
+5. Results Display:
+   ☐ Alert 5A shows 40 years? (All years calculated)
+   ☐ Alert 5B shows correct Year 1? (Data matches calculation)
+   ☐ Alert 5C shows field updated? (Display successful)
+
+PROBLEM INDICATORS:
+
+If Alert 1A doesn't appear:
+→ JavaScript not executing, page failed to load
+
+If Alert 1B shows 2000 (not 0):
+→ localStorage clearing code not working
+
+If Alert 2A shows wrong value:
+→ User input not being read from correct field
+
+If Alert 2B shows NaN or unexpected number:
+→ unformatNumber() function broken
+
+If Alert 3A shows undefined or 0:
+→ Loan calculation not running or data missing
+
+If Alert 4A doesn't show both values:
+→ One input is undefined/missing
+
+If Alert 4B shows wrong result:
+→ Formula calculation error: check subtraction logic
+
+If Alert 5A shows less than 40:
+→ Loop breaking early, validation failing
+
+If Alert 5C shows empty:
+→ HTML element ID wrong or element doesn't exist
+
+
+SECTION 12: TEST SUMMARY - WHAT TESTS SHALL ACCOMPLISH
+========================================================
+
+PRIMARY OBJECTIVES:
+
+Test 1: Verify Default Value
+   Input: Load page with fresh browser (or cleared localStorage)
+   Expected: Månatligt sparande field shows 0 kr
+   Alert Check: 1A, 1B, 1C should show 0
+   Success Condition: Field displays 0, not 2000
+
+Test 2: Verify User Input Reading
+   Input: User types 15000 in Månatligt sparande field
+   Expected: Calculation uses 15000, not default value
+   Alert Check: 2A should show "15 000", 2B should show 15000
+   Success Condition: baseMonthlySavings = 15000 (correct user value)
+
+Test 3: Verify Loan Cost Calculation
+   Input: Default loan amount (2,500,000) @ 3% interest
+   Expected: monthlyLoanCostAvg ≈ 5805 kr
+   Alert Check: 3A and 3B
+   Success Condition: Loan cost calculated as positive number
+
+Test 4: Verify Gross Savings Formula (CRITICAL TEST)
+   Input: monthlySavings = 15000, monthlyLoanCostAvg = 5805
+   Expected: Gross Savings = 15000 - 5805 = 9195
+   Alert Check: 4A shows both inputs, 4B shows 9195
+   Success Condition: Formula calculates correctly, result shown in field
+
+Test 5: Verify Negative Savings Detection
+   Input: monthlySavings = 2000, monthlyLoanCostAvg = 5805
+   Expected: Gross Savings = 2000 - 5805 = -3805
+   Alert Check: 4C should appear with negative warning
+   Success Condition: Negative values detected and reported
+
+Test 6: Verify 40-Year Calculation
+   Input: Any valid combination of inputs
+   Expected: All 40 years calculated with correct gross savings
+   Alert Check: 5A shows 40, 5B shows Year 1 matches calculation
+   Success Condition: 40 years of data populated
+
+Test 7: Verify Table Display
+   Input: Complete calculation from Tests 1-6
+   Expected: All three tables (Years 0-10, 10-30, 30-40) populated with data
+   Alert Check: 5C confirms field updated
+   Success Condition: Tables visible and contain correct data
+
+Test 8: Verify Field Updates
+   Input: Change Månatligt sparande value while page loaded
+   Expected: grossMonthlySavings field updates immediately
+   Alert Check: 5C shows updated value
+   Success Condition: Fields update in real-time
+
+
+SECTION 13: SUMMARY OF TESTING GOALS
+=====================================
+
+OVERALL GOAL:
+Ensure the three-field system (Monthly Savings → Monthly Loan Cost → Monthly Gross Savings)
+works correctly from user input through 40-year calculation and final display.
+
+KEY SUCCESS METRICS:
+
+1. Data Flow Integrity
+   ✓ User's entered value flows correctly through the calculation
+   ✓ Loan cost is calculated correctly
+   ✓ Gross savings formula produces correct result
+   ✓ Result is displayed in all relevant fields
+
+2. Default Behavior
+   ✓ Default value is 0 (not 2000)
+   ✓ Old localStorage values don't interfere
+   ✓ Page loads and displays defaults correctly
+
+3. Calculation Accuracy
+   ✓ Formula: monthlySavings = baseMonthlySavings - monthlyLoanCostAvg
+   ✓ Negative values detected and handled
+   ✓ All 40 years calculated with correct values
+
+4. User Interface
+   ✓ All three fields display current/calculated values
+   ✓ Fields update when inputs change
+   ✓ Read-only fields marked as readonly
+   ✓ Error messages appear when needed
+
+5. Edge Cases Handled
+   ✓ Very high savings + very high loan cost = negative gross
+   ✓ Zero savings + loan cost = negative gross
+   ✓ High savings + low loan cost = positive gross
+   ✓ Missing loan data handled gracefully
+
+PASS/FAIL CRITERIA:
+
+Test passes if:
+☐ All expected alerts appear in correct order
+☐ Alert values match expected calculations
+☐ No unexpected alerts or errors
+☐ Tables populate with data
+☐ Fields display calculated values
+☐ Negative values flagged correctly
+
+Test fails if:
+✗ Alerts missing or in wrong order
+✗ Alert values don't match expectations
+✗ JavaScript errors in console
+✗ Tables don't populate
+✗ Fields show wrong values
+✗ Negative savings not detected
+
+
+NEXT STEPS AFTER TESTING:
+
+1. If all tests pass:
+   → Remove all alerts
+   → Replace with console.log statements (for future debugging)
+   → Commit clean working version to main branch
+
+2. If tests reveal issues:
+   → Document which alerts failed
+   → Trace backwards to find root cause
+   → Add additional alerts at failure point
+   → Re-test until all pass
+
+3. Documentation:
+   → Update this file with test results
+   → Create alerts_test_results.txt with findings
+   → Archive failing versions for analysis
+
+
+SECTION 14: QUICK REFERENCE - ALL ALERTS AT A GLANCE
+=====================================================
+
+| Alert ID | Location | Line # | Alert Code | Expected Output | Priority |
+|----------|----------|--------|------------|-----------------|----------|
+| 1A | loadFinanceData() | 1614 | alert('VERSION CONFIRMATION: Loaded version with alerts'); | "VERSION CONFIRMATION..." | HIGH |
+| 1B | loadFinanceData() | 1617 | alert('monthlySavings (default from localStorage): ' + monthlySavings); | "monthlySavings (default from localStorage): 0" | CRITICAL |
+| 1C | loadFinanceData() | ~1632 | alert('monthlySavings field now displays: ' + document.getElementById('monthlySavings').value); | "monthlySavings field now displays: 0" | HIGH |
+| 2A | calculateInterest() | 808 | alert('baseMonthlySavings RAW from field: ' + document.getElementById('monthlySavings').value); | "baseMonthlySavings RAW from field: 15 000" | CRITICAL |
+| 2B | calculateInterest() | ~810 | alert('baseMonthlySavings AFTER unformatNumber: ' + baseMonthlySavings); | "baseMonthlySavings AFTER unformatNumber: 15000" | CRITICAL |
+| 2C | calculateInterest() | ~820 | if (isNaN(baseMonthlySavings)) alert('ERROR: baseMonthlySavings is NaN! Setting to 0'); | Should NOT appear if working | MEDIUM |
+| 3A | calculateInterest() | ~815 | alert('loanData.yearlyInterest[0]: ' + (loanData.yearlyInterest ? loanData.yearlyInterest[0] : 'UNDEFINED')); | "loanData.yearlyInterest[0]: 69660" | HIGH |
+| 3B | calculateInterest() | ~817 | alert('monthlyLoanCostAvg: ' + monthlyLoanCostAvg); | "monthlyLoanCostAvg: 5805" | HIGH |
+| 4A | calculateInterest() | ~836 | alert('Year 1 Calculation: baseMonthlySavings=' + baseMonthlySavings + ', monthlyLoanCostAvg=' + monthlyLoanCostAvg); | "Year 1 Calculation: baseMonthlySavings=15000, monthlyLoanCostAvg=5805" | CRITICAL |
+| 4B | calculateInterest() | ~838 | alert('Year 1 monthlySavings (GROSS): ' + monthlySavings); | "Year 1 monthlySavings (GROSS): 9195" | CRITICAL |
+| 4C | calculateInterest() | ~840 | if (monthlySavings < 0) alert('WARNING: Gross Savings is NEGATIVE: ' + monthlySavings + ' kr. Loan cost exceeds savings!'); | Appears only if result negative | MEDIUM |
+| 5A | calculateInterest() | ~890 | alert('results array has ' + results.length + ' years of data'); | "results array has 40 years of data" | HIGH |
+| 5B | calculateInterest() | ~892 | alert('Year 1 results: startAmount=' + results[0].startAmount + ', monthlySavings=' + results[0].monthlySavings); | "Year 1 results: startAmount=50000, monthlySavings=9195" | MEDIUM |
+| 5C | calculateInterest() | ~905 | alert('grossMonthlySavings field updated to: ' + document.getElementById('grossMonthlySavings').value); | "grossMonthlySavings field updated to: 9 195 kr" | HIGH |
+
+PRIORITY LEGEND:
+CRITICAL = Must pass, core functionality
+HIGH = Should pass, important for debugging
+MEDIUM = Nice to have, edge case detection
+
+
+SECTION 15: EXPECTED ALERT OUTPUT - WORKING SYSTEM EXAMPLES
+============================================================
+
+Scenario: User opens page, enters 15,000 kr in Monthly Savings, clicks Calculate
+
+EXPECTED ALERT SEQUENCE:
+
+On Page Load:
+-------------
+Alert 1A: "VERSION CONFIRMATION: Loaded version with alerts"
+Alert 1B: "monthlySavings (default from localStorage): 0"
+Alert 1C: "monthlySavings field now displays: 0"
+
+After User Types 15000 and Clicks Calculate:
+---------------------------------------------
+Alert 2A: "baseMonthlySavings RAW from field: 15 000"
+Alert 2B: "baseMonthlySavings AFTER unformatNumber: 15000"
+[Alert 2C does NOT appear - no NaN]
+
+Alert 3A: "loanData.yearlyInterest[0]: 69660"
+Alert 3B: "monthlyLoanCostAvg: 5805"
+
+Alert 4A: "Year 1 Calculation: baseMonthlySavings=15000, monthlyLoanCostAvg=5805"
+Alert 4B: "Year 1 monthlySavings (GROSS): 9195"
+[Alert 4C does NOT appear - result positive]
+
+Alert 5A: "results array has 40 years of data"
+Alert 5B: "Year 1 results: startAmount=50000, monthlySavings=9195"
+Alert 5C: "grossMonthlySavings field updated to: 9 195 kr"
+
+Total Alerts: 11 (1A, 1B, 1C, 2A, 2B, 3A, 3B, 4A, 4B, 5A, 5B, 5C)
+
+FAILING SYSTEM EXAMPLE:
+
+If Alert 2B shows: "baseMonthlySavings AFTER unformatNumber: 2000"
+→ PROBLEM: Old default value being used instead of user's 15000
+→ Root Cause: Either field not being read, or wrong field being read
+→ Fix: Check document.getElementById('monthlySavings') is correct element
+
+If Alert 4B shows: "Year 1 monthlySavings (GROSS): 15000"
+→ PROBLEM: Loan cost not being subtracted (should be 9195, not 15000)
+→ Root Cause: Formula not executing or monthlyLoanCostAvg = 0
+→ Fix: Check if Alert 3B shows 0, trace loan calculation
+
+
+SECTION 16: ENHANCED VISUAL FLOW DIAGRAM
+=========================================
+
+DATA FLOW FROM USER INPUT TO FINAL DISPLAY:
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 1: PAGE LOAD                                              │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  loadFinanceData()                                              │
+│       ↓                                                         │
+│  [Alert 1A] Version Confirmation                                │
+│       ↓                                                         │
+│  localStorage.getItem('monthlySavings') → monthlySavings        │
+│       ↓                                                         │
+│  [Alert 1B] Show default value (should be 0)                    │
+│       ↓                                                         │
+│  document.getElementById('monthlySavings').value = "0"          │
+│       ↓                                                         │
+│  [Alert 1C] Confirm field displays 0                            │
+│       ↓                                                         │
+│  USER SEES: Månatligt sparande field = 0 kr                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 2: USER INPUT                                             │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  USER TYPES: "15000" in Månatligt sparande field                │
+│       ↓                                                         │
+│  Field auto-formats to: "15 000"                                │
+│       ↓                                                         │
+│  USER CLICKS: Calculate button                                  │
+│       ↓                                                         │
+│  calculateInterest() triggered                                  │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 3: INPUT PARSING                                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  document.getElementById('monthlySavings').value                │
+│       ↓                                                         │
+│  [Alert 2A] Show RAW value: "15 000"                            │
+│       ↓                                                         │
+│  unformatNumber("15 000") → removes spaces                      │
+│       ↓                                                         │
+│  parseFloat("15000") → 15000                                    │
+│       ↓                                                         │
+│  [Alert 2B] Show parsed value: 15000                            │
+│       ↓                                                         │
+│  baseMonthlySavings = 15000                                     │
+│       ↓                                                         │
+│  isNaN(15000)? NO → continue                                    │
+│  [Alert 2C does NOT appear]                                     │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 4: LOAN COST CALCULATION                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  calculateLoanAmortization()                                    │
+│       ↓                                                         │
+│  Returns: { yearlyInterest: [69660, 69120, ...], ... }         │
+│       ↓                                                         │
+│  loanData.yearlyInterest[0] = 69660                             │
+│       ↓                                                         │
+│  [Alert 3A] Show yearly interest: 69660                         │
+│       ↓                                                         │
+│  monthlyLoanCostAvg = 69660 / 12 = 5805                         │
+│       ↓                                                         │
+│  [Alert 3B] Show monthly average: 5805                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 5: GROSS SAVINGS CALCULATION (CRITICAL)                   │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Inputs Ready:                                                  │
+│    baseMonthlySavings = 15000                                   │
+│    monthlyLoanCostAvg = 5805                                    │
+│       ↓                                                         │
+│  [Alert 4A] Show both inputs                                    │
+│       ↓                                                         │
+│  FORMULA EXECUTION:                                             │
+│  monthlySavings = baseMonthlySavings - monthlyLoanCostAvg       │
+│  monthlySavings = 15000 - 5805 = 9195                           │
+│       ↓                                                         │
+│  [Alert 4B] Show result: 9195                                   │
+│       ↓                                                         │
+│  Check: 9195 < 0? NO                                            │
+│  [Alert 4C does NOT appear]                                     │
+│       ↓                                                         │
+│  GROSS SAVINGS = 9195 kr                                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 6: 40-YEAR CALCULATION LOOP                               │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  for (year = 1; year <= 40; year++) {                           │
+│    Use monthlySavings = 9195 for each year                      │
+│    Calculate: balance, interest, accumulated                    │
+│    Store in results[year-1]                                     │
+│  }                                                              │
+│       ↓                                                         │
+│  [Alert 5A] Show results.length: 40                             │
+│       ↓                                                         │
+│  [Alert 5B] Show Year 1 data from results[0]                    │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ PHASE 7: DISPLAY UPDATE                                         │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  Update Månatlig lånekostnad field:                             │
+│    document.getElementById('monthlyLoanCost').value =           │
+│      formatCurrency(5805) = "5 805 kr"                          │
+│       ↓                                                         │
+│  Update Månatligt sparande brutto field:                        │
+│    monthlySavingsValue = 15000 - 5805 = 9195                    │
+│    document.getElementById('grossMonthlySavings').value =       │
+│      formatCurrency(9195) = "9 195 kr"                          │
+│       ↓                                                         │
+│  [Alert 5C] Confirm field updated: "9 195 kr"                   │
+│       ↓                                                         │
+│  Populate tables with results[0-39]                             │
+│       ↓                                                         │
+│  USER SEES:                                                     │
+│    Månatligt sparande: 15 000 kr (their input)                  │
+│    Månatlig lånekostnad: 5 805 kr (calculated)                  │
+│    Månatligt sparande brutto: 9 195 kr (result)                 │
+│    Tables filled with 40 years of data                          │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+
+SECTION 17: PRIORITY RANKING - TEST IMPORTANCE
+===============================================
+
+TIER 1 - CRITICAL (MUST PASS):
+-------------------------------
+These tests verify core functionality. If any fail, system is broken.
+
+1. Test 4 - Gross Savings Formula
+   Why Critical: This is THE core calculation the whole system depends on
+   Alerts: 4A, 4B
+   Impact if fails: Wrong values in all 40 years, entire calculation incorrect
+
+2. Test 2 - User Input Reading
+   Why Critical: If user input isn't read, system always uses default
+   Alerts: 2A, 2B
+   Impact if fails: User can't control savings amount
+
+3. Alert 1B - Default Value Check
+   Why Critical: Confirms localStorage clearing and new default working
+   Alert: 1B
+   Impact if fails: Old 2000 value persists, user confusion
+
+
+TIER 2 - IMPORTANT (SHOULD PASS):
+----------------------------------
+These verify the system works correctly end-to-end.
+
+4. Test 1 - Default Value Display
+   Why Important: First thing user sees, sets expectations
+   Alerts: 1A, 1C
+   Impact if fails: User sees wrong default, may not notice
+
+5. Test 3 - Loan Cost Calculation
+   Why Important: Provides the second input to gross savings formula
+   Alerts: 3A, 3B
+   Impact if fails: Gross savings calculation uses 0 for loan cost
+
+6. Test 6 - 40-Year Calculation
+   Why Important: Verifies loop processes all years
+   Alerts: 5A, 5B
+   Impact if fails: Incomplete data, tables partially empty
+
+7. Test 8 - Field Updates
+   Why Important: User feedback that calculation ran
+   Alert: 5C
+   Impact if fails: No visual confirmation, user doesn't see result
+
+
+TIER 3 - NICE TO HAVE (EDGE CASES):
+------------------------------------
+These catch unusual situations and improve user experience.
+
+8. Test 5 - Negative Savings Detection
+   Why Nice: Alerts user to problematic situation
+   Alert: 4C
+   Impact if fails: User may not realize savings are negative
+
+9. Test 7 - Table Display
+   Why Nice: Visual confirmation but not functional requirement
+   Alert: None specific
+   Impact if fails: Data calculated but not displayed
+
+
+TEST EXECUTION ORDER:
+---------------------
+Run in this sequence for efficient debugging:
+
+1. Test 1 (Default) → Confirms page loads
+2. Test 2 (Input Reading) → Confirms user can provide data
+3. Test 3 (Loan Cost) → Confirms loan calculation works
+4. Test 4 (Gross Savings) → Confirms core formula works
+5. Test 6 (40-Year) → Confirms full calculation
+6. Test 8 (Field Updates) → Confirms display
+7. Test 5 (Negative) → Edge case check
+8. Test 7 (Tables) → Final visual verification
+
+
+SECTION 18: TROUBLESHOOTING DECISION TREE
+==========================================
+
+START HERE: Which phase failed?
+│
+├─ PHASE 1 (Page Load) - Alert 1A doesn't appear
+│  │
+│  ├─ Check: Browser console for JavaScript errors?
+│  │  ├─ YES → Fix syntax errors first
+│  │  └─ NO → Continue
+│  │
+│  ├─ Check: Is file path correct (file:///C:/Git/oldmoney/...)?
+│  │  ├─ NO → Open correct file
+│  │  └─ YES → Continue
+│  │
+│  └─ Check: Did you hard refresh (Ctrl+Shift+R)?
+│     ├─ NO → Hard refresh browser
+│     └─ YES → JavaScript execution blocked, check browser settings
+│
+├─ PHASE 1 (Default Value) - Alert 1B shows 2000 instead of 0
+│  │
+│  ├─ Check: Is localStorage clearing code present (lines 1617-1620)?
+│  │  ├─ NO → Add localStorage.removeItem or setItem('0')
+│  │  └─ YES → Continue
+│  │
+│  ├─ Action: Manually clear localStorage
+│  │  Method: F12 → Application → Local Storage → Clear All
+│  │  Result: Refresh and check Alert 1B again
+│  │
+│  └─ If still shows 2000:
+│     └─ Problem: Code running before localStorage clear
+│        Fix: Move clear code to line 1615 (before getItem)
+│
+├─ PHASE 3 (Input Reading) - Alert 2A shows wrong value
+│  │
+│  ├─ Check: Alert 2A shows "15 000" (user's input)?
+│  │  ├─ NO → Field ID wrong or reading wrong element
+│  │  │  └─ Fix: Verify getElementById('monthlySavings') is correct
+│  │  └─ YES → Continue to Alert 2B
+│  │
+│  └─ Check: Alert 2B shows 15000 (number)?
+│     ├─ NO → unformatNumber() not working
+│     │  └─ Fix: Check unformatNumber function definition
+│     └─ YES → Input reading works, continue
+│
+├─ PHASE 4 (Loan Calculation) - Alert 3A shows UNDEFINED or 0
+│  │
+│  ├─ Check: Alert 3A shows number > 0?
+│  │  ├─ NO → calculateLoanAmortization() not returning data
+│  │  │  ├─ Action: Add alert in calculateLoanAmortization()
+│  │  │  │  Check: Is function returning { yearlyInterest: [...] }?
+│  │  │  └─ Fix: Verify loan calculation completes before return
+│  │  └─ YES → Continue to Alert 3B
+│  │
+│  └─ Check: Alert 3B shows monthlyLoanCostAvg > 0?
+│     ├─ NO → Division not working or yearlyInterest[0] = 0
+│     │  └─ Fix: Check formula: yearlyInterest[0] / 12
+│     └─ YES → Loan calculation works, continue
+│
+├─ PHASE 5 (Gross Savings) - Alert 4A shows wrong inputs
+│  │
+│  ├─ Check: Does 4A show both values?
+│  │  ├─ NO → One or both undefined
+│  │  │  ├─ baseMonthlySavings undefined? → Go back to Phase 3
+│  │  │  └─ monthlyLoanCostAvg undefined? → Go back to Phase 4
+│  │  └─ YES → Both values present, continue
+│  │
+│  └─ Check: Does Alert 4B show correct result?
+│     ├─ NO → Formula not executing correctly
+│     │  ├─ Check: Is line 835 code: monthlySavings = baseMonthlySavings - monthlyLoanCostAvg?
+│     │  ├─ Add debug: alert('Subtraction: ' + baseMonthlySavings + ' - ' + monthlyLoanCostAvg + ' = ' + (baseMonthlySavings - monthlyLoanCostAvg));
+│     │  └─ Fix: Ensure variables are numbers, not strings
+│     └─ YES → Formula works, continue
+│
+├─ PHASE 6 (40-Year Loop) - Alert 5A shows less than 40
+│  │
+│  ├─ Check: What number does 5A show?
+│  │  ├─ 0 → Loop not running at all
+│  │  │  └─ Fix: Check for (year = 1; year <= 40; year++) syntax
+│  │  ├─ 1-39 → Loop breaking early
+│  │  │  ├─ Check: Any validation failing inside loop?
+│  │  │  └─ Add alert inside loop to see where it stops
+│  │  └─ 40 → Loop works, continue
+│  │
+│  └─ Check: Does Alert 5B show correct Year 1 data?
+│     ├─ NO → results array populated with wrong data
+│     │  └─ Fix: Check results.push() parameters
+│     └─ YES → Calculation complete, continue
+│
+└─ PHASE 7 (Display) - Alert 5C shows wrong value or empty
+   │
+   ├─ Check: Does 5C show formatted value (e.g., "9 195 kr")?
+   │  ├─ NO → Element doesn't exist or formatCurrency failed
+   │  │  ├─ Check: Does getElementById('grossMonthlySavings') exist?
+   │  │  │  └─ Fix: Verify HTML has id="grossMonthlySavings"
+   │  │  └─ Check: formatCurrency function working?
+   │  └─ YES → Field update works
+   │
+   └─ Check: Do tables display data?
+      ├─ NO → populateInterestTables() not working
+      │  └─ Add alert in populateInterestTables to check tbody
+      └─ YES → All systems working!
+
+
+QUICK DIAGNOSTIC SHORTCUTS:
+
+If ONLY Alert 1B fails (shows 2000):
+→ localStorage issue, clear manually
+
+If Alerts 2A and 2B both fail:
+→ Element ID wrong, check getElementById('monthlySavings')
+
+If Alert 4A shows both inputs BUT 4B shows wrong result:
+→ Formula syntax error, check subtraction line
+
+If Alert 5A shows 40 BUT tables don't display:
+→ populateInterestTables issue, not calculation issue
+
+If ALL alerts appear correct BUT user sees wrong values:
+→ formatCurrency or display issue, not calculation issue
+
+
+SECTION 19: CONSOLE.LOG ALTERNATIVES FOR PRODUCTION
+=====================================================
+
+After testing complete, replace alerts with console.log for permanent debugging:
+
+PHASE 1 - PAGE LOAD:
+--------------------
+// Alert 1A
+alert('VERSION CONFIRMATION: Loaded version with alerts');
+// REPLACE WITH:
+console.log('✓ Page loaded, loadFinanceData() executing');
+
+// Alert 1B
+alert('monthlySavings (default from localStorage): ' + monthlySavings);
+// REPLACE WITH:
+console.log('monthlySavings default:', monthlySavings, '(expected: 0)');
+
+// Alert 1C
+alert('monthlySavings field now displays: ' + document.getElementById('monthlySavings').value);
+// REPLACE WITH:
+console.log('monthlySavings field value:', document.getElementById('monthlySavings').value);
+
+
+PHASE 2 & 3 - INPUT PARSING:
+-----------------------------
+// Alert 2A
+alert('baseMonthlySavings RAW from field: ' + document.getElementById('monthlySavings').value);
+// REPLACE WITH:
+console.log('baseMonthlySavings RAW:', document.getElementById('monthlySavings').value);
+
+// Alert 2B
+alert('baseMonthlySavings AFTER unformatNumber: ' + baseMonthlySavings);
+// REPLACE WITH:
+console.log('baseMonthlySavings parsed:', baseMonthlySavings, typeof baseMonthlySavings);
+
+// Alert 2C
+if (isNaN(baseMonthlySavings)) alert('ERROR: baseMonthlySavings is NaN! Setting to 0');
+// REPLACE WITH:
+if (isNaN(baseMonthlySavings)) {
+    console.error('⚠️ baseMonthlySavings is NaN, setting to 0');
+}
+
+
+PHASE 4 - LOAN CALCULATION:
+----------------------------
+// Alert 3A
+alert('loanData.yearlyInterest[0]: ' + (loanData.yearlyInterest ? loanData.yearlyInterest[0] : 'UNDEFINED'));
+// REPLACE WITH:
+console.log('loanData.yearlyInterest[0]:', loanData.yearlyInterest?.[0] ?? 'UNDEFINED');
+
+// Alert 3B
+alert('monthlyLoanCostAvg: ' + monthlyLoanCostAvg);
+// REPLACE WITH:
+console.log('monthlyLoanCostAvg:', monthlyLoanCostAvg, '(yearly:', loanData.yearlyInterest?.[0], '÷ 12)');
+
+
+PHASE 5 - GROSS SAVINGS (CRITICAL):
+------------------------------------
+// Alert 4A
+alert('Year 1 Calculation: baseMonthlySavings=' + baseMonthlySavings + ', monthlyLoanCostAvg=' + monthlyLoanCostAvg);
+// REPLACE WITH:
+console.log('Gross Savings Inputs:', {
+    baseMonthlySavings,
+    monthlyLoanCostAvg,
+    expected: baseMonthlySavings - monthlyLoanCostAvg
+});
+
+// Alert 4B
+alert('Year 1 monthlySavings (GROSS): ' + monthlySavings);
+// REPLACE WITH:
+console.log('✓ Gross Savings Calculated:', monthlySavings, 'kr');
+
+// Alert 4C
+if (monthlySavings < 0) alert('WARNING: Gross Savings is NEGATIVE: ' + monthlySavings + ' kr. Loan cost exceeds savings!');
+// REPLACE WITH:
+if (monthlySavings < 0) {
+    console.warn('⚠️ NEGATIVE Gross Savings:', monthlySavings, 'kr - Loan cost exceeds monthly savings');
+}
+
+
+PHASE 6 - 40-YEAR CALCULATION:
+-------------------------------
+// Alert 5A
+alert('results array has ' + results.length + ' years of data');
+// REPLACE WITH:
+console.log('✓ 40-Year Calculation Complete:', results.length, 'years');
+
+// Alert 5B
+alert('Year 1 results: startAmount=' + results[0].startAmount + ', monthlySavings=' + results[0].monthlySavings);
+// REPLACE WITH:
+console.log('Year 1 Data:', {
+    startAmount: results[0].startAmount,
+    monthlySavings: results[0].monthlySavings,
+    endAmount: results[0].endAmount
+});
+
+
+PHASE 7 - DISPLAY:
+-------------------
+// Alert 5C
+alert('grossMonthlySavings field updated to: ' + document.getElementById('grossMonthlySavings').value);
+// REPLACE WITH:
+console.log('✓ Fields Updated:', {
+    monthlyLoanCost: document.getElementById('monthlyLoanCost').value,
+    grossMonthlySavings: document.getElementById('grossMonthlySavings').value
+});
+
+
+GROUPED CONSOLE LOGGING (RECOMMENDED):
+---------------------------------------
+Use console.group() for better organization:
+
+function calculateInterest() {
+    console.group('💰 Calculate Interest - Start');
+    
+    // Input reading
+    console.log('📥 Reading user input...');
+    const baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+    console.log('   baseMonthlySavings:', baseMonthlySavings);
+    
+    // Loan calculation
+    console.log('🏦 Calculating loan cost...');
+    const loanData = calculateLoanAmortization();
+    const monthlyLoanCostAvg = loanData.yearlyInterest[0] / 12;
+    console.log('   monthlyLoanCostAvg:', monthlyLoanCostAvg);
+    
+    // Gross savings
+    console.log('🧮 Calculating gross savings...');
+    const monthlySavings = baseMonthlySavings - monthlyLoanCostAvg;
+    console.log('   Result:', monthlySavings, 'kr', monthlySavings < 0 ? '⚠️ NEGATIVE' : '✓');
+    
+    // 40-year loop
+    console.log('📊 Running 40-year calculation...');
+    // ... calculation code ...
+    console.log('   ✓ Complete:', results.length, 'years');
+    
+    console.groupEnd();
+}
+
+BENEFITS OF CONSOLE.LOG:
+- Non-blocking (doesn't stop execution)
+- Can be left in production code
+- Browser console can filter/search logs
+- Supports objects, arrays, formatting
+- Can be disabled globally in production
+
+
+SECTION 20: TIMING INFORMATION
+===============================
+
+Expected execution times for performance monitoring:
+
+PAGE LOAD:
+----------
+loadFinanceData(): < 100ms
+   - localStorage reads: instant
+   - formatNumber() calls: < 10ms each
+   - Total for all fields: < 50ms
+
+Expected total page load: < 500ms
+
+If page load > 2 seconds:
+→ Check: Browser cache issues
+→ Check: Slow localStorage access
+→ Check: Alert blocking execution
+
+
+CALCULATION EXECUTION:
+----------------------
+calculateInterest(): 100-300ms
+   - Input parsing: < 10ms
+   - calculateLoanAmortization(): 50-100ms
+   - 40-year loop: 50-150ms
+   - Table population: 20-50ms
+
+Expected total calculation: < 500ms
+
+If calculation > 2 seconds:
+→ Check: Loop running more than 40 times
+→ Check: Alerts blocking execution
+→ Check: DOM manipulation inside loop
+
+
+LOAN CALCULATION:
+-----------------
+calculateLoanAmortization(): 50-100ms
+   - 40-year amortization schedule
+   - Nested loops (40 years × 12 months)
+
+Expected: < 150ms
+
+If > 1 second:
+→ Check: Infinite loop
+→ Check: Excessive calculations
+
+
+TABLE POPULATION:
+-----------------
+populateInterestTables(): 20-50ms per table
+   - 3 tables total
+   - DOM manipulation for each row
+
+Expected total: < 150ms
+
+If > 500ms:
+→ Check: Too many DOM operations
+→ Consider batch insertions
+
+
+TIMING MEASUREMENT CODE:
+------------------------
+Add to calculateInterest():
+
+console.time('calculateInterest');
+
+// ... all calculation code ...
+
+console.timeEnd('calculateInterest');
+// Output: "calculateInterest: 234.56ms"
+
+
+For detailed breakdown:
+
+console.time('Total Calculation');
+
+console.time('Input Parsing');
+const baseMonthlySavings = parseFloat(unformatNumber(...));
+console.timeEnd('Input Parsing');
+
+console.time('Loan Calculation');
+const loanData = calculateLoanAmortization();
+console.timeEnd('Loan Calculation');
+
+console.time('40-Year Loop');
+for (let year = 1; year <= 40; year++) {
+    // ...
+}
+console.timeEnd('40-Year Loop');
+
+console.time('Table Population');
+populateInterestTables(...);
+console.timeEnd('Table Population');
+
+console.timeEnd('Total Calculation');
+
+
+PERFORMANCE BENCHMARKS:
+-----------------------
+✓ GOOD: Total calculation < 300ms
+⚠ ACCEPTABLE: 300-500ms
+❌ SLOW: > 500ms (investigate)
+
+If experiencing slowness:
+1. Check browser DevTools Performance tab
+2. Look for long tasks (> 50ms)
+3. Optimize loops or DOM manipulation
+4. Consider web workers for heavy calculations
+
+
+SECTION 21: EDGE CASES AND UNUSUAL SCENARIOS
+=============================================
+
+EDGE CASE 1: Zero Loan Amount
+------------------------------
+Input: Loan Amount = 0
+Expected Behavior:
+   - monthlyLoanCostAvg = 0
+   - Gross Savings = baseMonthlySavings - 0 = baseMonthlySavings
+   - No loan deduction
+
+Test:
+   Set: Lånbelopp = 0
+   Expected Alerts:
+      3A: "loanData.yearlyInterest[0]: 0"
+      3B: "monthlyLoanCostAvg: 0"
+      4B: "Year 1 monthlySavings (GROSS): 15000" (if input 15000)
+
+Pass Condition: Gross savings equals user input
+
+
+EDGE CASE 2: Zero Interest Rate (Loan)
+---------------------------------------
+Input: Låneränta = 0%
+Expected Behavior:
+   - yearlyLoanInterest = 0
+   - monthlyLoanCostAvg = 0
+   - Same as Edge Case 1
+
+Test:
+   Set: Låneränta = 0
+   Expected: No loan cost deduction
+
+
+EDGE CASE 3: Zero Monthly Savings
+----------------------------------
+Input: Månatligt sparande = 0
+Expected Behavior:
+   - baseMonthlySavings = 0
+   - If loan exists: Gross Savings = 0 - monthlyLoanCostAvg = NEGATIVE
+   - Alert 4C should appear
+
+Test:
+   Set: Månatligt sparande = 0, keep default loan
+   Expected Alerts:
+      2B: "baseMonthlySavings AFTER unformatNumber: 0"
+      4B: "Year 1 monthlySavings (GROSS): -5805"
+      4C: "WARNING: Gross Savings is NEGATIVE: -5805 kr..."
+
+Pass Condition: Negative value detected and reported
+
+
+EDGE CASE 4: Very High Savings
+-------------------------------
+Input: Månatligt sparande = 1,000,000 (1 million)
+Expected Behavior:
+   - Extremely high end balance after 40 years
+   - No calculation errors
+   - Tables display large numbers correctly
+
+Test:
+   Set: Månatligt sparande = 1000000
+   Expected: No errors, formatCurrency handles large numbers
+
+Pass Condition: Calculation completes, no overflow
+
+
+EDGE CASE 5: Very High Loan Cost
+---------------------------------
+Input: Lånbelopp = 50,000,000, Låneränta = 10%
+Expected Behavior:
+   - Very high monthlyLoanCostAvg (> 400,000)
+   - Unless savings very high, Gross Savings will be NEGATIVE
+   - Alert 4C appears
+
+Test:
+   Set: Lånbelopp = 50000000, Låneränta = 10
+   Expected Alerts:
+      3B: "monthlyLoanCostAvg: 416666.67" (approx)
+      4C: "WARNING: Gross Savings is NEGATIVE..."
+
+Pass Condition: System handles extreme values, shows warning
+
+
+EDGE CASE 6: Negative Number Entry
+-----------------------------------
+Input: User types -5000 in Månatligt sparande
+Expected Behavior:
+   - Field should accept negative (depends on validation)
+   - If accepted: Gross Savings even more negative
+   - May want to add validation to prevent this
+
+Test:
+   Set: Månatligt sparande = -5000
+   Expected: Either rejected by validation OR calculated as negative
+
+Recommendation: Add validation to prevent negative user input
+
+
+EDGE CASE 7: Non-Numeric Entry
+-------------------------------
+Input: User types "abc" in Månatligt sparande
+Expected Behavior:
+   - parseFloat("abc") = NaN
+   - Alert 2C should appear
+   - baseMonthlySavings set to 0
+
+Test:
+   Set: Type "abc" in field
+   Expected Alerts:
+      2B: "baseMonthlySavings AFTER unformatNumber: NaN"
+      2C: "ERROR: baseMonthlySavings is NaN! Setting to 0"
+
+Pass Condition: NaN detected, value defaulted to 0
+
+
+EDGE CASE 8: Empty Field
+-------------------------
+Input: Clear Månatligt sparande field (leave blank)
+Expected Behavior:
+   - document.getElementById().value = ""
+   - parseFloat("") = NaN
+   - Same as Edge Case 7
+
+Test:
+   Set: Delete all text from field
+   Expected: Alert 2C, value set to 0
+
+Pass Condition: Empty field handled as 0
+
+
+EDGE CASE 9: Field with Only Spaces
+------------------------------------
+Input: "    " (only spaces) in field
+Expected Behavior:
+   - unformatNumber removes spaces → ""
+   - parseFloat("") = NaN
+   - Same as Edge Cases 7 & 8
+
+Pass Condition: Handled as 0
+
+
+EDGE CASE 10: Very Long Decimal
+--------------------------------
+Input: 15000.123456789123456
+Expected Behavior:
+   - parseFloat handles full precision
+   - Calculations use full precision
+   - formatCurrency may round for display
+
+Test:
+   Set: Månatligt sparande = 15000.123456789
+   Expected: Accepted, calculations proceed
+
+Pass Condition: No errors, proper rounding
+
+
+EDGE CASE SUMMARY TABLE:
+------------------------
+
+| Case | Input | Expected Gross Savings | Alert Expected |
+|------|-------|------------------------|----------------|
+| 1 | Loan = 0 | = User Input | None |
+| 2 | Loan Rate = 0% | = User Input | None |
+| 3 | Savings = 0 | Negative (if loan exists) | 4C |
+| 4 | Savings = 1M | Very High Positive | None |
+| 5 | Loan = 50M @ 10% | Very Negative | 4C |
+| 6 | Savings = -5000 | More Negative | 4C or validation |
+| 7 | Input = "abc" | 0 (after NaN handling) | 2C |
+| 8 | Input = empty | 0 (after NaN handling) | 2C |
+| 9 | Input = spaces | 0 (after NaN handling) | 2C |
+| 10 | Input = long decimal | Calculated correctly | None |
+
+
+RECOMMENDATIONS FOR PRODUCTION:
+--------------------------------
+
+1. Add input validation:
+   - Prevent negative numbers in savings fields
+   - Limit maximum values to reasonable ranges
+   - Require numeric input only
+
+2. Add user-friendly error messages:
+   - Replace Alert 2C with inline error message
+   - Show red border on invalid fields
+   - Provide suggestions (e.g., "Please enter a positive number")
+
+3. Add range warnings:
+   - If savings < loan cost, show warning before calculation
+   - If loan amount > realistic value, warn user
+   - If end balance exceeds safe display range, notify user
+
+4. Improve formatting:
+   - Handle very large numbers (millions/billions)
+   - Handle very small decimals (fractional kr)
+   - Consistent decimal places across all fields

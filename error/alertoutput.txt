@@ -1,0 +1,230 @@
+================================================================================
+ALERT & CONSOLE.LOG OUTPUT DOCUMENTATION
+sparakyrkoskatten_4.html - Debugging Session
+Date: February 4, 2026
+================================================================================
+
+PROBLEM SUMMARY:
+----------------
+The "Månatligt sparande brutto" field was showing incorrect calculations.
+Initial report: Field showed 8,764 kr when it should have shown different values.
+
+FORMULA:
+--------
+Månatligt sparande brutto = Månatligt sparande - Månatlig lånekostnad
+
+In code:
+const monthlySavings = baseMonthlySavings - monthlyLoanCostAvg;
+
+DEBUGGING STRATEGY:
+-------------------
+Replaced blocking alert() statements with non-blocking console.log() to:
+1. Prevent report table destruction (alerts block async operations)
+2. Allow continuous debugging without page interruption
+3. Trace data flow through the calculation
+
+CONSOLE.LOG STATEMENTS ADDED:
+------------------------------
+
+1. Line 1624 - Page Load Confirmation:
+   console.log('✓ Page loaded, loadFinanceData() executing');
+   
+2. Line 1634 - Default Value Check:
+   console.log('monthlySavings default:', monthlySavings, '(expected: 0)');
+   
+3. Line 815 - Raw Input Field Value:
+   console.log('RAW monthlySavings field value:', document.getElementById('monthlySavings').value);
+   
+4. Line 816 - Parsed Input Value:
+   console.log('baseMonthlySavings parsed:', baseMonthlySavings, typeof baseMonthlySavings);
+   
+5. Line 823 - Loan Cost Calculation (calculateBoth function):
+   console.log('monthlyLoanCostAvg:', monthlyLoanCostAvg);
+   
+6. Line 1078 - Loan Cost Calculation (calculateChurchInterest function):
+   console.log('monthlyLoanCostAvg:', monthlyLoanCostAvg);
+
+TEST DATA & RESULTS:
+--------------------
+
+TEST 1: Zero Input
+-----------------
+Input Values:
+  - Månatligt sparande: 0
+  - Månatlig lånekostnad: 6,236.25 kr
+
+Console Output:
+  RAW monthlySavings field value: 0
+  baseMonthlySavings parsed: 0 number
+  monthlyLoanCostAvg: 6236.25
+
+Expected Calculation:
+  0 - 6,236.25 = -6,236.25
+
+Actual Result:
+  Månatligt sparande brutto: -6,236 kr ✓ CORRECT
+
+Analysis:
+  Negative value shows deficit (spending more than saving).
+  Mathematically correct.
+
+TEST 2: 10,000 Input
+--------------------
+Input Values:
+  - Månatligt sparande: 10,000
+  - Månatlig lånekostnad: 6,236.25 kr
+
+Console Output:
+  RAW monthlySavings field value: 10 000
+  baseMonthlySavings parsed: 10000 number
+  monthlyLoanCostAvg: 6236.25
+
+Expected Calculation:
+  10,000 - 6,236.25 = 3,763.75
+
+Actual Result:
+  Månatligt sparande brutto: 3,764 kr ✓ CORRECT
+
+Analysis:
+  Positive value shows surplus after loan costs.
+  Rounded correctly.
+
+TEST 3: 100,000 Input
+---------------------
+Input Values:
+  - Månatligt sparande: 100,000
+  - Månatlig lånekostnad: 6,236.25 kr
+
+Console Output:
+  RAW monthlySavings field value: 100 000
+  baseMonthlySavings parsed: 100000 number
+  monthlyLoanCostAvg: 6236.25
+
+Expected Calculation:
+  100,000 - 6,236.25 = 93,763.75
+
+Actual Result:
+  Månatligt sparande brutto: 93,764 kr ✓ CORRECT
+
+Analysis:
+  Large surplus correctly calculated.
+  All calculations verified working.
+
+ERRORS DISCOVERED & SOLUTIONS:
+-------------------------------
+
+ERROR 1: Blocking Alerts Destroying Reports
+Problem: alert() statements blocked async table population
+Solution: Replaced all alert() with console.log()
+Files Modified: sparakyrkoskatten_4.html
+Result: Reports now populate correctly while debugging
+
+ERROR 2: Duplicate loanData Declaration
+Problem: Line 879 had duplicate loanData variable causing syntax error
+Solution: Removed duplicate declaration
+Files Modified: sparakyrkoskatten_4.html
+Result: No more JavaScript errors
+
+ERROR 3: Null Pointer in displayLoanAmortization()
+Problem: Accessing HTML elements before page load
+Solution: Added null check: if (!loanData || !loanData.yearlyInterest) return;
+Files Modified: sparakyrkoskatten_4.html
+Result: No more null pointer exceptions
+
+ERROR 4: localStorage Persisting Old Default (2000)
+Problem: Old monthlySavings default (2000) remained in localStorage
+Solution: Added force-clear code in loadFinanceData():
+  if (localStorage.getItem('monthlySavings') && localStorage.getItem('monthlySavings') !== '0') {
+      localStorage.setItem('monthlySavings', '0');
+  }
+Files Modified: sparakyrkoskatten_4.html (line 1626-1628)
+Result: New default (0) now loads correctly
+
+ERROR 5: Initial Calculation Confusion
+Problem: User thought calculation was wrong when showing 8,764 kr
+Root Cause: Field was showing previous calculation result (15,000 - 6,236)
+Solution: Added RAW field value logging to trace input reading
+Result: Confirmed calculation is correct, issue was testing methodology
+
+CALCULATION FLOW CONFIRMED:
+----------------------------
+
+1. User enters value in "Månatligt sparande" field
+2. User clicks "Beräkna alla" (Calculate All) button
+3. calculateBoth() function executes:
+   a. saveFinanceData() - saves to localStorage
+   b. calculateInterest() - calculates interest
+   c. calculateSavings() - calculates savings
+   d. calculateChurchInterest() - calculates church tax (also logs monthlyLoanCostAvg)
+   e. calculateLoanAmortization() - gets loan data
+   f. displayLoanAmortization() - displays loan table
+
+4. Inside calculateInterest() (line 814-900):
+   a. Read baseMonthlySavings from input field (line 814)
+   b. Calculate monthlyLoanCostAvg from loan data (line 821)
+   c. Loop through 40 years:
+      - monthlySavings = baseMonthlySavings - monthlyLoanCostAvg (line 841)
+      - Calculate interest and balance
+   d. Populate "Månatlig lånekostnad" field (line 897)
+   e. Populate "Månatligt sparande brutto" field (line 900)
+
+FUNCTION CALL STRUCTURE:
+-------------------------
+
+calculateBoth() [onclick="calculateBoth()"]
+├── saveFinanceData()
+├── calculateInterest() ← Logs baseMonthlySavings & monthlyLoanCostAvg (line 815-823)
+├── calculateSavings()
+├── calculateChurchInterest() ← Logs monthlyLoanCostAvg again (line 1078)
+├── calculateLoanAmortization()
+└── displayLoanAmortization()
+
+Why two logs for monthlyLoanCostAvg?
+- Line 823: In calculateInterest() function
+- Line 1078: In calculateChurchInterest() function
+Both functions calculate the same value independently.
+
+CALCULATION NOT AUTOMATIC:
+---------------------------
+
+Finding: Calculation ONLY runs when "Beräkna alla" button is clicked manually.
+No setInterval/setTimeout timers found.
+No onchange/oninput event listeners on input fields.
+
+Event Listeners Found:
+- 'blur' event: Formats numbers when leaving field (cosmetic only)
+- 'focus' event: Removes formatting when entering field (cosmetic only)
+
+Result: Manual button click required for calculation. This is correct behavior.
+
+REPEATED CONSOLE LOGS:
+----------------------
+
+Console output showed 7+ repetitions of same calculation.
+Cause: User clicked "Beräkna alla" button multiple times.
+Each click triggers full calculation cycle.
+This is expected behavior.
+
+FINAL STATUS:
+-------------
+
+✓ Formula is correct: baseMonthlySavings - monthlyLoanCostAvg
+✓ Input reading is correct
+✓ Loan cost calculation is correct
+✓ Field population is correct
+✓ All test cases pass (0, 10,000, 100,000)
+✓ console.log debugging statements working
+✓ No blocking alerts remaining
+✓ Reports populate correctly
+✓ localStorage defaults to 0 correctly
+
+REMAINING WORK:
+---------------
+
+Optional: Remove console.log statements for production (keep for future debugging)
+Optional: Git commit working version
+Optional: Remove old debug files (sparakyrkoskatten_1, _2, _3)
+
+================================================================================
+END OF DOCUMENTATION
+================================================================================

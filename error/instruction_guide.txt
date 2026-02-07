@@ -1,0 +1,86 @@
+PROJECT: Old Money – MAIN INSTRUCTION GUIDE
+FORMAT: Single entry point for all instructions
+
+=============================================================
+PURPOSE
+=============================================================
+This is the MAIN instruction file. Start here every time.
+Do NOT start with any other .txt file.
+
+=============================================================
+HOW TO USE (READ ORDER)
+=============================================================
+1) instruction_guide.txt (THIS FILE) — Decide what you are doing.
+2) Then read the specific file for the task:
+   - html_structure_guide.txt  → Building/structuring HTML pages
+   - color_palette_guide.txt   → Color selection and usage
+   - buttons_guide.txt         → Button types, sizes, icons
+   - TOOLTIP_REQUIREMENT.txt   → Tooltip rules for buttons
+3) Use design_style_guide.txt for the full consolidated implementation details.
+4) Use general_ui_standards.txt only for broad principles and extra standards.
+5) Use abbreviation_guide.txt for command behavior (only command-instruction file).
+
+=============================================================
+TASK-TO-FILE MAP
+=============================================================
+Create or update HTML pages:
+  - Read html_structure_guide.txt first
+  - Then design_style_guide.txt for CSS/layout details
+
+Create HTML pages with calculations (calculator pages):
+  - Read html_structure_guide.txt first
+  - IMPORTANT: Always create corresponding JavaScript file (e.g., churchtax.js)
+  - Include the JS file with <script src="js/filename.js"></script> in HTML
+  - Implement calculation functions, validation, export (CSV/clipboard)
+  - Then design_style_guide.txt for CSS/layout details
+
+Add language support (Swedish/English) to HTML pages:
+  - Add data-lang-sv and data-lang-en attributes to all text elements
+  - Format: <element data-lang-sv="Swedish text" data-lang-en="English text">Default</element>
+  - Language buttons (SV/EN) automatically provided in header
+  - Language preference is saved to localStorage (persists across page reloads)
+  - switchLanguage(lang) function in app.js handles all translations
+  - initializeLanguage() is called automatically on DOMContentLoaded
+  - Default language is Swedish (sv)
+
+Add email export to calculator pages:
+  - Read email_instructions.txt for complete implementation details
+
+Create portal/hub pages (application directory):
+  - Read portal_hub_instructions.txt for implementation details
+
+Choose or verify colors:
+  - Read color_palette_guide.txt
+  - Then design_style_guide.txt for application rules
+
+Create or style buttons:
+  - Read buttons_guide.txt first
+  - Then TOOLTIP_REQUIREMENT.txt for tooltip rules
+  - Then design_style_guide.txt for layout/consistency
+
+General rules and principles:
+  - Read general_ui_standards.txt
+
+Command behavior (PA/OA/DA/etc.):
+  - Read abbreviation_guide.txt
+
+=============================================================
+IGNORED FILES
+=============================================================
+The following files are NOT related to the Old Money project
+and should be completely ignored:
+- master_cmd.txt
+- master_cmd_defs.txt
+- commands.txt
+
+These belong to a different project ("vinst-p--lgh").
+
+=============================================================
+SINGLE SOURCE OF TRUTH (NAVIGATION)
+=============================================================
+Only this file defines the order and priority of all other
+instruction files.
+
+If any conflict exists between files, STOP and ask the user.
+
+Last Updated: February 3, 2026

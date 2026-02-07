@@ -1,0 +1,76 @@
+================================================================================
+REPORT ERROR SOLUTION LOG
+Project: sparakyrkoskatten_4.html
+Date: February 4, 2026
+================================================================================
+
+GOAL:
+-----
+Identify why report data for År 1–10 was missing and document all debugging steps,
+commands, and the exact change that fixed the issue.
+
+SUMMARY OF ISSUE:
+-----------------
+In the “IoI (kyrkoskattbesparing)” report, År 11–30 and År 31–40 were shown, but
+År 1–10 was missing. The calculation ran, but the table body for År 1–10 did not
+exist, so rows could not be appended.
+
+ROOT CAUSE:
+-----------
+The table for År 1–10 in the Church IoI section had no <tbody id="ctIoiTableBody1">.
+The population function expected this ID and silently failed to render rows.
+
+ACTUAL FIX (CODE CHANGE):
+--------------------------
+Added missing tbody inside the År 1–10 table for Church IoI:
+
+Added:
+    <tbody id="ctIoiTableBody1"></tbody>
+
+Location:
+    Church Interest Results section (År 1–10 table)
+    File: sparakyrkoskatten_4.html
+
+WHY IT WORKS:
+-------------
+populateChurchInterestTables() uses this ID to append rows for years 1–10.
+Without the tbody, the DOM query returns null, and rows are never added.
+
+COMMANDS USED (FAULT FINDING):
+-------------------------------
+1) Locate IoI/Church IoI structure and table IDs:
+   Select-String -Pattern "populate.*IoI|populateInterest|IoI" sparakyrkoskatten_4.html
+
+2) Locate population functions:
+   Select-String -Pattern "populateChurchInterestTables|populateInterestTables" sparakyrkoskatten_4.html
+
+3) Read populateInterestTables (to verify expected table IDs):
+   Get-Content sparakyrkoskatten_4.html | Select-Object -Skip 990 -First 60
+
+4) Search all table body IDs used in HTML:
+   Select-String -Pattern "tableBody1|tableBody2|tableBody3" sparakyrkoskatten_4.html
+
+5) Inspect Church IoI HTML section (År 1–10 and År 11–30 placement):
+   Get-Content sparakyrkoskatten_4.html | Select-Object -Skip 330 -First 70
+   Get-Content sparakyrkoskatten_4.html | Select-Object -Skip 380 -First 70
+
+
+RELATED DIAGNOSTIC ACTIVITY:
+----------------------------
+- Verified calculations by comparing visible report rows (År 11–30) and by checking
+  console logs for input parsing and loan cost calculations.
+- Confirmed that report rendering only failed for År 1–10, not for other ranges.
+
+KEY OBSERVATION:
+----------------
+ctIoiTableBody2 and ctIoiTableBody3 existed, but ctIoiTableBody1 did not. This
+explained why År 11–30 and 31–40 appeared while År 1–10 was blank.
+
+FINAL STATUS:
+-------------
+✓ År 1–10 rows now render correctly in Church IoI report.
+✓ No calculation logic changes required—only HTML structure fix.
+
+================================================================================
+END OF FILE
+================================================================================

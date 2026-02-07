@@ -1,0 +1,3477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Project - Enhanced Kanban Board</title>
+    <link rel="icon" href="CoolPortals_2026.PNG" type="image/png">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 10px 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            height: 60px;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 12px; }
+        .project-title { font-size: 24px; font-weight: bold; color: #667eea; }
+        .title-short { display: none; }
+        .title-full { display: inline; }
+        .timestamp { display: none; /* font-size: 14px; color: #666; padding: 4px 10px; background: #f0f0f0; border-radius: 5px; */ }
+        .project-controls { display: flex; align-items: center; gap: 6px; }
+        .project-select { padding: 5px 8px; font-size: 12px; border: 1px solid #ddd; border-radius: 5px; background: white; height: 36px; box-sizing: border-box; }
+        .project-btn {
+            padding: 5px 8px; background: #10b981; color: white; border: none;
+            border-radius: 5px; cursor: pointer; font-size: 12px; transition: background 0.3s;
+            height: 36px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+        }
+        .project-btn:hover { background: #0e9f6e; }
+        .project-btn.small { padding: 4px 6px; font-size: 11px; }
+        .tablet-column-select { display: none !important; }
+        .nav-buttons { display: flex; gap: 6px; }
+        .nav-btn {
+            padding: 5px 12px; background: #667eea; color: white; border: none;
+            border-radius: 5px; cursor: pointer; font-size: 14px; transition: background 0.3s;
+            height: 36px; display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box;
+        }
+        .nav-btn:hover { background: #5568d3; }
+        .nav-btn.logout-red { background: #dc2626; }
+        .nav-btn.logout-red:hover { background: #b91c1c; }
+        
+        /* Hide red logout button on tablet and mobile */
+        @media (max-width: 1024px) {
+            .nav-btn.logout-red { display: none !important; }
+        }
+        
+        /* HJ-ID1RS11: Show/hide button text based on screen size */
+        .btn-icon { display: none; }
+        .btn-text { display: inline; }
+        
+        @media (max-width: 1024px) {
+            .nav-btn .btn-text { display: none; }
+            .nav-btn .btn-icon { display: inline; }
+        }
+
+        .mobile-toolbar {
+            position: fixed;
+            top: 55px;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            padding: 6px 10px;
+            height: 44px;
+            display: none;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            z-index: 999;
+            box-sizing: border-box;
+        }
+        .mobile-toolbar select {
+            flex: 1;
+            padding: 4px 6px;
+            font-size: 11px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #fff;
+            height: 26px;
+        }
+        .mobile-btn {
+            padding: 2px 4px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 11px;
+            cursor: pointer;
+            height: 26px;
+            min-width: 26px;
+        }
+        .mobile-btn.secondary { background: #10b981; }
+        .mobile-btn.ghost { background: #6b7280; }
+
+        .back-to-top {
+            position: fixed;
+            right: 16px;
+            bottom: 18px;
+            background: #667eea;
+            color: #fff;
+            border: none;
+            border-radius: 999px;
+            padding: 10px 12px;
+            font-size: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+        }
+        .back-to-top.show { display: inline-flex; align-items: center; gap: 6px; }
+
+        .kanban-container {
+            display: flex;
+            gap: 3px;
+            padding: 12px;
+            height: calc(100vh - 75px);
+            margin-top: 75px;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            scroll-snap-type: x proximity;
+            touch-action: pan-x;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .kanban-column {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 240px;
+            overflow: hidden;
+            scroll-snap-align: start;
+        }
+
+        .column-header {
+            padding: 12px;
+            font-weight: bold;
+            font-size: 14px;
+            color: black;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+        }
+        .column-title { display: inline-block; }
+        .collapse-icon { cursor: pointer; font-size: 16px; position: absolute; right: 8px; opacity: 0.7; padding: 2px 6px; border-radius: 3px; }
+        .collapse-icon:hover { opacity: 1; background: rgba(255,255,255,0.3); }
+        .collapse-menu { position: fixed; background: white; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); padding: 4px 0; min-width: 160px; z-index: 1000; display: none; }
+        .collapse-menu.show { display: block; }
+        .collapse-menu-item { padding: 8px 12px; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .collapse-menu-item:hover { background: #f3f4f6; }
+        .kanban-column.collapsed { flex: 0 0 36px; min-width: 36px; max-width: 36px; background: transparent; box-shadow: none; }
+        .kanban-column.collapsed .column-content { display: none; }
+        .kanban-column.collapsed .project-filter { display: none; }
+        .kanban-column.collapsed .add-task-btn { display: none; }
+        .kanban-column.collapsed .column-header { justify-content: center; padding: 8px 6px; }
+        .kanban-column.collapsed .column-title { writing-mode: vertical-rl; transform: rotate(180deg); }
+
+        .idea .column-header { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .todo .column-header { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .planning .column-header { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .design .column-header { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .test .column-header { background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); color: white; }
+        .done .column-header { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .cancelled .column-header { background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); }
+
+        .add-task-btn {
+            margin: 10px;
+            padding: 8px;
+            background: #e5e7eb;
+            color: #000;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            align-self: flex-start;
+        }
+        .add-task-btn:hover { background: #5568d3; }
+
+        @media (max-width: 1023px) {
+            /* HJ-ID1RS11 Feature 12: Icon-only buttons, shorter selects, logout icon - Mobile (phones <1024px) */
+            .header { height: 55px; padding: 8px 10px; }
+            .header-left { gap: 2px; }
+            .project-title { font-size: 14px; }
+            .title-full { display: none; }
+            .title-short { display: inline; }
+            .timestamp { display: none !important; }
+            .project-controls { gap: 2px; }
+            .project-select { 
+                font-size: 11px; 
+                padding: 4px 6px; 
+                height: 32px; 
+                max-width: 80px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .project-btn { 
+                font-size: 14px; 
+                padding: 2px 4px; 
+                height: 26px; 
+                min-width: 26px;
+            }
+            .nav-btn { 
+                font-size: 11px; 
+                padding: 2px 4px; 
+                height: 26px;
+                min-width: 26px;
+                gap: 2px;
+            }
+            
+            /* Icon-only buttons with hover text */
+            .project-btn .btn-text,
+            .nav-btn .btn-text { display: none; }
+            .project-btn .btn-icon,
+            .nav-btn .btn-icon { display: inline; }
+
+            .mobile-toolbar { display: flex; }
+
+            .kanban-container {
+                position: fixed;
+                top: 99px;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                display: flex;
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                gap: 3px;
+                padding: 0px;
+                box-sizing: border-box;
+                -webkit-overflow-scrolling: touch;
+            }
+            /* Show scrollbar on mobile */
+            .kanban-container::-webkit-scrollbar {
+                height: 8px;
+            }
+            .kanban-container::-webkit-scrollbar-track {
+                background: #f0f0f0;
+            }
+            .kanban-container::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+
+            .kanban-column { 
+                display: flex; 
+                flex-direction: column; 
+                min-width: 280px;
+                max-width: 280px;
+                flex-shrink: 0;
+                background: rgba(255, 255, 255, 0.95);
+                border-radius: 0px;
+                overflow: hidden;
+            }
+            
+            /* Collapsed columns on mobile - 22px for better visibility on phones */
+            .kanban-column.collapsed { 
+                flex: 0 0 22px; 
+                min-width: 22px; 
+                max-width: 22px; 
+            }
+            .kanban-column.collapsed .column-header { 
+                padding: 4px 1px;
+                font-size: 10px;
+            }
+            
+            .column-header { 
+                font-size: 11px; 
+                padding: 0px;
+                flex-shrink: 0;
+            }
+            .project-filter { 
+                margin: 0px;
+                flex-shrink: 0;
+            }
+            .project-filter select { 
+                width: 100%;
+                max-width: 180px;
+                font-size: 10px;
+                padding: 3px 4px;
+                height: 26px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .project-filter .project-btn { display: none; }
+            .column-content { 
+                flex: 1;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding: 4px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .add-task-btn { display: none !important; }
+            .task-card { cursor: default; padding: 4px; margin-bottom: 3px; }
+            .task-row1 { font-size: 9px; margin-bottom: 2px; }
+            .task-row2 { font-size: 11px; margin-bottom: 2px; }
+            .project-tag { font-size: 8px; padding: 1px 3px; }
+            .move-select { font-size: 10px; padding: 3px 5px; }
+            .delete-btn, .icon-btn, .priority-btn { min-height: 30px; min-width: 30px; }
+        }
+
+        @media (max-width: 1366px) and (min-width: 1024px) {
+            /* HJ-ID1RS11: Feature 9 - Tablet (iPads 1024-1366px) - hide timestamp, show short title, fit all on top row */
+            .header { height: 80px; padding: 6px 8px; display: flex; flex-direction: column; justify-content: flex-start !important; }
+            .header-left { gap: 4px; align-items: center; justify-content: flex-start !important; width: 100%; }
+            .project-controls { gap: 3px; align-items: center; justify-content: flex-start !important; width: auto; }
+            .nav-buttons { gap: 3px; flex-wrap: nowrap; justify-content: flex-start !important; width: 100%; }
+            .timestamp { display: none !important; }
+            .title-full { display: none; }
+            .title-short { display: inline; font-size: 14px; }
+            
+            /* Tablet icon replacements - swap text with data-tablet-icon */
+            .nav-btn .btn-text { display: none; }
+            .nav-btn::after { content: attr(data-tablet-icon); font-size: 13px; }
+            .nav-btn { padding: 3px 5px; height: 30px; min-width: auto; }
+            
+            /* Tablet-only Jump to column - on second row */
+            .tablet-column-select { 
+                display: block !important;
+                width: 50%;
+                padding: 3px 5px;
+                font-size: 10px;
+                border: 1px solid #999;
+                border-radius: 3px;
+                background: #fff;
+                margin: 3px 0 0 0;
+                box-sizing: border-box;
+                flex-shrink: 0;
+            }
+            
+            .kanban-container {
+                display: flex;
+                flex-wrap: nowrap;
+                grid-template-columns: none;
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+                gap: 3px;
+                padding: 8px;
+            }
+            /* Show scrollbar on tablet */
+            .kanban-container::-webkit-scrollbar {
+                height: 8px;
+            }
+            .kanban-container::-webkit-scrollbar-track {
+                background: #f0f0f0;
+            }
+            .kanban-container::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+            .kanban-column { min-width: 240px; }
+            
+            /* Thinner collapsed columns on tablet for more visibility */
+            .kanban-column.collapsed { 
+                flex: 0 0 20px; 
+                min-width: 20px; 
+                max-width: 20px; 
+            }
+            .kanban-column.collapsed .column-header { 
+                padding: 6px 2px; 
+            }
+            
+            .project-select { height: 30px; padding: 3px 5px; font-size: 10px; }
+            .project-btn { height: 30px; padding: 3px 5px; font-size: 9px; min-width: auto; }
+            .column-header { font-size: 12px; padding: 8px; }
+            .add-task-btn { padding: 6px; font-size: 12px; }
+            .task-card { padding: 6px; margin-bottom: 6px; }
+            .task-row1 { font-size: 10px; margin-bottom: 4px; }
+            .task-row2 { font-size: 12px; margin-bottom: 4px; }
+            .project-tag { font-size: 9px; padding: 1px 4px; }
+            .icon-btn { opacity: 1; font-size: 16px; padding: 4px; }
+            .action-buttons { gap: 4px; }
+            .move-select { font-size: 11px; padding: 4px 6px; }
+        }
+
+        .project-filter { display: flex; gap: 6px; margin: 0 10px 10px; justify-content: flex-start; align-items: center; }
+        .project-filter select { flex: 0 1 180px; padding: 4px 6px; font-size: 11px; border: 1px solid #ddd; border-radius: 3px; background: white; }
+
+        .column-content { flex: 1; padding: 10px; overflow-y: auto; overflow-x: hidden; }
+        .column-content::-webkit-scrollbar { width: 6px; }
+        .column-content::-webkit-scrollbar-thumb { background: #888; border-radius: 10px; }
+
+        .task-card {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 8px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            cursor: move;
+            transition: all 0.2s;
+        }
+        .task-card:hover { transform: translateY(-1px); box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1); }
+        .task-card[data-creator="HJ"] { border-left: 3px solid gold; }
+        .task-card.dragging { opacity: 0.5; }
+        .column-content.drag-over { background: rgba(102, 126, 234, 0.1); }
+
+        /* Compact mode removed - cards are now consistently sized */
+
+        .task-row1 { display: flex; align-items: center; justify-content: space-between; gap: 5px; margin-bottom: 5px; font-size: 11px; }
+        .task-info-left { display: flex; align-items: center; gap: 5px; flex-shrink: 1; min-width: 0; }
+        .navigation-group { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+        .task-id { color: #888; font-weight: bold; flex-shrink: 0; line-height: 1.1; }
+        .task-id-line { display: block; }
+        .project-tag { font-size: 10px; color: #555; background: #f3f4f6; padding: 2px 6px; border-radius: 10px; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .priority-btn { width: 20px; height: 20px; border-radius: 50%; border: none; cursor: pointer; }
+        .priority-1 { background: #22c55e; }
+        .priority-2 { background: #3b82f6; }
+        .priority-3 { background: #eab308; }
+        .status-icon { font-size: 14px; cursor: pointer; }
+        .action-buttons { margin-left: 0; display: flex; gap: 3px; }
+        .icon-btn { background: none; border: none; cursor: pointer; font-size: 18px; padding: 6px 8px; opacity: 0.7; border-radius: 4px; transition: 0.2s; }
+        .icon-btn:hover { opacity: 1; background: rgba(59, 130, 246, 0.1); }
+
+        .task-row2 { font-size: 13px; font-weight: 500; color: #333; margin-bottom: 5px; cursor: pointer; line-height: 1.3; }
+        .task-row2:hover { color: #667eea; }
+        /* Compact toggle removed for cleaner UI */
+        .task-description { font-size: 12px; color: #666; margin-bottom: 5px; padding: 4px 6px; background: #f9fafb; border-radius: 4px; line-height: 1.4; font-style: italic; }
+        .task-description.hidden { display: none; }
+
+        .task-row3 { display: flex; gap: 5px; align-items: center; justify-content: flex-end; }
+        .move-select { padding: 3px 5px; font-size: 11px; border: 1px solid #ddd; border-radius: 3px; }
+        .delete-btn { padding: 3px 8px; background: #ef4444; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 10px; }
+        .delete-btn:hover { background: #dc2626; }
+
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 2000; align-items: center; justify-content: center; }
+        .modal.active { display: flex; }
+        .modal-content { background: white; padding: 25px; border-radius: 10px; width: 90%; max-width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { font-size: 20px; font-weight: bold; margin-bottom: 20px; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 10px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: #555; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px; font-size: 13px; }
+        .form-group textarea { resize: vertical; min-height: 60px; }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .modal-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-primary { flex: 1; padding: 10px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .btn-primary:hover { background: #5568d3; }
+        .btn-secondary { flex: 1; padding: 10px; background: #6b7280; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; }
+        .btn-secondary:hover { background: #4b5563; }
+        
+        /* LOGIN MODAL (HJ-ID1RS5) */
+        .login-box { background: white; padding: 40px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.3); text-align: center; width: 90%; max-width: 350px; }
+        .login-box h2 { margin-bottom: 20px; color: #667eea; font-size: 24px; }
+        .login-box input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
+        .login-box input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 5px rgba(102, 126, 234, 0.3); }
+        .login-box .login-error { color: #dc2626; font-size: 12px; margin: 10px 0; display: none; }
+        .login-box .login-status { color: #059669; font-size: 12px; margin: 10px 0; }
+        .login-btn { width: 100%; padding: 14px 16px; background: #667eea; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 14px; font-weight: 600; margin-top: 15px; touch-action: manipulation; -webkit-appearance: none; box-sizing: border-box; }
+        .password-wrapper { position: relative; display: flex; align-items: center; }
+        .password-wrapper input { flex: 1; padding-right: 40px; }
+        .toggle-password-btn { position: absolute; right: 10px; background: none; border: none; cursor: pointer; font-size: 16px; padding: 5px; color: #667eea; }
+        .login-btn:hover { background: #5568d3; }
+        .login-btn:active { background: #4a54b8; }
+        .login-btn:disabled { background: #ccc; cursor: not-allowed; }
+        
+        @media (max-width: 600px) {
+            .login-box { padding: 30px 20px; margin: 20px; }
+            .login-box input { font-size: 16px; padding: 14px; }
+            .login-btn { padding: 16px 20px; font-size: 16px; }
+        }
+
+        /* ADMIN PANEL (HJ-ID1RS7) */
+        .admin-modal .modal-content { max-width: 900px; max-height: 90vh; }
+        .admin-tabs { display: flex; gap: 5px; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .admin-tab { padding: 10px 20px; background: #f3f4f6; border: none; border-radius: 5px 5px 0 0; cursor: pointer; font-size: 14px; font-weight: 500; transition: all 0.2s; }
+        .admin-tab.active { background: #667eea; color: white; }
+        .admin-tab:hover:not(.active) { background: #e5e7eb; }
+        .admin-tab-content { display: none; }
+        .admin-tab-content.active { display: block; }
+        .user-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 15px; }
+        .user-table th { background: #f3f4f6; padding: 10px; text-align: left; font-weight: 600; border-bottom: 2px solid #ddd; }
+        .user-table td { padding: 10px; border-bottom: 1px solid #e5e7eb; }
+        .user-table tr:hover { background: #f9fafb; }
+        .user-table .user-active { color: #10b981; font-weight: bold; }
+        .user-table .user-inactive { color: #ef4444; font-weight: bold; }
+        .user-actions { display: flex; gap: 5px; }
+        .user-actions button { padding: 4px 8px; font-size: 11px; border: none; border-radius: 3px; cursor: pointer; }
+        .btn-edit { background: #3b82f6; color: white; }
+        .btn-edit:hover { background: #2563eb; }
+        .btn-delete { background: #ef4444; color: white; }
+        .btn-delete:hover { background: #dc2626; }
+        .btn-reset { background: #f59e0b; color: white; }
+        .btn-reset:hover { background: #d97706; }
+        .role-checkboxes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 5px; }
+        .role-checkboxes label { display: flex; align-items: center; gap: 5px; font-size: 12px; }
+        .log-viewer { max-height: 400px; overflow-y: auto; background: #f9fafb; padding: 15px; border-radius: 5px; font-family: 'Courier New', monospace; font-size: 12px; }
+        .log-entry { padding: 5px 0; border-bottom: 1px solid #e5e7eb; }
+        .log-entry:last-child { border-bottom: none; }
+        .session-list { max-height: 400px; overflow-y: auto; }
+        
+        /* PA-002: Task Modal Enhancements */
+        .modal-header {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* PA-003: Unified Cancel Button in Header */
+        .modal-header-cancel {
+            padding: 8px 12px;
+            background: #6b7280;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.3s;
+            min-width: 100px;
+            white-space: nowrap;
+        }
+        .modal-header-cancel:hover { background: #4b5563; }
+        
+        /* Save Button in Header */
+        .modal-header-save {
+            padding: 8px 12px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.3s;
+            min-width: 100px;
+            white-space: nowrap;
+            margin-right: 8px;
+        }
+        .modal-header-save:hover { background: #059669; }
+        
+        /* Mobile: Show text on buttons */
+        @media (max-width: 800px) {
+            .modal-header-cancel, .modal-header-save {
+                padding: 6px 10px;
+                font-size: 12px;
+                min-height: 32px;
+                min-width: auto;
+            }
+        }
+        
+        .btn-toggle-fields {
+            width: 100%;
+            padding: 10px 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            transition: background 0.3s;
+            margin: 10px 0;
+        }
+        .btn-toggle-fields:hover { background: #5568d3; }
+        
+        @media (max-width: 800px) {
+            .btn-toggle-fields { min-height: 44px; font-size: 14px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN MODAL (HJ-ID1RS5) -->
+    <div id="loginModal" class="modal active">
+        <div class="login-box">
+            <h2>🔐 Time Project Login</h2>
+            <input type="text" id="loginUsername" placeholder="Username" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" onkeypress="if(event.key==='Enter') verifyLogin()">
+            <div class="password-wrapper">
+                <input type="password" id="loginPassword" placeholder="Password" autocomplete="off" autocorrect="off" spellcheck="false" onkeypress="if(event.key==='Enter') verifyLogin()">
+                <button type="button" class="toggle-password-btn" onclick="togglePasswordVisibility(event)" title="Show/Hide Password">👁️</button>
+            </div>
+            <div class="login-error" id="loginError"></div>
+            <div class="login-status" id="loginStatus"></div>
+            
+            <!-- GitHub Sync Note -->
+            <div style="background: #dbeafe; border: 1px solid #0284c7; border-radius: 6px; padding: 12px; margin-bottom: 12px; font-size: 12px; color: #0c4a6e;">
+                <strong>💡 Tip:</strong> After login, click <strong>📖 Docs</strong> button to set up GitHub Token for cross-device sync. Your tasks will automatically sync across Desktop, Tablet, Mobile, and Laptop!
+            </div>
+            
+            <button class="login-btn" id="loginBtn" type="button" onclick="verifyLogin()">Login</button>
+            <button class="login-btn" style="background: #6b7280; margin-top: 8px;" type="button" onclick="toggleDemoMode()" title="For testing only">Demo Mode</button>
+            <button class="login-btn" style="background: #9333ea; margin-top: 8px; font-size: 12px; padding: 10px;" type="button" onclick="resetLoginLockout()" title="Clear lockout">🔓 Reset Lockout</button>
+            <button class="login-btn" id="deviceDisplay" style="background: #9ca3af; margin-top: 12px; cursor: default; font-size: 13px;" type="button" disabled title="Current device">Device: Unknown</button>
+        </div>
+    </div>
+
+    <!-- GITHUB TOKEN SETTINGS MODAL -->
+    <div id="tokenModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">🔐 GitHub Sync Settings</div>
+            <div style="padding: 20px; font-size: 14px;">
+                <p style="margin-bottom: 15px; color: #666;">
+                    <strong>Cross-Device Synchronization</strong><br>
+                    Enter your GitHub Personal Access Token to enable task sync across devices.
+                </p>
+                
+                <div style="background: #f3f4f6; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-size: 12px; color: #555;">
+                    <strong>How to get a token:</strong><br>
+                    1. Visit: <a href="https://github.com/settings/tokens" target="_blank" style="color: #0066cc;">github.com/settings/tokens</a><br>
+                    2. Click "Generate new token (classic)"<br>
+                    3. Select scope: ✅ repo<br>
+                    4. Copy token (starts with ghp_)
+                </div>
+
+                <label style="display: block; margin-bottom: 8px; font-weight: bold;">GitHub Personal Access Token:</label>
+                <input type="password" id="tokenInput" placeholder="ghp_..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-family: monospace; font-size: 12px; box-sizing: border-box; margin-bottom: 15px;">
+                
+                <div id="tokenStatus" style="margin-bottom: 15px; padding: 10px; border-radius: 4px; display: none; font-size: 12px;"></div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button onclick="saveGithubToken()" style="flex: 1; padding: 10px; background: #059669; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">✓ Save Token</button>
+                    <button onclick="document.getElementById('tokenModal').classList.remove('active')" style="flex: 1; padding: 10px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                </div>
+                
+                <button onclick="clearGithubToken()" style="width: 100%; padding: 8px; margin-top: 10px; background: #dc2626; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">🗑️ Clear Token</button>
+
+                <div style="background: #dbeafe; padding: 12px; border-radius: 4px; margin-top: 15px; font-size: 11px; color: #1e40af;">
+                    <strong>Status:</strong> <span id="syncStatusText">Not configured</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DOCUMENTATION MODAL (Feature 15) -->
+    <div id="docModal" class="modal">
+        <div class="modal-content" style="width: 100%; height: 100vh; max-width: none; max-height: none; overflow-y: auto; border-radius: 0;">
+            <div class="modal-header" style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                <span>📖 Documentation & Setup Guide</span>
+                <button onclick="document.getElementById('docModal').classList.remove('active')" style="padding: 6px 10px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✖ Close</button>
+            </div>
+            <div style="padding: 20px; font-size: 14px; line-height: 1.6;">
+                <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+                    <button onclick="document.getElementById('docModal').classList.remove('active')" style="padding: 6px 10px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✖ Close</button>
+                </div>
+
+                <!-- INDEX -->
+                <div id="docIndex" style="background: #f3f4f6; padding: 12px; border-radius: 6px; margin-bottom: 20px;">
+                    <h3 style="margin: 0 0 10px 0; font-size: 15px; color: #111827;">📌 Index</h3>
+                    <ul style="margin: 0; padding-left: 18px; color: #374151;">
+                        <li style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                            <span>1. 🧭 Buttons Inventory</span>
+                            <button onclick="document.getElementById('doc-buttons').scrollIntoView({behavior: 'smooth'})" style="padding: 2px 6px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">Jump</button>
+                        </li>
+                        <li style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                            <span>2. 🔐 GitHub Token Setup (Feature 15)</span>
+                            <button onclick="document.getElementById('doc-github').scrollIntoView({behavior: 'smooth'})" style="padding: 2px 6px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">Jump</button>
+                        </li>
+                        <li style="margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                            <span>3. 🔧 Troubleshooting</span>
+                            <button onclick="document.getElementById('doc-troubleshooting').scrollIntoView({behavior: 'smooth'})" style="padding: 2px 6px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">Jump</button>
+                        </li>
+                        <li style="display: flex; align-items: center; gap: 8px;">
+                            <span>4. ✨ What This Enables</span>
+                            <button onclick="document.getElementById('doc-benefits').scrollIntoView({behavior: 'smooth'})" style="padding: 2px 6px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">Jump</button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- GITHUB SYNC SETUP SECTION -->
+                <div id="doc-github" style="margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <h2 style="color: #1f2937; font-size: 18px; margin-bottom: 12px;">🔐 GitHub Token Setup (Feature 15)</h2>
+                        <button onclick="document.getElementById('docIndex').scrollIntoView({behavior: 'smooth'})" style="padding: 4px 8px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">↩ Index</button>
+                    </div>
+                    <p style="color: #666; margin-bottom: 15px;">
+                        Enable cross-device synchronization. Your tasks will automatically sync across Desktop, Mobile, Tablet, and Laptop.
+                    </p>
+
+                    <!-- RECOMMENDED METHOD -->
+                    <div style="background: #dbeafe; border-left: 4px solid #0284c7; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+                        <h3 style="color: #0c4a6e; font-size: 14px; margin-bottom: 8px;">✅ RECOMMENDED - UI Button Method (Easiest)</h3>
+                        <ol style="margin: 0; padding-left: 20px; color: #0c4a6e;">
+                            <li style="margin-bottom: 6px;">Click <strong>🔐 Token</strong> button in top navigation</li>
+                            <li style="margin-bottom: 6px;">Click link: <a href="https://github.com/settings/tokens" target="_blank" style="color: #0284c7;">github.com/settings/tokens</a></li>
+                            <li style="margin-bottom: 6px;">Click "Generate new token (classic)"</li>
+                            <li style="margin-bottom: 6px;"><strong>Token name:</strong> "Time Kanban Sync"</li>
+                            <li style="margin-bottom: 6px;"><strong>Expiration:</strong> "No expiration"</li>
+                            <li style="margin-bottom: 6px;"><strong>Scope:</strong> Check ✅ <strong>repo</strong> only</li>
+                            <li style="margin-bottom: 6px;">Click "Generate token"</li>
+                            <li style="margin-bottom: 6px;"><strong>Copy token immediately</strong> (starts with ghp_)</li>
+                            <li style="margin-bottom: 6px;">Return here, click 🔐 Token button</li>
+                            <li style="margin-bottom: 6px;">Paste token in the text field</li>
+                            <li>Click <strong>✓ Save Token</strong></li>
+                        </ol>
+                        <p style="color: #0c4a6e; margin-top: 10px; font-size: 12px;">
+                            ⏱️ Time required: 2-3 minutes | 🔧 Difficulty: Easy | ✓ Recommended
+                        </p>
+                    </div>
+
+                    <!-- CONSOLE METHOD (for advanced users) -->
+                    <details style="background: #f3f4f6; padding: 12px; border-radius: 4px; margin-bottom: 15px; cursor: pointer;">
+                        <summary style="color: #374151; font-weight: bold; cursor: pointer;">
+                            🖥️ Advanced - Console Method (For developers)
+                        </summary>
+                        <div style="margin-top: 12px; color: #1f2937;">
+                            <ol style="padding-left: 20px;">
+                                <li style="margin-bottom: 8px;">Visit: <a href="https://github.com/settings/tokens" target="_blank" style="color: #0284c7;">github.com/settings/tokens</a></li>
+                                <li style="margin-bottom: 8px;">Generate token (steps same as above)</li>
+                                <li style="margin-bottom: 8px;">Open browser console (F12 → Console tab)</li>
+                                <li style="margin-bottom: 8px;">Type "allow pasting" and press Enter (if prompted)</li>
+                                <li style="margin-bottom: 8px;">Paste this command:<br>
+                                    <code style="background: #000; color: #0f0; padding: 8px; display: block; border-radius: 4px; font-family: monospace; font-size: 12px; margin-top: 6px;">localStorage.setItem('githubToken', 'ghp_YOUR_TOKEN_HERE');</code>
+                                </li>
+                                <li>Refresh page (F5)</li>
+                            </ol>
+                        </div>
+                    </details>
+
+                    <!-- REPEAT FOR EACH DEVICE -->
+                    <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; border-radius: 4px; margin-bottom: 15px;">
+                        <h3 style="color: #92400e; font-size: 14px; margin-bottom: 8px;">📱 Setup on Multiple Devices</h3>
+                        <p style="color: #92400e; margin-bottom: 8px;">
+                            <strong>Same token works on all devices.</strong> Repeat setup on:
+                        </p>
+                        <ul style="margin: 0; padding-left: 20px; color: #92400e;">
+                            <li>✅ Desktop (Chrome/Edge/Safari)</li>
+                            <li>✅ Tablet (Chrome recommended)</li>
+                            <li>✅ Mobile phone (Chrome recommended)</li>
+                            <li>✅ iPad (Chrome recommended)</li>
+                            <li>✅ Laptop</li>
+                        </ul>
+                    </div>
+
+                    <!-- VERIFICATION -->
+                    <div style="background: #dcfce7; border-left: 4px solid #16a34a; padding: 12px; border-radius: 4px;">
+                        <h3 style="color: #166534; font-size: 14px; margin-bottom: 8px;">✓ Verification</h3>
+                        <ol style="margin: 0; padding-left: 20px; color: #166534;">
+                            <li style="margin-bottom: 6px;">After saving token, <strong>refresh page</strong></li>
+                            <li style="margin-bottom: 6px;">Open browser console (F12)</li>
+                            <li style="margin-bottom: 6px;">Look for: <code style="background: #fff; padding: 2px 4px;">✓ Tasks fetched from GitHub: X</code></li>
+                            <li style="margin-bottom: 6px;">Click 🔐 Token button → status should show ✓ Configured</li>
+                            <li>Create a test task → console shows: <code style="background: #fff; padding: 2px 4px;">✓ Tasks pushed to GitHub</code></li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- TROUBLESHOOTING -->
+                <div id="doc-troubleshooting" style="margin-bottom: 30px; border-top: 1px solid #ddd; padding-top: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <h2 style="color: #1f2937; font-size: 18px; margin-bottom: 12px;">🔧 Troubleshooting</h2>
+                        <button onclick="document.getElementById('docIndex').scrollIntoView({behavior: 'smooth'})" style="padding: 4px 8px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">↩ Index</button>
+                    </div>
+                    
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #dc2626;">❌ "GitHub push failed: 401"</strong><br>
+                        <span style="color: #666;">Token invalid or expired. Create new token at <a href="https://github.com/settings/tokens" target="_blank" style="color: #0284c7;">github.com/settings/tokens</a></span>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #dc2626;">❌ "GitHub push failed: 403"</strong><br>
+                        <span style="color: #666;">Token lacks permissions. Verify ✅ <strong>repo</strong> scope is checked when creating token.</span>
+                    </div>
+
+                    <div style="margin-bottom: 12px;">
+                        <strong style="color: #dc2626;">❌ "No sync appearing"</strong><br>
+                        <span style="color: #666;">1) Hard refresh (Ctrl+Shift+R) → 2) Check token is saved: Click 🔐 Token button → should show ✓ Configured → 3) Check console (F12) for errors</span>
+                    </div>
+
+                    <div>
+                        <strong style="color: #dc2626;">❌ "Tasks different on different devices"</strong><br>
+                        <span style="color: #666;">Make sure token is set on ALL devices. Also clear browser cache if not syncing.</span>
+                    </div>
+                </div>
+
+                <!-- FEATURES & BENEFITS -->
+                <div id="doc-benefits" style="border-top: 1px solid #ddd; padding-top: 20px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+                        <h2 style="color: #1f2937; font-size: 18px; margin-bottom: 12px;">✨ What This Enables</h2>
+                        <button onclick="document.getElementById('docIndex').scrollIntoView({behavior: 'smooth'})" style="padding: 4px 8px; font-size: 11px; background: #e5e7eb; border: none; border-radius: 4px; cursor: pointer;">↩ Index</button>
+                    </div>
+                    <ul style="padding-left: 20px; color: #666;">
+                        <li style="margin-bottom: 8px;">📱 Work on desktop → lunch break → update on mobile → tasks sync automatically</li>
+                        <li style="margin-bottom: 8px;">✏️ Edit on tablet → changes appear on laptop instantly</li>
+                        <li style="margin-bottom: 8px;">☁️ All devices have same data (no more mismatches)</li>
+                        <li style="margin-bottom: 8px;">🔄 Manual sync button (🔄) available in header</li>
+                        <li style="margin-bottom: 8px;">🛡️ Secure: Token stored in browser, only on YOUR device</li>
+                    </ul>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 20px;">
+                    <button onclick="document.getElementById('docModal').classList.remove('active')" style="padding: 8px 12px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px;">✖ Close</button>
+                </div>
+
+            </div>
+
+            <div style="padding: 15px; border-top: 1px solid #ddd; text-align: center;">
+                <button onclick="document.getElementById('docModal').classList.remove('active')" style="padding: 10px 20px; background: #6b7280; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL MODAL (HJ-ID1RS7) -->
+    <div id="adminModal" class="modal admin-modal">
+        <div class="modal-content">
+            <div class="modal-header">⚙️ Admin Dashboard</div>
+            
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('users')">👥 Users</button>
+                <button class="admin-tab" onclick="switchAdminTab('logs')">📋 Login Logs</button>
+                <button class="admin-tab" onclick="switchAdminTab('sessions')">🔒 Sessions</button>
+                <button class="admin-tab" onclick="switchAdminTab('invitations')">✉️ Invitations</button>
+                <button class="admin-tab" onclick="switchAdminTab('projects')">📁 Projects</button>
+            </div>
+
+            <!-- USERS TAB -->
+            <div id="adminTab-users" class="admin-tab-content active">
+                <button class="btn-primary" style="width: auto; margin-bottom: 15px;" onclick="openAddUserForm()">➕ Add New User</button>
+                <div id="userTableContainer"></div>
+            </div>
+
+            <!-- LOGS TAB -->
+            <div id="adminTab-logs" class="admin-tab-content">
+                <div class="form-row" style="margin-bottom: 15px;">
+                    <input type="text" id="logFilterUser" placeholder="Filter by username..." oninput="filterLogs()">
+                    <select id="logFilterType" onchange="filterLogs()">
+                        <option value="">All Types</option>
+                        <option value="SUCCESS">Success</option>
+                        <option value="FAILED">Failed</option>
+                        <option value="LOCKED">Locked</option>
+                    </select>
+                </div>
+                <div id="logViewer" class="log-viewer"></div>
+            </div>
+
+            <!-- SESSIONS TAB -->
+            <div id="adminTab-sessions" class="admin-tab-content">
+                <h3 style="margin-bottom: 10px; font-size: 14px;">Active Sessions</h3>
+                <div id="sessionList" class="session-list"></div>
+            </div>
+
+            <!-- INVITATIONS TAB (HJ-ID1RS10) -->
+            <div id="adminTab-invitations" class="admin-tab-content">
+                <button class="btn-primary" style="width: auto; margin-bottom: 15px;" onclick="openInvitationForm()">✉️ Send Invitation</button>
+                <div id="invitationTableContainer"></div>
+            </div>
+
+            <!-- PROJECTS TAB (PA-005) -->
+            <div id="adminTab-projects" class="admin-tab-content">
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 15px;">
+                    <button class="btn-primary" style="width: auto;" onclick="openProjectForm()">➕ Add Project</button>
+                    <button class="btn-secondary" style="width: auto;" onclick="renderProjectAdminTable()">🔄 Refresh</button>
+                </div>
+                <div id="projectTableContainer"></div>
+
+                <div id="projectFormContainer" style="margin-top: 20px; display: none; border-top: 1px solid #e5e7eb; padding-top: 15px;">
+                    <h3 id="projectFormTitle" style="margin-bottom: 12px; font-size: 14px;">Create Project</h3>
+                    <input type="hidden" id="projectFormId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Project Name</label>
+                            <input type="text" id="projectFormName" placeholder="Project name">
+                        </div>
+                        <div class="form-group">
+                            <label>Prefix (3-5 uppercase)</label>
+                            <input type="text" id="projectFormPrefix" placeholder="TIME" maxlength="5">
+                        </div>
+                        <div class="form-group">
+                            <label>Next Task Number</label>
+                            <input type="number" id="projectFormNextNumber" value="1" min="1">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Priority</label>
+                            <select id="projectFormPriority">
+                                <option value="1">1 (High)</option>
+                                <option value="2" selected>2 (Medium)</option>
+                                <option value="3">3 (Low)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Owner</label>
+                            <input type="text" id="projectFormOwner" placeholder="Owner username">
+                        </div>
+                        <div class="form-group">
+                            <label>Status</label>
+                            <select id="projectFormStatus">
+                                <option value="Active" selected>Active</option>
+                                <option value="On Hold">On Hold</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Archived">Archived</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Members (comma-separated)</label>
+                            <input type="text" id="projectFormMembers" placeholder="admin, user1, user2">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Tags (comma-separated)</label>
+                            <input type="text" id="projectFormTags" placeholder="core, web">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea id="projectFormDescription" placeholder="Short project description" style="min-height: 60px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Settings</label>
+                        <div class="role-checkboxes" style="grid-template-columns: repeat(3, 1fr);">
+                            <label><input type="checkbox" id="projectFormAllowExternal"> Allow external members</label>
+                            <label><input type="checkbox" id="projectFormRequireApproval"> Require approval for tasks</label>
+                            <label><input type="checkbox" id="projectFormAutoArchive"> Auto-archive completed</label>
+                        </div>
+                    </div>
+                    <div class="modal-buttons">
+                        <button class="btn-primary" onclick="saveProjectFromAdmin()">Save Project</button>
+                        <button class="btn-secondary" onclick="closeProjectForm()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-secondary" onclick="closeAdminPanel()">Close</button>
+                <button class="btn-delete" onclick="resetUserDataToDefaults()" style="margin-left: auto;" title="Emergency reset to default users">🔄 Reset to Defaults</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- USER FORM MODAL (HJ-ID1RS7) -->
+    <div id="userFormModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="userFormTitle">Add New User</div>
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" id="userFormUsername" placeholder="Enter username">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="userFormPassword" placeholder="Enter password">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="userFormEmail" placeholder="user@time.local">
+            </div>
+            <div class="form-group">
+                <label>Roles (select multiple)</label>
+                <div class="role-checkboxes">
+                    <label><input type="checkbox" value="Project Manager"> Project Manager</label>
+                    <label><input type="checkbox" value="Developer"> Developer</label>
+                    <label><input type="checkbox" value="Reviewer"> Reviewer</label>
+                    <label><input type="checkbox" value="Designer"> Designer</label>
+                    <label><input type="checkbox" value="Tester"> Tester</label>
+                    <label><input type="checkbox" value="Admin"> Admin</label>
+                    <label><input type="checkbox" id="userFormActive" checked> Active</label>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="saveUser()">Save User</button>
+                <button class="btn-secondary" onclick="closeUserForm()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- INVITATION FORM MODAL (HJ-ID1RS10) -->
+    <div id="invitationFormModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">✉️ Send Invitation</div>
+            <div class="form-group">
+                <label>Recipient Email</label>
+                <input type="email" id="inviteEmail" placeholder="user@example.com">
+            </div>
+            <div class="form-group">
+                <label>Custom Message (optional)</label>
+                <textarea id="inviteMessage" placeholder="Add a personal message..." style="min-height: 60px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Expiration Days</label>
+                <input type="number" id="inviteExpireDays" value="7" min="1" max="30">
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" id="inviteForcePasswordChange" checked> Require password change on first login
+                </label>
+            </div>
+            <div class="form-group">
+                <label>Pre-assign Roles (optional)</label>
+                <div class="role-checkboxes">
+                    <label><input type="checkbox" value="Developer"> Developer</label>
+                    <label><input type="checkbox" value="Reviewer"> Reviewer</label>
+                    <label><input type="checkbox" value="Designer"> Designer</label>
+                    <label><input type="checkbox" value="Tester"> Tester</label>
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="generateInvitation()">Generate & Send</button>
+                <button class="btn-secondary" onclick="closeInvitationForm()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="header">
+        <div class="header-left">
+            <div class="project-title"><span class="title-full"><span style="display: inline-flex; gap: 4px; padding: 4px 8px; background: white; border-radius: 8px; border: 2px solid #3b82f6; align-items: center; vertical-align: middle;"><span style="font-size: 16px; color: #fbbf24;">?</span><span style="width: 2px; height: 20px; background: #3b82f6; border-radius: 1px;"></span><span style="font-size: 16px; color: #ef4444;">!</span><span style="width: 2px; height: 20px; background: #3b82f6; border-radius: 1px;"></span><span style="font-size: 16px; color: #10b981;">✓</span></span> KanBan</span><span class="title-short"><span style="display: inline-flex; gap: 3px; padding: 3px 6px; background: white; border-radius: 6px; border: 2px solid #3b82f6; align-items: center; vertical-align: middle;"><span style="font-size: 14px; color: #fbbf24;">?</span><span style="width: 1.5px; height: 16px; background: #3b82f6; border-radius: 1px;"></span><span style="font-size: 14px; color: #ef4444;">!</span><span style="width: 1.5px; height: 16px; background: #3b82f6; border-radius: 1px;"></span><span style="font-size: 14px; color: #10b981;">✓</span></span> KanBan</span></div>
+            <div class="timestamp" id="timestamp">Loading...</div>
+            <div class="project-controls">
+                <select id="projectFilter" class="project-select" onchange="setGlobalProjectFilter(this.value)"></select>
+                <select id="assigneeFilter" class="project-select" onchange="setAssigneeFilter(this.value)" style="margin-left: 8px;"></select>
+                <select id="tabletColumnSelect" class="tablet-column-select" onchange="scrollToColumn(this.value)" style="display: none;" title="Jump to column">
+                    <option value="">Go to...</option>
+                    <option value="1">1-Idea</option>
+                    <option value="2">2-Todo</option>
+                    <option value="3">3-Plan</option>
+                    <option value="4">4-Design</option>
+                    <option value="5">5-Test</option>
+                    <option value="6">6-Done</option>
+                    <option value="7">7-Cancel</option>
+                </select>
+                <button class="project-btn" onclick="createProjectFlow()" title="Add new project"><span class="btn-text">➕ Project</span><span class="btn-icon">➕</span></button>
+            </div>
+        </div>
+        <div class="nav-buttons">
+            <button class="nav-btn" data-tablet-icon="ℹ️" onclick="document.getElementById('docModal').classList.add('active')" title="Documentation & Setup"><span class="btn-text">📖 Docs</span></button>
+            <button class="nav-btn" data-tablet-icon="🔑" onclick="document.getElementById('tokenModal').classList.add('active')" title="GitHub Sync Settings"><span class="btn-text">🔐 Token</span></button>
+            <button class="nav-btn" data-tablet-icon="⇄" id="syncBtn" onclick="manualSync()" title="Sync with GitHub"><span class="btn-text">🔄 Sync</span></button>
+            <button class="nav-btn" data-tablet-icon="🛠️" id="adminBtn" onclick="openAdminPanel()" style="display: none;" title="Admin Panel"><span class="btn-text">⚙️ Admin</span></button>
+            <button class="nav-btn" data-tablet-icon="⬇️" onclick="exportAll()" title="Export all tasks to clipboard"><span class="btn-text">📋 Export All</span></button>
+            <button class="nav-btn" data-tablet-icon="↻" onclick="refreshTimestamp()" title="Refresh timestamp"><span class="btn-text">🔄 Refresh</span></button>
+            <button class="nav-btn" data-tablet-icon="👋" onclick="logout()" title="Logout"><span class="btn-text">🚪 Logout</span></button>
+        </div>
+    </div>
+
+    <div class="mobile-toolbar">
+        <select id="mobileProjectFilter" onchange="setGlobalProjectFilter(this.value)"></select>
+        <select id="mobileColumnSelect" onchange="scrollToColumn(this.value)">
+            <option value="">Jump to column...</option>
+            <option value="1">1 - Idea</option>
+            <option value="2">2 - Todo</option>
+            <option value="3">3 - Planning</option>
+            <option value="4">4 - Design</option>
+            <option value="5">5 - Test</option>
+            <option value="6">6 - Done</option>
+            <option value="7">7 - Cancelled</option>
+        </select>
+        <button class="mobile-btn" onclick="openAddModal(currentColumn || 1)" title="Add new task">➕</button>
+        <button class="mobile-btn secondary" onclick="exportAll()" title="Export tasks">📋</button>
+    </div>
+
+    <button id="backToTop" class="back-to-top" onclick="scrollToTop()">⬆️ Top</button>
+
+    <div class="kanban-container">
+        <div class="kanban-column idea" data-column="1">
+            <div class="column-header">
+                <span class="column-title">1 - 💡 Idea</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 1)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-1">
+                    <div class="collapse-menu-item" onclick="collapseColumn(1)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(1)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(1)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(1)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-1" onchange="setColumnProjectFilter(1, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-1"></div>
+        </div>
+        <div class="kanban-column todo" data-column="2">
+            <div class="column-header">
+                <span class="column-title">2 - 📋 Todo</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 2)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-2">
+                    <div class="collapse-menu-item" onclick="collapseColumn(2)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(2)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(2)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(2)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-2" onchange="setColumnProjectFilter(2, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-2"></div>
+        </div>
+        <div class="kanban-column planning" data-column="3">
+            <div class="column-header">
+                <span class="column-title">3 - 📊 Planning</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 3)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-3">
+                    <div class="collapse-menu-item" onclick="collapseColumn(3)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(3)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(3)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(3)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-3" onchange="setColumnProjectFilter(3, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-3"></div>
+        </div>
+        <div class="kanban-column design" data-column="4">
+            <div class="column-header">
+                <span class="column-title">4 - 🎨 Design</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 4)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-4">
+                    <div class="collapse-menu-item" onclick="collapseColumn(4)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(4)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(4)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(4)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-4" onchange="setColumnProjectFilter(4, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-4"></div>
+        </div>
+        <div class="kanban-column test" data-column="5">
+            <div class="column-header">
+                <span class="column-title">5 - 🧪 Test</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 5)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-5">
+                    <div class="collapse-menu-item" onclick="collapseColumn(5)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(5)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(5)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(5)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-5" onchange="setColumnProjectFilter(5, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-5"></div>
+        </div>
+        <div class="kanban-column done" data-column="6">
+            <div class="column-header">
+                <span class="column-title">6 - ✅ Done</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 6)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-6">
+                    <div class="collapse-menu-item" onclick="collapseColumn(6)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(6)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(6)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(6)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-6" onchange="setColumnProjectFilter(6, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-6"></div>
+        </div>
+        <div class="kanban-column cancelled" data-column="7">
+            <div class="column-header">
+                <span class="column-title">7 - ❌ Cancelled</span>
+                <span class="collapse-icon" onclick="toggleCollapseMenu(event, 7)">⋮</span>
+                <div class="collapse-menu" id="collapse-menu-7">
+                    <div class="collapse-menu-item" onclick="collapseColumn(7)">◀ Collapse</div>
+                    <div class="collapse-menu-item" onclick="expandColumn(7)">▶ Expand</div>
+                    <div class="collapse-menu-item" onclick="focusColumn(7)">🎯 Focus (collapse others)</div>
+                    <div class="collapse-menu-item" onclick="expandAllColumns()">⊞ Expand All</div>
+                </div>
+            </div>
+            <button class="add-task-btn" onclick="openAddModal(7)">➕ Add Task</button>
+            <div class="project-filter">
+                <select id="project-filter-7" onchange="setColumnProjectFilter(7, this.value)"></select>
+                <button class="project-btn small" onclick="createProjectFlow()">➕</button>
+            </div>
+            <div class="column-content" id="column-7"></div>
+        </div>
+    </div>
+
+    <div id="taskModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">
+                <span>Add New Task</span>
+                <button class="modal-close-btn" onclick="closeModal()" title="Close">✖</button>
+            </div>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>Project *</label>
+                    <select id="taskProject" onchange="autoGenerateTaskId()" required></select>
+                </div>
+                <div class="form-group">
+                    <label>Task ID * (Auto-generated)</label>
+                    <input type="text" id="taskId" placeholder="Select project to generate ID" readonly required style="background: #f3f4f6;">
+                </div>
+                <div class="form-group">
+                    <label>What (Task Title) * - 2 rows</label>
+                    <textarea id="taskWhat" placeholder="Brief task title..." required rows="2" style="min-height: 50px;"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>What Description - 4 rows Scrollable</label>
+                    <textarea id="taskWhatDescription" placeholder="Detailed description of the task..." rows="4" style="min-height: 100px; overflow-y: auto;"></textarea>
+                </div>
+                
+                <!-- PA-002: Toggle Button for Additional Fields -->
+                <div class="form-group" style="text-align: center; margin: 10px 0;">
+                    <button type="button" id="toggleAdditionalFields" class="btn-toggle-fields" onclick="toggleTaskFormFields()">
+                        <span id="toggleIcon">▼</span> Show All Fields
+                    </button>
+                </div>
+                
+                <!-- PA-002: Additional Fields Container (hidden by default) -->
+                <div id="additionalFieldsContainer" style="display: none;">
+                    <div class="form-group">
+                        <label>Feature Descriptions (FD)</label>
+                        <textarea id="taskFD" placeholder="Feature descriptions..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>AI Analyse Summeries (AIS)</label>
+                        <textarea id="taskAIS" placeholder="AI analysis summaries..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Trouble Descriptions (TR)</label>
+                        <textarea id="taskTR" placeholder="Trouble descriptions..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>AI TR Analyses (AITRA)</label>
+                        <textarea id="taskAITRA" placeholder="AI trouble analysis..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Why (Reason/Purpose)</label>
+                        <textarea id="taskWhy" placeholder="Why is this needed?"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>How (Approach/Method)</label>
+                        <textarea id="taskHow" placeholder="How will you approach this?"></textarea>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Who</label>
+                            <input type="text" id="taskWho" value="HJ">
+                        </div>
+                        <div class="form-group">
+                            <label>When</label>
+                            <input type="date" id="taskWhen">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Where</label>
+                        <input type="text" id="taskWhere" placeholder="Location/file...">
+                    </div>
+                    <div class="form-group">
+                        <label>👤 Assign To (Optional)</label>
+                        <select id="taskAssignee">
+                            <option value="">-- Unassigned --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Priority</label>
+                        <select id="taskPriority">
+                            <option value="1">1 - High (Green)</option>
+                            <option value="2" selected>2 - Medium (Blue)</option>
+                            <option value="3">3 - Low (Yellow)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="taskStatus">
+                            <option value="Not Started">⬜ Not Started</option>
+                            <option value="Executing">⚙️ Executing</option>
+                            <option value="Progressing">⏳ Progressing</option>
+                            <option value="Done">✅ Done</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn-primary">💾 Save</button>
+                    <button type="button" class="btn-secondary" onclick="closeModal()">❌ Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="viewModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Task Details</div>
+            <div id="viewContent"></div>
+            <div class="modal-buttons">
+                <button class="btn-primary" onclick="closeViewModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const defaultTasks = [
+            // OLD HJ ID TASKS (COMPLETED)
+            { id: 'HJ-ID1', what: 'Kanban HTML Web Page', why: 'Visual project management system', how: 'Built with HTML/CSS/Vanilla JS', who: 'HJ', when: '2026-01-28', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'HJ-ID2', what: 'Enhanced Kanban Forms', why: 'Interactive task management with modals', how: 'Modal forms + priority + status system', who: 'HJ', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            // NEW AI TD TASKS (PROJECT SETUP - proj-1)
+            { id: 'AI-TD11', what: 'Create GitHub Repository', why: 'Set up version control and hosting', how: 'Configure GitHub repo + GitHub Pages', who: 'Team Lead', when: 'Week 1', where: 'github.com', priority: 1, status: 'Not Started', column: 1, projectId: 'proj-1' },
+            { id: 'AI-TD12', what: 'Project Directory Structure', why: 'Organize project files logically', how: 'Create folders: css/, js/, assets/', who: 'Team Lead', when: 'Week 1', where: 'Local + GitHub', priority: 1, status: 'Not Started', column: 2, projectId: 'proj-1' },
+            { id: 'AI-TD13', what: 'Base HTML Template', why: 'Create main entry point structure', how: 'Write index.html with meta tags, nav framework', who: 'Frontend Dev', when: 'Week 1', where: 'index.html', priority: 1, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'AI-TD14', what: 'Global CSS Stylesheet', why: 'Define consistent styling across site', how: 'Create main.css with variables, resets, responsive', who: 'Frontend Dev', when: 'Week 1', where: 'css/main.css', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            // NEW AI TD TASKS (FEATURES - proj-2)
+            { id: 'AI-TD15', what: 'Interactive Calendar', why: 'Display calendar with event marking', how: 'Build widget with month/year nav, grid, events', who: 'Frontend Dev', when: 'Week 2', where: 'features/calendar.js', priority: 1, status: 'Not Started', column: 1, projectId: 'proj-2' },
+            { id: 'AI-TD16', what: 'Doomsday Clock Display', why: 'Show current Doomsday Clock status', how: 'Create display with countdown + info links', who: 'Frontend Dev', when: 'Week 2', where: 'features/doomsday.js', priority: 1, status: 'Not Started', column: 1, projectId: 'proj-2' },
+            // NEW HJ-ID1RS# TASKS (KANBAN ENHANCEMENTS - proj-1)
+            { id: 'HJ-ID1RS2', what: 'Enhanced Interactive Kanban', why: 'Rich task management UX', how: 'Priority/status toggle + modal edit + move/delete', who: 'AI', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS3', what: 'Device Detection Testing', why: 'Verify responsive design on all screen sizes', how: 'Test on desktop/tablet/mobile, verify drag-drop and menus', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS4', what: 'Multi-Project Kanban', why: 'Organize work across multiple projects', how: 'Add project filters + dropdown selectors + sorting', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS6', what: 'User/Role Assignment System', why: 'Assign tasks to users with multiple roles', how: 'Add assignee field + role checkboxes to task modal', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 1, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS7', what: 'Admin User Management Panel', why: 'Manage users, roles, emails via admin dashboard', how: 'Create admin modal with user CRUD + email fields', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS8', what: 'Print Kanban Board', why: 'Export board/columns as PDF for meetings', how: 'Add print buttons + @media print CSS (LS/PT)', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 1, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS9', what: 'Email Column Group', why: 'Send column tasks to team via email', how: 'Email modal + mailto link + Copy fallback', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 1, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS9-Logging', what: 'Email Event Logging', why: 'Track ASSIGN + MOVED events for audit trail', how: 'Log to Email_Log.txt on assignment/movement', who: 'AI', when: 'Phase 1', where: 'Email_Log.txt', priority: 1, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS9-P2', what: 'Email Notifications (Phase 2)', why: 'Auto-send emails on task assign/move', how: 'Notification triggers + FormSubmit or backend', who: 'TBD', when: 'Phase 2 (L8R)', where: 'kanban.html', priority: 2, status: 'Deferred', column: 7, projectId: 'proj-1' },
+            { id: 'HJ-ID1RS10', what: 'Admin User Invitations System', why: 'Send invite links with credentials to new team members', how: 'Invitations tab in admin + mailto + clipboard fallback', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+
+            // RESERVED HJ-ID (placeholder)
+            { id: 'HJ-ID1RS11', what: 'Responsive Font Sizing for Mobile/Tablet', why: 'Improve readability and fit content on different screen sizes', how: '1) For Tablet: reduce font to fit screen resolution; For Mobile phone: reduce font size more than tablet. 2) For Tablet and mobile: remove timestamp. 3) For Export: take away "All" text for tablet and mobile; for refresh have only refresh icon. On mobile: have only icons with mouseover showing the button names. 4) Tablet and Mobile: Page name change from "Time Project - Kanban Board" to "Time Kanban". 5) The Project, Logout (Admin), Export buttons shall all have the same vertical size. 6) Task form REVISED: Split What field - What (title 2 rows) + What Description (4 rows scrollable). 7) Feature 8: Add task form navigation row (Min/Max toggle, Export, Print, Mail, Notification, Project dropdown). 8) Feature 9: Streamline all application gaps on row above and below text and buttons in top row for desktop, tablet and mobile - standardize padding/margins: header 60px desktop/58px tablet/55px mobile, reduce gaps between elements, mobile toolbar 32px button height. 9) Feature 10: Reduce all column gaps to 3px for desktop/tablet/mobile. 10) Feature 11: Add 4 new textforms to task form - Feature Descriptions (FD), AI Analyse Summeries (AIS), Trouble Descriptions (TR), AI TR Analyses (AITRA). 11) Feature 12: Mobile - All buttons icon-only with hover tooltips, shorter project selects (max-width 80px), shorter filter selects (max-width 180px, height 26px), Logout button with exit icon 🚪. 12) GitHub SYNC: fetchFromGitHub(), pushToGitHub(), manualSync() functions, token settings modal, auto-sync on save. 13) Feature 13: Desktop/Tablet/Mobile logout button uniform size (32px mobile, 36px desktop/tablet). 14) Feature 14: Mobile - remove space between filters and task form (eliminate padding/margins, top: 99px touches filter row). 15) Feature 15: Complete GitHub Token Setup Documentation - 📖 Docs button in nav, comprehensive setup guide (recommended UI method + console method), login modal note, troubleshooting section.', who: 'AI', when: 'TBD', where: 'kanban.html CSS @media queries + modal form + GitHub API', priority: 2, status: 'Completed', column: 6, projectId: 'proj-1' },
+
+            // LOGIN & SECURITY COMPLETIONS (proj-1)
+            { id: 'HJ-ID1RS5', what: 'Password Protection & Login', why: 'Secure access to board', how: 'Login modal + per-user lockout', who: 'AI', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'NEW-LOGIN-PWD', what: 'Password Visibility Toggle', why: 'Reduce login errors', how: 'Eye icon + toggle input type', who: 'AI', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'NEW-LOGIN-ATTEMPTS', what: 'Lockout Threshold (5 Strikes)', why: 'Balance security and UX', how: 'Increase lockout to 5 attempts', who: 'AI', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'TPK-v1-BUG-01-001', what: 'Login Lockout Reset Bug', why: 'User stuck after correct login', how: 'Reset locked flag + lockUntil', who: 'AI', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'TPK-v1-FIX-01-001', what: 'Reset Lockout Flags on Login', why: 'Ensure successful login clears lockout', how: 'Clear attempts/lockUntil/disabled state', who: 'AI', when: '2026-01-29', where: 'kanban.html', priority: 1, status: 'Done', column: 6, projectId: 'proj-1' },
+
+            // RESPONSIVE FEATURES (AF3/AF4) - planned
+            { id: 'TPK-v1-RES-02-005', what: 'Minimized View Selection at Login (AF3)', why: 'Compact UI for small screens', how: 'Login selector + localStorage viewMode', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'TPK-v1-RES-02-006', what: 'Header Minimization Toggle (AF4)', why: 'Maximize board space', how: 'Header toggle + CSS minimized state', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'TPK-v1-RES-02-007', what: 'Mobile Header & Toolbar Optimization', why: 'Improve mobile navigation and actions', how: 'Compact header + mobile toolbar + quick actions', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+
+            // EPIC OVERVIEW (high-level)
+            { id: 'TPK-EPIC-SEC-01', what: 'EPIC: Security & Access', why: 'Secure login and lockout controls', how: 'HJ-ID1RS5 + NEW-LOGIN + BUG/FIX', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 2, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-ADM-01', what: 'EPIC: Admin & Invitations', why: 'User management + onboarding', how: 'HJ-ID1RS7 + HJ-ID1RS10', who: 'AI', when: 'Phase 1', where: 'kanban.html', priority: 2, status: 'Done', column: 6, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-RES-02', what: 'EPIC: Responsive & Views', why: 'Adaptive UX across devices', how: 'HJ-ID1RS3 + AF3 + AF4', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-EXP-02', what: 'EPIC: Print & Export', why: 'Share board externally', how: 'HJ-ID1RS8', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-COM-02', what: 'EPIC: Communication', why: 'Email and notifications', how: 'HJ-ID1RS9 + RS9-Logging + RS9-P2', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-ORG-02', what: 'EPIC: Organization', why: 'Multi-project structure', how: 'HJ-ID1RS4', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 2, status: 'Not Started', column: 3, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-TSK-03', what: 'EPIC: Task Management', why: 'Assignments and ownership', how: 'HJ-ID1RS6', who: 'AI', when: 'Phase 2', where: 'kanban.html', priority: 3, status: 'Not Started', column: 4, projectId: 'proj-1' },
+            { id: 'TPK-EPIC-DOC-02', what: 'EPIC: Documentation System', why: 'TPK-NIRS tracking & docs', how: 'TPK-NIRS proposal + master index', who: 'AI', when: 'Phase 1', where: 'TPK_NIRS_*', priority: 3, status: 'Done', column: 6, projectId: 'proj-1' },
+        ];
+        let tasks = defaultTasks.map(task => ({ ...task }));
+        let taskIdCounter = 24;
+        // Compact view removed - using consistent card layout
+        let descriptionVisibility = localStorage.getItem('descriptionVisibility') ? JSON.parse(localStorage.getItem('descriptionVisibility')) : {}; // { taskId: true/false }
+        let collapsedColumns = localStorage.getItem('collapsedColumns') ? JSON.parse(localStorage.getItem('collapsedColumns')) : {}; // { columnNum: true/false }
+        
+        // PASSWORD PROTECTION (HJ-ID1RS5) - Valid Credentials (Updated 2026-01-29)
+        // ENHANCED SCHEMA (HJ-ID1RS7) - email, roles array, active, lastLogin
+        function getDefaultUsers() {
+            return [
+                { username: 'R18', password: 'R18', email: 'r18@time.local', roles: ['Project Manager'], active: true, lastLogin: null },
+                { username: 'Maximus', password: 'Maximus', email: 'maximus@time.local', roles: ['Developer'], active: true, lastLogin: null },
+                { username: 'Joel', password: 'Joel', email: 'joel@time.local', roles: ['Reviewer'], active: true, lastLogin: null },
+                { username: 'admin', password: 'admin', email: 'admin@time.local', roles: ['Admin'], active: true, lastLogin: null }
+            ];
+        }
+        
+        function loadValidUsers() {
+            try {
+                const stored = localStorage.getItem('validUsers');
+                if (stored) {
+                    const parsed = JSON.parse(stored);
+                    // Validate that array has users with required fields
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        // Ensure each user has roles array
+                        const validated = parsed.map(u => ({
+                            ...u,
+                            roles: Array.isArray(u.roles) ? u.roles : [u.role || 'User'],
+                            active: u.active !== false
+                        }));
+                        return validated;
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading validUsers from localStorage:', e);
+            }
+            return getDefaultUsers();
+        }
+        
+        let validUsers = loadValidUsers();
+        let currentUser = null;
+        // PER-USER LOCKOUT TRACKING - Use localStorage so it resets on page reload
+        let loginAttemptsByUser = {}; // { username: { attempts: 0, locked: false, lockUntil: null } }
+        let currentColumn = 1;
+        let editingTaskId = null;
+        let deviceInfo = {};
+        let draggedTaskId = null;
+        // PA-005: Enhanced project structure with ID generation, access control, and admin features
+        let projects = [
+            { 
+                id: 'proj-1', 
+                name: 'Time Project Kanban', 
+                prefix: 'TIME',
+                nextTaskNumber: 1,
+                priority: 1,
+                createdBy: 'admin',
+                createdDate: '2026-01-15',
+                owner: 'admin',
+                members: ['admin', 'R18', 'Maximus'],
+                description: 'Main kanban board for Time project',
+                status: 'Active',
+                tags: ['core', 'kanban'],
+                settings: {
+                    allowExternalMembers: false,
+                    requireApprovalForTasks: false,
+                    autoArchiveCompleted: false
+                }
+            },
+            { 
+                id: 'proj-2', 
+                name: 'Time Website Features', 
+                prefix: 'WEB',
+                nextTaskNumber: 1,
+                priority: 2,
+                createdBy: 'admin',
+                createdDate: '2026-01-15',
+                owner: 'admin',
+                members: ['admin'],
+                description: 'Website development and features',
+                status: 'Active',
+                tags: ['website'],
+                settings: {
+                    allowExternalMembers: false,
+                    requireApprovalForTasks: false,
+                    autoArchiveCompleted: false
+                }
+            }
+        ];
+        let globalProjectFilter = 'all';
+        let columnProjectFilters = { 1: 'all', 2: 'all', 3: 'all', 4: 'all', 5: 'all', 6: 'all', 7: 'all' };
+        let globalAssigneeFilter = 'all'; // Step 5: assignee filter
+
+        // ===== PASSWORD PROTECTION (HJ-ID1RS5) =====
+        async function verifyLogin() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value.trim();
+            const errorDiv = document.getElementById('loginError');
+            const statusDiv = document.getElementById('loginStatus');
+            const loginBtn = document.getElementById('loginBtn');
+            
+            console.log(`📱 Login attempt: username="${username}" (length=${username.length}), password="${password.length > 0 ? '***' : ''}" (length=${password.length})`);
+            
+            errorDiv.style.display = 'none';
+            statusDiv.textContent = '';
+            
+            // Initialize user lockout tracking if not exists
+            if (!loginAttemptsByUser[username]) {
+                loginAttemptsByUser[username] = { attempts: 0, locked: false, lockUntil: null };
+                console.log(`🔑 New login attempt for user: ${username}`);
+            }
+            const userLockout = loginAttemptsByUser[username];
+            console.log(`Login check for ${username}: attempts=${userLockout.attempts}, locked=${userLockout.locked}`);
+            
+            // Check if THIS USER is locked
+            if (userLockout.locked && userLockout.lockUntil > Date.now()) {
+                const minutesLeft = Math.ceil((userLockout.lockUntil - Date.now()) / 60000);
+                errorDiv.textContent = `Account locked. Try again in ${minutesLeft} minute(s).`;
+                errorDiv.style.display = 'block';
+                loginBtn.disabled = true;
+                console.log(`🔒 User ${username} is locked out`);
+                return;
+            } else if (userLockout.locked && userLockout.lockUntil <= Date.now()) {
+                // Lockout expired, reset for this user
+                userLockout.locked = false;
+                userLockout.attempts = 0;
+                userLockout.lockUntil = null;
+                loginBtn.disabled = false;
+                console.log(`✓ Lockout expired for ${username}, resetting`);
+            }
+            
+            // Validate input
+            if (!username || !password) {
+                errorDiv.textContent = 'Username and password required.';
+                errorDiv.style.display = 'block';
+                return;
+            }
+            
+            // Check credentials
+            const user = validUsers.find(u => u.username === username && u.password === password);
+            if (user) {
+                currentUser = user;
+                userLockout.attempts = 0;
+                userLockout.locked = false;
+                userLockout.lockUntil = null;
+                user.lastLogin = new Date().toISOString();
+                loginBtn.disabled = false;
+                // PERSIST SESSION TO LOCALSTORAGE
+                localStorage.setItem('timeProjectSession', JSON.stringify({
+                    username: user.username,
+                    roles: user.roles,
+                    email: user.email,
+                    lastLogin: user.lastLogin
+                }));
+                logLoginAttempt(username, 'SUCCESS', 0);
+                console.log(`✓ Login SUCCESS for ${username}`);
+                console.log(`✓ currentUser set to:`, currentUser);
+                document.getElementById('loginModal').classList.remove('active');
+                document.getElementById('loginUsername').value = '';
+                document.getElementById('loginPassword').value = '';
+                await loadTasks();
+                renderAllColumns();
+                attachDragListeners();
+                
+                // Force header update
+                setTimeout(() => {
+                    updateHeader();
+                    console.log(`✓ Header updated with user: ${currentUser.username}`);
+                }, 100);
+                
+                statusDiv.textContent = `Welcome, ${user.username}! (${user.roles ? user.roles.join(', ') : user.role || ''})`;
+                statusDiv.style.color = '#059669';
+            } else {
+                userLockout.attempts++;
+                logLoginAttempt(username, 'FAILED', userLockout.attempts);
+                console.log(`❌ Login FAILED for ${username}: attempt ${userLockout.attempts}/5`);
+                
+                if (userLockout.attempts >= 5) {
+                    userLockout.locked = true;
+                    userLockout.lockUntil = Date.now() + (5 * 60 * 1000); // 5 min lockout
+                    errorDiv.textContent = 'Too many failed attempts. Account locked for 5 minutes.';
+                    loginBtn.disabled = true;
+                    logLoginAttempt(username, 'LOCKED', userLockout.attempts);
+                    console.log(`🔒 User ${username} LOCKED for 5 minutes`);
+                } else {
+                    errorDiv.textContent = `Invalid credentials. Attempt ${userLockout.attempts}/5`;
+                }
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function togglePasswordVisibility(evt) {
+            const pwdInput = document.getElementById('loginPassword');
+            const btn = evt ? evt.currentTarget : document.querySelector('.toggle-password-btn');
+            if (!pwdInput || !btn) return;
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                btn.textContent = '😨'; // Closed eye = password now visible
+                btn.title = 'Hide Password';
+            } else {
+                pwdInput.type = 'password';
+                btn.textContent = '👁️'; // Open eye = password hidden
+                btn.title = 'Show Password';
+            }
+        }
+
+        function resetLoginLockout() {
+            loginAttemptsByUser = {};
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            const pwdToggle = document.querySelector('.toggle-password-btn');
+            if (pwdToggle) {
+                pwdToggle.textContent = '👁️';
+                pwdToggle.title = 'Show Password';
+                document.getElementById('loginPassword').type = 'password';
+            }
+            document.getElementById('loginError').style.display = 'none';
+            document.getElementById('loginStatus').textContent = '✅ Lockout cleared! Try again.';
+            document.getElementById('loginStatus').style.color = '#059669';
+            document.getElementById('loginBtn').disabled = false;
+            console.log('✓ All login lockouts cleared');
+            setTimeout(() => {
+                document.getElementById('loginStatus').textContent = '';
+            }, 3000);
+        }
+
+        function logLoginAttempt(username, status, attemptNum) {
+            const timestamp = new Date().toLocaleString();
+            const logEntry = `[${timestamp}] | ${username} | ${status} | Attempt #${attemptNum}`;
+            console.log('LOGIN LOG:', logEntry);
+            // In future: Send to Login_Log.txt via backend
+        }
+
+        function toggleDemoMode() {
+            // For testing: automatically log in as first user
+            document.getElementById('loginUsername').value = 'R18';
+            document.getElementById('loginPassword').value = 'R18';
+            console.log('📱 Demo Mode activated - attempting login with R18/R18');
+            verifyLogin();
+        }
+
+        function updateHeader() {
+            if (currentUser) {
+                const headerLeft = document.querySelector('.header-left');
+                if (!document.getElementById('userDisplay')) {
+                    const userDisplay = document.createElement('div');
+                    userDisplay.id = 'userDisplay';
+                    userDisplay.style.cssText = 'font-size: 12px; color: #059669; padding: 5px 10px; background: #ecfdf5; border-radius: 5px; display: flex; align-items: center; gap: 10px;';
+                    const roles = currentUser.roles ? currentUser.roles.join(', ') : currentUser.role || '';
+                    userDisplay.innerHTML = `👤 ${currentUser.username} <button class="nav-btn logout-red" onclick="logout()" title="Logout"><span class="btn-text">🚪 Logout</span><span class="btn-icon">🚪</span></button>`;
+                    headerLeft.appendChild(userDisplay);
+                }
+                
+                // Show/hide admin button (HJ-ID1RS7)
+                const adminBtn = document.getElementById('adminBtn');
+                if (adminBtn) {
+                    adminBtn.style.display = isAdmin() ? 'inline-block' : 'none';
+                }
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            // Clear session from localStorage
+            localStorage.removeItem('timeProjectSession');
+            // Don't reset other users' lockout status - only clear current session
+            document.getElementById('loginModal').classList.add('active');
+            const userDisplay = document.getElementById('userDisplay');
+            if (userDisplay) userDisplay.remove();
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+            logLoginAttempt('(unknown)', 'LOGOUT', 0);
+        }
+
+        // ===== END PASSWORD PROTECTION =====
+
+        // ===== ADMIN PANEL (HJ-ID1RS7) =====
+        let editingUserId = null;
+        let editingProjectId = null;
+        let adminLogs = [];
+
+        function isAdmin() {
+            if (!currentUser) return false;
+            if (currentUser.roles) return currentUser.roles.includes('Admin');
+            return currentUser.role === 'Admin';
+        }
+
+        function logAdminAction(action, details) {
+            const timestamp = new Date().toLocaleString();
+            const logEntry = `[${timestamp}] | ${currentUser.username} | ${action} | ${details}`;
+            adminLogs.push(logEntry);
+            console.log('ADMIN LOG:', logEntry);
+            // In future: Send to Admin_Log.txt via backend
+        }
+
+        function openAdminPanel() {
+            if (!isAdmin()) {
+                alert('Access denied. Admin role required.');
+                return;
+            }
+            document.getElementById('adminModal').classList.add('active');
+            renderUserTable();
+            renderLoginLogs();
+            renderSessionList();
+            renderProjectAdminTable();
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminModal').classList.remove('active');
+        }
+
+        function switchAdminTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.remove('active'));
+            
+            // Show selected tab
+            document.querySelector(`.admin-tab[onclick*="${tabName}"]`).classList.add('active');
+            document.getElementById(`adminTab-${tabName}`).classList.add('active');
+            
+            // Refresh data
+            if (tabName === 'users') renderUserTable();
+            if (tabName === 'logs') renderLoginLogs();
+            if (tabName === 'sessions') renderSessionList();
+            if (tabName === 'projects') renderProjectAdminTable();
+        }
+
+        function renderUserTable() {
+            const container = document.getElementById('userTableContainer');
+            let html = '<table class="user-table"><thead><tr>';
+            html += '<th>Username</th><th>Email</th><th>Roles</th><th>Last Login</th><th>Status</th><th>Actions</th>';
+            html += '</tr></thead><tbody>';
+            
+            validUsers.forEach((user, idx) => {
+                const roles = user.roles ? user.roles.join(', ') : user.role || '';
+                const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleString() : 'Never';
+                const statusClass = user.active ? 'user-active' : 'user-inactive';
+                const statusText = user.active ? '✓ Active' : '✗ Inactive';
+                
+                html += `<tr>
+                    <td><strong>${user.username}</strong></td>
+                    <td>${user.email || 'N/A'}</td>
+                    <td>${roles}</td>
+                    <td>${lastLogin}</td>
+                    <td class="${statusClass}">${statusText}</td>
+                    <td class="user-actions">
+                        <button class="btn-edit" onclick="openEditUserForm(${idx})">Edit</button>
+                        <button class="btn-reset" onclick="resetPassword(${idx})">Reset</button>
+                        <button class="btn-delete" onclick="deleteUser(${idx})">Delete</button>
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function openAddUserForm() {
+            editingUserId = null;
+            document.getElementById('userFormTitle').textContent = 'Add New User';
+            document.getElementById('userFormUsername').value = '';
+            document.getElementById('userFormPassword').value = '';
+            document.getElementById('userFormEmail').value = '';
+            document.getElementById('userFormActive').checked = true;
+            document.querySelectorAll('.role-checkboxes input').forEach(cb => cb.checked = false);
+            document.getElementById('userFormModal').classList.add('active');
+        }
+
+        function openEditUserForm(idx) {
+            editingUserId = idx;
+            const user = validUsers[idx];
+            document.getElementById('userFormTitle').textContent = 'Edit User';
+            document.getElementById('userFormUsername').value = user.username;
+            document.getElementById('userFormPassword').value = user.password;
+            document.getElementById('userFormEmail').value = user.email || '';
+            document.getElementById('userFormActive').checked = user.active !== false;
+            
+            // Set role checkboxes
+            document.querySelectorAll('.role-checkboxes input').forEach(cb => {
+                if (user.roles) {
+                    cb.checked = user.roles.includes(cb.value);
+                } else {
+                    cb.checked = user.role === cb.value;
+                }
+            });
+            
+            document.getElementById('userFormModal').classList.add('active');
+        }
+
+        function closeUserForm() {
+            document.getElementById('userFormModal').classList.remove('active');
+            editingUserId = null;
+        }
+
+        function resetUserDataToDefaults() {
+            if (confirm('⚠️ EMERGENCY RESET: This will restore all users to default values and erase any changes. Continue?')) {
+                validUsers = getDefaultUsers();
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                logAdminAction('RESET_DATA', 'User data reset to defaults');
+                renderUserTable();
+                alert('✅ User data reset to defaults. All changes have been erased.');
+            }
+        }
+
+        function saveUser() {
+            const username = document.getElementById('userFormUsername').value.trim();
+            const password = document.getElementById('userFormPassword').value.trim();
+            const email = document.getElementById('userFormEmail').value.trim();
+            const active = document.getElementById('userFormActive').checked;
+            
+            // Get selected roles
+            const roles = [];
+            document.querySelectorAll('.role-checkboxes input[type="checkbox"][value]:checked').forEach(cb => {
+                roles.push(cb.value);
+            });
+            
+            if (!username || !password) {
+                alert('Username and password are required.');
+                return;
+            }
+            
+            if (roles.length === 0) {
+                alert('Please select at least one role.');
+                return;
+            }
+            
+            const userData = {
+                username,
+                password,
+                email,
+                roles: Array.isArray(roles) ? roles : ['User'],
+                active,
+                lastLogin: null
+            };
+            
+            if (editingUserId !== null) {
+                // Edit existing user
+                const oldUsername = validUsers[editingUserId].username;
+                validUsers[editingUserId] = userData;
+                logAdminAction('EDIT_USER', `Updated user: ${oldUsername} → ${username}`);
+            } else {
+                // Add new user
+                if (validUsers.find(u => u.username === username)) {
+                    alert('Username already exists.');
+                    return;
+                }
+                validUsers.push(userData);
+                logAdminAction('ADD_USER', `Added new user: ${username} (${roles.join(', ')})`);
+            }
+            
+            // Save validUsers to localStorage with validation
+            try {
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                console.log('✅ User data saved successfully:', userData);
+            } catch (e) {
+                console.error('❌ Failed to save user data:', e);
+                alert('Error saving user data. Check browser storage.');
+            }
+            
+            closeUserForm();
+            renderUserTable();
+        }
+
+        function deleteUser(idx) {
+            const user = validUsers[idx];
+            if (user.username === currentUser.username) {
+                alert('Cannot delete your own account.');
+                return;
+            }
+            if (confirm(`Delete user "${user.username}"? This action cannot be undone.`)) {
+                validUsers.splice(idx, 1);
+                logAdminAction('DELETE_USER', `Deleted user: ${user.username}`);
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                renderUserTable();
+            }
+        }
+
+        function resetPassword(idx) {
+            const user = validUsers[idx];
+            const newPassword = prompt(`Enter new password for "${user.username}":`);
+            if (newPassword && newPassword.trim() !== '') {
+                validUsers[idx].password = newPassword.trim();
+                logAdminAction('RESET_PASSWORD', `Reset password for user: ${user.username}`);
+                localStorage.setItem('validUsers', JSON.stringify(validUsers));
+                renderUserTable();
+                alert(`Password reset successfully for ${user.username}.`);
+            }
+        }
+
+        function renderLoginLogs() {
+            const viewer = document.getElementById('logViewer');
+            
+            // Display adminLogs with column headers (Improvement #16)
+            let html = `<div style="margin-bottom: 10px; font-weight: bold; display: grid; grid-template-columns: 180px 100px 150px 1fr; gap: 15px; padding: 10px; background: #f0f0f0; border-radius: 5px;">
+                <div>🕐 Timestamp</div>
+                <div>👤 User</div>
+                <div>📋 Action</div>
+                <div>📝 Details</div>
+            </div>`;
+            
+            // Combine adminLogs with sample logs for display
+            const logsToDisplay = adminLogs && adminLogs.length > 0 ? adminLogs : [
+                '[2026-01-29 10:15:23] | R18 | SUCCESS | Attempt #1',
+                '[2026-01-29 10:20:45] | admin | SUCCESS | Attempt #1',
+                '[2026-01-29 10:25:12] | unknown | FAILED | Attempt #1',
+                '[2026-01-29 10:26:34] | unknown | FAILED | Attempt #2',
+                '[2026-01-29 10:27:56] | unknown | FAILED | Attempt #3',
+                '[2026-01-29 10:28:10] | unknown | LOCKED | Attempt #3',
+            ];
+            
+            if (logsToDisplay && logsToDisplay.length > 0) {
+                logsToDisplay.forEach(log => {
+                    // Parse log format: [timestamp] | username | action | details
+                    const parts = log.split(' | ');
+                    const timestamp = parts[0] ? parts[0].replace('[', '').replace(']', '') : 'N/A';
+                    const username = parts[1] || 'N/A';
+                    const action = parts[2] || 'N/A';
+                    const details = parts[3] || 'N/A';
+                    
+                    html += `<div style="display: grid; grid-template-columns: 180px 100px 150px 1fr; gap: 15px; padding: 8px; border-bottom: 1px solid #ddd;">
+                        <div style="font-size: 12px;">${timestamp}</div>
+                        <div><strong>${username}</strong></div>
+                        <div style="color: #0066cc;">${action}</div>
+                        <div>${details}</div>
+                    </div>`;
+                });
+            } else {
+                html += '<div style="text-align: center; color: #888; padding: 20px;">No logs available</div>';
+            }
+            
+            viewer.innerHTML = html;
+        }
+
+        function filterLogs() {
+            // Placeholder for log filtering functionality
+            renderLoginLogs();
+        }
+
+        function renderSessionList() {
+            const container = document.getElementById('sessionList');
+            // Simulate active sessions (in future: track real sessions)
+            const sessions = [
+                { username: currentUser.username, loginTime: new Date().toLocaleString(), ip: '127.0.0.1', device: 'Chrome Desktop' }
+            ];
+            
+            let html = '<table class="user-table"><thead><tr>';
+            html += '<th>Username</th><th>Login Time</th><th>IP Address</th><th>Device</th><th>Actions</th>';
+            html += '</tr></thead><tbody>';
+            
+            sessions.forEach(session => {
+                html += `<tr>
+                    <td><strong>${session.username}</strong></td>
+                    <td>${session.loginTime}</td>
+                    <td>${session.ip}</td>
+                    <td>${session.device}</td>
+                    <td><button class="btn-delete" onclick="alert('Force logout not yet implemented')">Force Logout</button></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // ===== PROJECT ADMIN (PA-005) =====
+        function renderProjectAdminTable() {
+            const container = document.getElementById('projectTableContainer');
+            if (!container) return;
+
+            if (!projects || projects.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #888;">No projects available.</p>';
+                return;
+            }
+
+            let html = '<table class="user-table"><thead><tr>';
+            html += '<th>Name</th><th>Prefix</th><th>Next #</th><th>Owner</th><th>Status</th><th>Members</th><th>Actions</th>';
+            html += '</tr></thead><tbody>';
+
+            projects.forEach(project => {
+                const membersCount = project.members ? project.members.length : 0;
+                html += `<tr>
+                    <td><strong>${project.name}</strong></td>
+                    <td>${project.prefix || '—'}</td>
+                    <td>${project.nextTaskNumber || 1}</td>
+                    <td>${project.owner || '—'}</td>
+                    <td>${project.status || 'Active'}</td>
+                    <td>${membersCount}</td>
+                    <td class="user-actions">
+                        <button class="btn-edit" onclick="openProjectForm('${project.id}')">Edit</button>
+                        <button class="btn-delete" onclick="deleteProjectFromAdmin('${project.id}')">Delete</button>
+                    </td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        function openProjectForm(projectId = null) {
+            const container = document.getElementById('projectFormContainer');
+            if (!container) return;
+            container.style.display = 'block';
+
+            editingProjectId = projectId;
+            const title = document.getElementById('projectFormTitle');
+            const project = projectId ? projects.find(p => p.id === projectId) : null;
+
+            document.getElementById('projectFormId').value = project ? project.id : '';
+            document.getElementById('projectFormName').value = project ? project.name : '';
+            document.getElementById('projectFormPrefix').value = project ? (project.prefix || '') : '';
+            document.getElementById('projectFormNextNumber').value = project ? (project.nextTaskNumber || 1) : 1;
+            document.getElementById('projectFormPriority').value = project ? (project.priority || 2) : 2;
+            document.getElementById('projectFormOwner').value = project ? (project.owner || '') : (currentUser ? currentUser.username : 'admin');
+            document.getElementById('projectFormStatus').value = project ? (project.status || 'Active') : 'Active';
+            document.getElementById('projectFormMembers').value = project && project.members ? project.members.join(', ') : '';
+            document.getElementById('projectFormTags').value = project && project.tags ? project.tags.join(', ') : '';
+            document.getElementById('projectFormDescription').value = project ? (project.description || '') : '';
+            document.getElementById('projectFormAllowExternal').checked = project ? !!(project.settings && project.settings.allowExternalMembers) : false;
+            document.getElementById('projectFormRequireApproval').checked = project ? !!(project.settings && project.settings.requireApprovalForTasks) : false;
+            document.getElementById('projectFormAutoArchive').checked = project ? !!(project.settings && project.settings.autoArchiveCompleted) : false;
+
+            if (title) title.textContent = project ? 'Edit Project' : 'Create Project';
+        }
+
+        function closeProjectForm() {
+            const container = document.getElementById('projectFormContainer');
+            if (container) container.style.display = 'none';
+            editingProjectId = null;
+        }
+
+        function parseCsvList(value) {
+            if (!value) return [];
+            return value
+                .split(',')
+                .map(v => v.trim())
+                .filter(v => v.length > 0);
+        }
+
+        function saveProjectFromAdmin() {
+            const name = document.getElementById('projectFormName').value.trim();
+            let prefix = document.getElementById('projectFormPrefix').value.trim().toUpperCase();
+            const nextTaskNumberRaw = parseInt(document.getElementById('projectFormNextNumber').value, 10);
+            const priority = parseInt(document.getElementById('projectFormPriority').value, 10) || 2;
+            const ownerInput = document.getElementById('projectFormOwner').value.trim();
+            const status = document.getElementById('projectFormStatus').value;
+            const members = parseCsvList(document.getElementById('projectFormMembers').value);
+            const tags = parseCsvList(document.getElementById('projectFormTags').value);
+            const description = document.getElementById('projectFormDescription').value.trim();
+            const settings = {
+                allowExternalMembers: document.getElementById('projectFormAllowExternal').checked,
+                requireApprovalForTasks: document.getElementById('projectFormRequireApproval').checked,
+                autoArchiveCompleted: document.getElementById('projectFormAutoArchive').checked
+            };
+
+            if (!name) {
+                alert('Project name is required.');
+                return;
+            }
+
+            if (!prefix) {
+                alert('Project prefix is required.');
+                return;
+            }
+
+            const validation = validateProjectPrefix(prefix, editingProjectId);
+            if (!validation.valid) {
+                alert(validation.error);
+                return;
+            }
+
+            const nextTaskNumber = Number.isFinite(nextTaskNumberRaw) && nextTaskNumberRaw > 0 ? nextTaskNumberRaw : 1;
+            const owner = ownerInput || (currentUser ? currentUser.username : 'admin');
+            if (owner && !members.includes(owner)) members.unshift(owner);
+
+            if (editingProjectId) {
+                const project = projects.find(p => p.id === editingProjectId);
+                if (!project) return;
+                project.name = name;
+                project.prefix = prefix;
+                project.nextTaskNumber = nextTaskNumber;
+                project.priority = priority;
+                project.owner = owner;
+                project.members = members;
+                project.status = status;
+                project.tags = tags;
+                project.description = description;
+                project.settings = settings;
+                logAdminAction('UPDATE_PROJECT', `Updated project ${project.name} (${project.id})`);
+            } else {
+                const newProject = {
+                    id: `proj-${Date.now()}`,
+                    name,
+                    prefix,
+                    nextTaskNumber,
+                    priority,
+                    createdBy: currentUser ? currentUser.username : 'admin',
+                    createdDate: new Date().toISOString().slice(0, 10),
+                    owner,
+                    members,
+                    description,
+                    status,
+                    tags,
+                    settings
+                };
+                projects.push(newProject);
+                logAdminAction('CREATE_PROJECT', `Created project ${newProject.name} (${newProject.id})`);
+            }
+
+            saveProjects();
+            renderProjectDropdowns();
+            renderProjectAdminTable();
+            renderAllColumns();
+            closeProjectForm();
+        }
+
+        function deleteProjectFromAdmin(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return;
+
+            const relatedCount = tasks.filter(t => t.projectId === projectId).length;
+            const warning = relatedCount > 0
+                ? `This project has ${relatedCount} tasks. Deleting it will remove the project but leave tasks unassigned. Continue?`
+                : 'Delete this project?';
+            if (!confirm(warning)) return;
+
+            projects = projects.filter(p => p.id !== projectId);
+            if (globalProjectFilter === projectId) globalProjectFilter = 'all';
+            Object.keys(columnProjectFilters).forEach(key => {
+                if (columnProjectFilters[key] === projectId) columnProjectFilters[key] = 'all';
+            });
+
+            saveProjects();
+            renderProjectDropdowns();
+            renderProjectAdminTable();
+            renderAllColumns();
+            logAdminAction('DELETE_PROJECT', `Deleted project ${project.name} (${project.id})`);
+        }
+        // ===== END PROJECT ADMIN =====
+
+        // ===== INVITATIONS (HJ-ID1RS10) =====
+        let clientInvitations = [];
+
+        function generateRandomCredentials() {
+            const username = 'user_' + new Date().getFullYear() + '_' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            const password = Math.random().toString(36).substr(2, 8) + Math.random().toString(36).substr(2, 2).toUpperCase();
+            return { username, password };
+        }
+
+        function openInvitationForm() {
+            document.getElementById('inviteEmail').value = '';
+            document.getElementById('inviteMessage').value = '';
+            document.getElementById('inviteExpireDays').value = '7';
+            document.getElementById('inviteForcePasswordChange').checked = true;
+            document.querySelectorAll('#invitationFormModal .role-checkboxes input').forEach(cb => cb.checked = false);
+            document.getElementById('invitationFormModal').classList.add('active');
+        }
+
+        function closeInvitationForm() {
+            document.getElementById('invitationFormModal').classList.remove('active');
+        }
+
+        function generateInvitation() {
+            const email = document.getElementById('inviteEmail').value.trim();
+            const message = document.getElementById('inviteMessage').value.trim();
+            const expireDays = parseInt(document.getElementById('inviteExpireDays').value);
+            const forcePasswordChange = document.getElementById('inviteForcePasswordChange').checked;
+            
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            // Check for duplicate pending invitations
+            if (clientInvitations.find(inv => inv.email === email && inv.status === 'Sent')) {
+                alert('Pending invitation already exists for this email.');
+                return;
+            }
+
+            const credentials = generateRandomCredentials();
+            const expirationDate = new Date();
+            expirationDate.setDate(expirationDate.getDate() + expireDays);
+            
+            const invitation = {
+                id: 'inv_' + Date.now(),
+                email,
+                tempUsername: credentials.username,
+                tempPassword: credentials.password,
+                message,
+                datesent: new Date().toLocaleString(),
+                expiresOn: expirationDate.toLocaleString(),
+                expireDays,
+                status: 'Sent',
+                forcePasswordChange,
+                roles: [],
+                viewed: false,
+                accepted: false
+            };
+
+            // Get selected roles
+            document.querySelectorAll('#invitationFormModal .role-checkboxes input:checked').forEach(cb => {
+                invitation.roles.push(cb.value);
+            });
+
+            clientInvitations.push(invitation);
+            logAdminAction('SEND_INVITATION', `Sent invitation to: ${email} (expires in ${expireDays} days)`);
+            
+            // Generate email
+            generateInvitationEmail(invitation);
+            
+            closeInvitationForm();
+            renderInvitationTable();
+            alert(`Invitation generated for ${email}. Click "Send via Email" to send.`);
+        }
+
+        function generateInvitationEmail(invitation) {
+            const projectUrl = window.location.origin + window.location.pathname;
+            const emailSubject = `You're Invited to Join Time Project Kanban`;
+            const emailBody = `Hi there,
+
+You've been invited to join the Time Project Kanban board!
+
+PROJECT: Time Project - Enhanced Kanban Board
+LOGIN URL: ${projectUrl}
+
+TEMPORARY CREDENTIALS:
+Username: ${invitation.tempUsername}
+Password: ${invitation.tempPassword}
+
+HOW TO ACCESS:
+1. Visit: ${projectUrl}
+2. Enter your temporary username and password
+3. On first login, you'll be prompted to change your password
+4. Start collaborating!
+
+${invitation.message ? `\nMESSAGE FROM ADMIN:\n${invitation.message}\n` : ''}
+
+IMPORTANT:
+• This invitation expires on: ${invitation.expiresOn}
+• Your temporary credentials are for initial access only
+• You MUST change your password on first login
+• Do not share these credentials via email
+
+Questions? Contact your admin.
+
+---
+Time Project Kanban Board
+${projectUrl}`;
+
+            invitation.emailBody = emailBody;
+            invitation.emailSubject = emailSubject;
+        }
+
+        function sendViaEmail(invitationId) {
+            const invitation = clientInvitations.find(inv => inv.id === invitationId);
+            if (!invitation) return;
+
+            const mailtoLink = `mailto:${invitation.email}?subject=${encodeURIComponent(invitation.emailSubject)}&body=${encodeURIComponent(invitation.emailBody)}`;
+            window.location.href = mailtoLink;
+            logAdminAction('EMAIL_SENT', `Sent invitation email to: ${invitation.email}`);
+        }
+
+        function copyToClipboard(invitationId) {
+            const invitation = clientInvitations.find(inv => inv.id === invitationId);
+            if (!invitation) return;
+
+            const textToCopy = `${invitation.emailSubject}\n\n${invitation.emailBody}`;
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('Invitation text copied to clipboard!');
+                logAdminAction('INVITE_COPIED', `Invitation copied to clipboard for: ${invitation.email}`);
+            }).catch(() => {
+                // Fallback for older browsers
+                const textarea = document.createElement('textarea');
+                textarea.value = textToCopy;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Invitation text copied to clipboard!');
+            });
+        }
+
+        function revokeInvitation(invitationId) {
+            const idx = clientInvitations.findIndex(inv => inv.id === invitationId);
+            if (idx !== -1) {
+                const email = clientInvitations[idx].email;
+                clientInvitations[idx].status = 'Revoked';
+                logAdminAction('REVOKE_INVITATION', `Revoked invitation for: ${email}`);
+                renderInvitationTable();
+            }
+        }
+
+        function renderInvitationTable() {
+            const container = document.getElementById('invitationTableContainer');
+            
+            if (clientInvitations.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #888;">No invitations sent yet.</p>';
+                return;
+            }
+
+            let html = '<table class="user-table"><thead><tr>';
+            html += '<th>Email</th><th>Temp Username</th><th>Status</th><th>Sent Date</th><th>Expires</th><th>Actions</th>';
+            html += '</tr></thead><tbody>';
+            
+            clientInvitations.forEach(inv => {
+                const statusColor = inv.status === 'Sent' ? '#3b82f6' : inv.status === 'Accepted' ? '#10b981' : '#ef4444';
+                html += `<tr>
+                    <td>${inv.email}</td>
+                    <td><code style="font-family: monospace; font-size: 11px;">${inv.tempUsername}</code></td>
+                    <td style="color: ${statusColor}; font-weight: bold;">${inv.status}</td>
+                    <td>${inv.datesent}</td>
+                    <td>${inv.expiresOn}</td>
+                    <td class="user-actions">
+                        ${inv.status === 'Sent' ? `
+                            <button class="btn-edit" onclick="sendViaEmail('${inv.id}')" title="Send via mailto">✉️ Email</button>
+                            <button class="btn-edit" onclick="copyToClipboard('${inv.id}')" title="Copy to clipboard">📋 Copy</button>
+                            <button class="btn-delete" onclick="revokeInvitation('${inv.id}')">Revoke</button>
+                        ` : inv.status === 'Revoked' ? `
+                            <em style="color: #999;">Revoked</em>
+                        ` : `
+                            <em style="color: #999;">Completed</em>
+                        `}
+                    </td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+        // ===== END INVITATIONS =====
+
+        // Device Detection (Hybrid Method)
+        function detectDevice() {
+            const width = window.innerWidth;
+            const supportsTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            const hasCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+            
+            deviceInfo = {
+                isDesktop: width > 1366,
+                isTablet: width >= 1024 && width <= 1366,
+                isMobile: width < 1024,
+                supportsTouch: supportsTouch,
+                width: width
+            };
+            
+            updateDeviceDisplay();
+            updateDragDropState();
+        }
+
+        function updateDeviceDisplay() {
+            const deviceDisplay = document.getElementById('deviceDisplay');
+            if (deviceDisplay) {
+                if (deviceInfo.isDesktop) {
+                    deviceDisplay.textContent = 'Device: Desktop/Laptop';
+                } else if (deviceInfo.isTablet) {
+                    deviceDisplay.textContent = 'Device: Tablet';
+                } else if (deviceInfo.isMobile) {
+                    deviceDisplay.textContent = 'Device: Mobile';
+                } else {
+                    deviceDisplay.textContent = 'Device: Unknown';
+                }
+            }
+        }
+
+        function updateDragDropState() {
+            const enableDrag = deviceInfo.isDesktop || deviceInfo.isTablet;
+            document.querySelectorAll('.task-card').forEach(card => {
+                card.setAttribute('draggable', enableDrag);
+            });
+        }
+
+        function getProjectById(projectId) {
+            return projects.find(p => p.id === projectId);
+        }
+
+        function getProjectName(projectId) {
+            const project = getProjectById(projectId);
+            return project ? project.name : 'Unassigned';
+        }
+
+        function getProjectPriority(projectId) {
+            const project = getProjectById(projectId);
+            return project ? project.priority : 99;
+        }
+
+        function getProjectOptions(includeAll) {
+            const sorted = [...projects].sort((a, b) => a.priority - b.priority);
+            const options = sorted.map(p => `<option value="${p.id}">${p.name} (P${p.priority})</option>`).join('');
+            return (includeAll ? '<option value="all">All Projects</option>' : '') + options;
+        }
+
+        function renderProjectDropdowns() {
+            const headerSelect = document.getElementById('projectFilter');
+            if (headerSelect) {
+                headerSelect.innerHTML = getProjectOptions(true);
+                headerSelect.value = globalProjectFilter;
+            }
+
+            const mobileProjectSelect = document.getElementById('mobileProjectFilter');
+            if (mobileProjectSelect) {
+                mobileProjectSelect.innerHTML = getProjectOptions(true);
+                mobileProjectSelect.value = globalProjectFilter;
+            }
+
+            for (let i = 1; i <= 7; i++) {
+                const select = document.getElementById(`project-filter-${i}`);
+                if (select) {
+                    select.innerHTML = getProjectOptions(true);
+                    select.value = columnProjectFilters[i] || 'all';
+                }
+            }
+
+            const taskProjectSelect = document.getElementById('taskProject');
+            if (taskProjectSelect) {
+                taskProjectSelect.innerHTML = getProjectOptions(false);
+            }
+
+            // Populate assignee dropdown (Step 2)
+            const taskAssigneeSelect = document.getElementById('taskAssignee');
+            if (taskAssigneeSelect) {
+                let assigneeOptions = '<option value="">-- Unassigned --</option>';
+                validUsers.forEach(user => {
+                    assigneeOptions += `<option value="${user.username}">${user.username} (${user.role})</option>`;
+                });
+                taskAssigneeSelect.innerHTML = assigneeOptions;
+            }
+
+            // Populate assignee filter dropdown (Step 5)
+            const assigneeFilterSelect = document.getElementById('assigneeFilter');
+            if (assigneeFilterSelect) {
+                let filterOptions = '<option value="all">All Tasks</option>';
+                filterOptions += '<option value="my">My Tasks</option>';
+                filterOptions += '<option value="unassigned">Unassigned</option>';
+                validUsers.forEach(user => {
+                    filterOptions += `<option value="${user.username}">${user.username} (${user.role})</option>`;
+                });
+                assigneeFilterSelect.innerHTML = filterOptions;
+                assigneeFilterSelect.value = globalAssigneeFilter;
+            }
+        }
+
+        function setGlobalProjectFilter(projectId) {
+            globalProjectFilter = projectId;
+            renderAllColumns();
+            const headerSelect = document.getElementById('projectFilter');
+            if (headerSelect && headerSelect.value !== projectId) headerSelect.value = projectId;
+            const mobileProjectSelect = document.getElementById('mobileProjectFilter');
+            if (mobileProjectSelect && mobileProjectSelect.value !== projectId) mobileProjectSelect.value = projectId;
+        }
+
+        function setAssigneeFilter(filterValue) {
+            globalAssigneeFilter = filterValue;
+            renderAllColumns();
+        }
+
+        function setColumnProjectFilter(columnNum, projectId) {
+            columnProjectFilters[columnNum] = projectId;
+            renderColumn(columnNum);
+        }
+
+        function createProjectFlow() {
+            const name = prompt('New project name?');
+            if (!name) return;
+            let prefix = prompt('Project prefix (3-5 uppercase letters)?', '').trim().toUpperCase();
+            if (!prefix) return;
+            const validation = validateProjectPrefix(prefix);
+            if (!validation.valid) {
+                alert(validation.error);
+                return;
+            }
+
+            let priorityInput = prompt('Project priority (1=High, 2=Medium, 3=Low):', '2');
+            let priority = parseInt(priorityInput, 10);
+            if (![1, 2, 3].includes(priority)) priority = 2;
+
+            const id = `proj-${Date.now()}`;
+            const owner = currentUser ? currentUser.username : 'admin';
+            projects.push({
+                id,
+                name: name.trim(),
+                prefix,
+                nextTaskNumber: 1,
+                priority,
+                createdBy: owner,
+                createdDate: new Date().toISOString().slice(0, 10),
+                owner,
+                members: owner ? [owner] : [],
+                description: '',
+                status: 'Active',
+                tags: [],
+                settings: {
+                    allowExternalMembers: false,
+                    requireApprovalForTasks: false,
+                    autoArchiveCompleted: false
+                }
+            });
+            saveProjects();
+            renderProjectDropdowns();
+            renderProjectAdminTable();
+            renderAllColumns();
+        }
+
+        function initSampleTasks() {
+            tasks = defaultTasks.map(task => ({ ...task }));
+            taskIdCounter = 27;
+            renderAllColumns();
+        }
+
+        function mergeMissingTasks() {
+            const existingIds = new Set(tasks.map(t => t.id));
+            const missing = defaultTasks.filter(t => !existingIds.has(t.id));
+            if (missing.length) {
+                tasks = tasks.concat(missing.map(task => ({ ...task })));
+                saveTasks();
+            }
+        }
+
+        function dedupeTasksById(taskList) {
+            const seen = new Set();
+            const deduped = [];
+            taskList.forEach(task => {
+                if (!task || !task.id) return;
+                if (seen.has(task.id)) return;
+                seen.add(task.id);
+                deduped.push(task);
+            });
+            return deduped;
+        }
+
+        // PA-005: Generate sequential task ID based on assigned project
+        function generateTaskIdForProject(projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project || !project.prefix) {
+                return `UNKNOWN-${Math.floor(Math.random() * 1000)}`;
+            }
+            
+            const paddedNumber = String(project.nextTaskNumber).padStart(3, '0');
+            const newId = `${project.prefix}-${paddedNumber}`;
+            
+            // Increment for next task
+            project.nextTaskNumber++;
+            saveProjects();
+            
+            return newId;
+        }
+
+        // PA-005: Validate project prefix (unique, 3-5 chars, uppercase)
+        function validateProjectPrefix(prefix, excludeProjectId = null) {
+            if (!/^[A-Z]{3,5}$/.test(prefix)) {
+                return { valid: false, error: 'Prefix must be 3-5 uppercase letters' };
+            }
+            
+            const existing = projects.find(p => p.prefix === prefix && p.id !== excludeProjectId);
+            if (existing) {
+                return { valid: false, error: `Prefix "${prefix}" already used by ${existing.name}` };
+            }
+            
+            return { valid: true };
+        }
+
+        // PA-005: Check if user has access to project
+        function hasProjectAccess(username, projectId) {
+            const project = projects.find(p => p.id === projectId);
+            if (!project) return false;
+            
+            if (project.owner === username) return true;
+            if (project.members && project.members.includes(username)) return true;
+            
+            const user = validUsers.find(u => u.username === username);
+            if (user && user.roles.includes('Admin')) return true;
+            
+            return false;
+        }
+
+        // PA-005: Save projects to localStorage
+        function saveProjects() {
+            localStorage.setItem('projects', JSON.stringify(projects));
+        }
+
+        // PA-005: Load projects from localStorage
+        function loadProjects() {
+            const saved = localStorage.getItem('projects');
+            if (saved) {
+                try {
+                    projects = JSON.parse(saved);
+                } catch (e) {
+                    console.error('Failed to load projects:', e);
+                }
+            }
+        }
+
+        // Old random ID generator (deprecated - kept for backwards compatibility)
+        function generateTaskId() {
+            const prefixes = ['AI-TD', 'TPK-v1', 'HJ-ID1RS', 'NEW', 'EPIC'];
+            const randomPrefix = prefixes[Math.floor(Math.random() * prefixes.length)];
+            const randomNum = Math.floor(Math.random() * 1000);
+            const newId = `${randomPrefix}${randomNum}`;
+            document.getElementById('taskId').value = newId;
+        }
+
+        // PA-005: Auto-generate task ID when project is selected
+        function autoGenerateTaskId() {
+            const projectSelect = document.getElementById('taskProject');
+            const taskIdInput = document.getElementById('taskId');
+            
+            if (!projectSelect || !taskIdInput) return;
+            
+            const projectId = projectSelect.value;
+            if (!projectId || projectId === '') {
+                taskIdInput.value = '';
+                taskIdInput.placeholder = 'Select project to generate ID';
+                return;
+            }
+            
+            // Generate new ID based on selected project
+            const newId = generateTaskIdForProject(projectId);
+            taskIdInput.value = newId;
+        }
+
+        function openAddModal(column) {
+            currentColumn = column;
+            editingTaskId = null;
+            document.getElementById('modalTitle').innerHTML = '<span>Add New Task</span><div style="display: flex; gap: 8px;"><button class="modal-header-save btn-primary" onclick="document.getElementById(\'taskForm\').requestSubmit()" title="Save Task">💾 Save</button><button class="modal-header-cancel btn-secondary" onclick="closeModal()" title="Close">❌ Cancel</button></div>';
+            document.getElementById('taskForm').reset();
+            document.getElementById('taskWho').value = 'HJ';
+            // PA-005: Removed auto-generate - now happens when project is selected
+            
+            // PA-002: Restore toggle state from localStorage
+            const savedState = localStorage.getItem('taskFormExpanded') === 'true';
+            const container = document.getElementById('additionalFieldsContainer');
+            const toggleBtn = document.getElementById('toggleAdditionalFields');
+            if (savedState) {
+                container.style.display = 'block';
+                toggleBtn.innerHTML = '<span id="toggleIcon">▲</span> Hide Additional Fields';
+            } else {
+                container.style.display = 'none';
+                toggleBtn.innerHTML = '<span id="toggleIcon">▼</span> Show All Fields';
+            }
+            
+            const taskProjectSelect = document.getElementById('taskProject');
+            const columnFilter = columnProjectFilters[column] || 'all';
+            const preferredProject = columnFilter !== 'all'
+                ? columnFilter
+                : (globalProjectFilter !== 'all' ? globalProjectFilter : projects[0].id);
+            if (taskProjectSelect) taskProjectSelect.value = preferredProject;
+            document.getElementById('taskModal').classList.add('active');
+            const shouldFocus = (deviceInfo && (deviceInfo.isMobile || deviceInfo.isTablet)) || window.innerWidth <= 800;
+            if (shouldFocus) {
+                setTimeout(() => {
+                    const taskWhat = document.getElementById('taskWhat');
+                    if (taskWhat) taskWhat.focus();
+                }, 50);
+            }
+        }
+
+        function editTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            editingTaskId = taskId;
+            currentColumn = task.column;
+            document.getElementById('modalTitle').innerHTML = '<span>Edit Task</span><div style="display: flex; gap: 8px;"><button class="modal-header-save btn-primary" onclick="document.getElementById(\'taskForm\').requestSubmit()" title="Save Task">💾 Save</button><button class="modal-header-cancel btn-secondary" onclick="closeModal()" title="Close">❌ Cancel</button></div>';
+            document.getElementById('taskId').value = task.id; /* Show existing ID for editing */
+            document.getElementById('taskWhat').value = task.what;
+            document.getElementById('taskWhatDescription').value = task.whatDescription || '';
+            document.getElementById('taskFD').value = task.fd || '';
+            document.getElementById('taskAIS').value = task.ais || '';
+            document.getElementById('taskTR').value = task.tr || '';
+            document.getElementById('taskAITRA').value = task.aitra || '';
+            document.getElementById('taskWhy').value = task.why || '';
+            document.getElementById('taskHow').value = task.how || '';
+            document.getElementById('taskWho').value = task.who || 'HJ';
+            document.getElementById('taskWhen').value = task.when || '';
+            document.getElementById('taskWhere').value = task.where || '';
+            document.getElementById('taskPriority').value = task.priority;
+            document.getElementById('taskStatus').value = task.status;
+            document.getElementById('taskProject').value = task.projectId || projects[0].id;
+            document.getElementById('taskAssignee').value = task.assignee || '';
+            
+            // PA-002: Restore toggle state from localStorage
+            const savedState = localStorage.getItem('taskFormExpanded') === 'true';
+            const container = document.getElementById('additionalFieldsContainer');
+            const toggleBtn = document.getElementById('toggleAdditionalFields');
+            if (savedState) {
+                container.style.display = 'block';
+                toggleBtn.innerHTML = '<span id="toggleIcon">▲</span> Hide Additional Fields';
+            } else {
+                container.style.display = 'none';
+                toggleBtn.innerHTML = '<span id="toggleIcon">▼</span> Show All Fields';
+            }
+            
+            document.getElementById('taskModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('taskModal').classList.remove('active');
+        }
+        
+        // PA-002: Toggle Additional Fields Function
+        function toggleTaskFormFields() {
+            const container = document.getElementById('additionalFieldsContainer');
+            const button = document.getElementById('toggleAdditionalFields');
+            
+            const isCurrentlyHidden = container.style.display === 'none';
+            
+            if (isCurrentlyHidden) {
+                container.style.display = 'block';
+                button.innerHTML = '<span id="toggleIcon">▲</span> Hide Additional Fields';
+                localStorage.setItem('taskFormExpanded', 'true');
+            } else {
+                container.style.display = 'none';
+                button.innerHTML = '<span id="toggleIcon">▼</span> Show All Fields';
+                localStorage.setItem('taskFormExpanded', 'false');
+            }
+        }
+
+        function viewTask(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (!task) return;
+            const content = `
+                <div style="line-height:1.8;"><p><strong>ID:</strong> ${task.id}</p>
+                <p><strong>Project:</strong> ${getProjectName(task.projectId)}</p>
+                <p><strong>What:</strong> ${task.what}</p>
+                <p><strong>What Description:</strong> ${task.whatDescription || 'Not specified'}</p>
+                <p><strong>Feature Descriptions (FD):</strong> ${task.fd || 'Not specified'}</p>
+                <p><strong>AI Analyse Summeries (AIS):</strong> ${task.ais || 'Not specified'}</p>
+                <p><strong>Trouble Descriptions (TR):</strong> ${task.tr || 'Not specified'}</p>
+                <p><strong>AI TR Analyses (AITRA):</strong> ${task.aitra || 'Not specified'}</p>
+                <p><strong>Why:</strong> ${task.why || 'Not specified'}</p>
+                <p><strong>How:</strong> ${task.how || 'Not specified'}</p>
+                <p><strong>Who:</strong> ${task.who || 'HJ'}</p>
+                <p><strong>When:</strong> ${task.when || 'Not specified'}</p>
+                <p><strong>Where:</strong> ${task.where || 'Not specified'}</p>
+                <p><strong>Priority:</strong> ${task.priority} - ${task.priority===1?'High':task.priority===2?'Medium':'Low'}</p>
+                <p><strong>Status:</strong> ${task.status}</p></div>
+            `;
+            document.getElementById('viewContent').innerHTML = content;
+            document.getElementById('viewModal').classList.add('active');
+        }
+
+        function closeViewModal() {
+            document.getElementById('viewModal').classList.remove('active');
+        }
+
+        document.getElementById('taskForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const taskId = document.getElementById('taskId').value || `HJ TD${taskIdCounter++}`;
+            const previousTask = editingTaskId ? tasks.find(t => t.id === editingTaskId) : null;
+            
+            // Get assignee data (Step 3)
+            const selectedAssignee = document.getElementById('taskAssignee').value;
+            const assigneeUser = selectedAssignee ? validUsers.find(u => u.username === selectedAssignee) : null;
+            
+            const taskData = {
+                id: editingTaskId || taskId,
+                what: document.getElementById('taskWhat').value,
+                whatDescription: document.getElementById('taskWhatDescription').value,
+                fd: document.getElementById('taskFD').value,
+                ais: document.getElementById('taskAIS').value,
+                tr: document.getElementById('taskTR').value,
+                aitra: document.getElementById('taskAITRA').value,
+                why: document.getElementById('taskWhy').value,
+                how: document.getElementById('taskHow').value,
+                who: document.getElementById('taskWho').value,
+                when: document.getElementById('taskWhen').value,
+                where: document.getElementById('taskWhere').value,
+                priority: parseInt(document.getElementById('taskPriority').value),
+                status: document.getElementById('taskStatus').value,
+                column: currentColumn,
+                projectId: document.getElementById('taskProject').value,
+                // User Assignment Fields (Step 3)
+                assignee: assigneeUser ? assigneeUser.username : null,
+                assigneeEmail: assigneeUser ? assigneeUser.email : null,
+                assignedDate: assigneeUser ? new Date().toISOString().split('T')[0] : null,
+                assignedBy: assigneeUser ? currentUser.username : null
+            };
+
+            // Step 6: Admin log for task assignment
+            if (assigneeUser && (!previousTask || previousTask.assignee !== assigneeUser.username)) {
+                logAdminAction('ASSIGN_TASK', `Task ${taskData.id} assigned to ${assigneeUser.username}`);
+            }
+
+            if (editingTaskId) {
+                tasks[tasks.findIndex(t => t.id === editingTaskId)] = taskData;
+            } else {
+                tasks.push(taskData);
+            }
+            saveTasks();
+            renderAllColumns();
+            closeModal();
+        });
+
+        function togglePriority(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                task.priority = task.priority === 3 ? 1 : task.priority + 1;
+                saveTasks();
+                renderColumn(task.column);
+            }
+        }
+
+        function toggleStatus(taskId) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                const statuses = ['Not Started', 'Executing', 'Progressing', 'Done'];
+                task.status = statuses[(statuses.indexOf(task.status) + 1) % statuses.length];
+                saveTasks();
+                renderColumn(task.column);
+            }
+        }
+
+        function moveTask(taskId, newColumn) {
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                const oldColumn = task.column;
+                task.column = parseInt(newColumn);
+                saveTasks();
+                renderColumn(oldColumn);
+                renderColumn(newColumn);
+            }
+        }
+
+        function deleteTask(taskId) {
+            if (confirm('Delete this task permanently?')) {
+                const column = tasks.find(t => t.id === taskId).column;
+                tasks = tasks.filter(t => t.id !== taskId);
+                saveTasks();
+                renderColumn(column);
+            }
+        }
+
+        // toggleCompactView removed - using consistent card layout
+
+        function toggleDescriptionVisibility(taskId) {
+            // Toggle description visibility for this task
+            descriptionVisibility[taskId] = !descriptionVisibility[taskId];
+            localStorage.setItem('descriptionVisibility', JSON.stringify(descriptionVisibility));
+            
+            // Re-render the task's column
+            const task = tasks.find(t => t.id === taskId);
+            if (task) {
+                renderColumn(task.column);
+            }
+        }
+
+        function applyColumnCollapseState(columnNum) {
+            const columnEl = document.querySelector(`.kanban-column[data-column="${columnNum}"]`);
+            if (!columnEl) return;
+
+            const isCollapsed = collapsedColumns[columnNum] === true;
+            columnEl.classList.toggle('collapsed', isCollapsed);
+
+            const iconEl = columnEl.querySelector('.collapse-icon');
+            if (iconEl) {
+                iconEl.textContent = isCollapsed ? '▶️' : '▼';
+            }
+        }
+
+        function applyAllColumnCollapseStates() {
+            for (let i = 1; i <= 7; i++) {
+                applyColumnCollapseState(i);
+            }
+        }
+
+        function toggleCollapseMenu(event, columnNum) {
+            event.stopPropagation();
+            const menu = document.getElementById(`collapse-menu-${columnNum}`);
+            // Close all other menus
+            document.querySelectorAll('.collapse-menu').forEach(m => {
+                if (m !== menu) m.classList.remove('show');
+            });
+            
+            // Position menu next to the icon using fixed positioning
+            const iconRect = event.target.getBoundingClientRect();
+            menu.style.top = `${iconRect.bottom + 2}px`;
+            menu.style.left = `${iconRect.left}px`;
+            
+            menu.classList.toggle('show');
+        }
+
+        function collapseColumn(columnNum) {
+            collapsedColumns[columnNum] = true;
+            localStorage.setItem('collapsedColumns', JSON.stringify(collapsedColumns));
+            applyColumnCollapseState(columnNum);
+            closeAllMenus();
+        }
+
+        function expandColumn(columnNum) {
+            collapsedColumns[columnNum] = false;
+            localStorage.setItem('collapsedColumns', JSON.stringify(collapsedColumns));
+            applyColumnCollapseState(columnNum);
+            closeAllMenus();
+        }
+
+        function focusColumn(columnNum) {
+            // Expand this column first (in case it's collapsed), then collapse all others
+            collapsedColumns[columnNum] = false;
+            applyColumnCollapseState(columnNum);
+            
+            // Collapse all others
+            for (let i = 1; i <= 7; i++) {
+                if (i !== columnNum) {
+                    collapsedColumns[i] = true;
+                    applyColumnCollapseState(i);
+                }
+            }
+            localStorage.setItem('collapsedColumns', JSON.stringify(collapsedColumns));
+            closeAllMenus();
+        }
+
+        function expandAllColumns() {
+            for (let i = 1; i <= 7; i++) {
+                collapsedColumns[i] = false;
+                applyColumnCollapseState(i);
+            }
+            localStorage.setItem('collapsedColumns', JSON.stringify(collapsedColumns));
+            closeAllMenus();
+        }
+
+        function closeAllMenus() {
+            document.querySelectorAll('.collapse-menu').forEach(m => m.classList.remove('show'));
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.collapse-icon') && !e.target.closest('.collapse-menu')) {
+                closeAllMenus();
+            }
+        });
+
+        function toggleColumnCollapse(columnNum) {
+            collapsedColumns[columnNum] = !collapsedColumns[columnNum];
+            localStorage.setItem('collapsedColumns', JSON.stringify(collapsedColumns));
+            applyColumnCollapseState(columnNum);
+        }
+
+        // ===== GITHUB SYNC CONFIGURATION =====
+        const GITHUB_CONFIG = {
+            owner: 'howcan66',
+            repo: 'Time',
+            path: 'data/kanbanTasks.json',
+            branch: 'main'
+        };
+
+        // ===== GITHUB API FUNCTIONS =====
+        async function fetchFromGitHub() {
+            const token = localStorage.getItem('githubToken');
+            if (!token) {
+                console.log('⚠️ No GitHub token found. Skipping GitHub fetch.');
+                return null;
+            }
+
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        console.log('⚠️ GitHub file not found. Will create on first save.');
+                        return null;
+                    }
+                    throw new Error(`GitHub API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                const content = JSON.parse(decodeURIComponent(escape(atob(data.content))));
+                console.log('✓ Tasks fetched from GitHub:', content.length);
+                return { tasks: content, sha: data.sha };
+            } catch (e) {
+                console.log('⚠️ GitHub fetch failed:', e.message);
+                return null;
+            }
+        }
+
+        async function pushToGitHub(tasksData) {
+            const token = localStorage.getItem('githubToken');
+            if (!token) {
+                console.log('⚠️ No GitHub token. Skipping GitHub push.');
+                return false;
+            }
+
+            const url = `https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${GITHUB_CONFIG.path}`;
+            
+            try {
+                // Get current file SHA
+                let sha = localStorage.getItem('githubFileSha');
+                if (!sha) {
+                    const response = await fetch(url, {
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Accept': 'application/vnd.github.v3+json'
+                        }
+                    });
+                    if (response.ok) {
+                        const data = await response.json();
+                        sha = data.sha;
+                    }
+                }
+
+                const content = btoa(unescape(encodeURIComponent(JSON.stringify(tasksData, null, 2))));
+                const payload = {
+                    message: `Update tasks - ${new Date().toISOString()}`,
+                    content: content,
+                    branch: GITHUB_CONFIG.branch
+                };
+                if (sha) payload.sha = sha;
+
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`GitHub push failed: ${response.status}`);
+                }
+
+                const result = await response.json();
+                localStorage.setItem('githubFileSha', result.content.sha);
+                console.log('✓ Tasks pushed to GitHub');
+                updateSyncStatus('synced');
+                return true;
+            } catch (e) {
+                console.log('⚠️ GitHub push failed:', e.message);
+                updateSyncStatus('error');
+                return false;
+            }
+        }
+
+        function updateSyncStatus(status) {
+            const btn = document.getElementById('syncBtn');
+            if (!btn) return;
+            
+            if (status === 'syncing') {
+                btn.textContent = '🔄';
+                btn.title = 'Syncing...';
+            } else if (status === 'synced') {
+                btn.textContent = '✓';
+                btn.title = 'Synced with GitHub';
+                setTimeout(() => {
+                    btn.textContent = '🔄';
+                    btn.title = 'Sync with GitHub';
+                }, 2000);
+            } else if (status === 'error') {
+                btn.textContent = '⚠️';
+                btn.title = 'Sync error - check console';
+                setTimeout(() => {
+                    btn.textContent = '🔄';
+                    btn.title = 'Sync with GitHub';
+                }, 3000);
+            }
+        }
+
+        // ===== GITHUB TOKEN SETTINGS =====
+        function saveGithubToken() {
+            const token = document.getElementById('tokenInput').value.trim();
+            const statusDiv = document.getElementById('tokenStatus');
+            
+            if (!token) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = '#fee2e2';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.textContent = '❌ Please enter a token';
+                return;
+            }
+
+            if (!token.startsWith('ghp_')) {
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = '#fee2e2';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.textContent = '❌ Token should start with ghp_';
+                return;
+            }
+
+            localStorage.setItem('githubToken', token);
+            
+            statusDiv.style.display = 'block';
+            statusDiv.style.background = '#dcfce7';
+            statusDiv.style.color = '#166534';
+            statusDiv.textContent = '✓ Token saved! Syncing will activate on refresh.';
+            
+            updateTokenStatus();
+            
+            setTimeout(() => {
+                document.getElementById('tokenModal').classList.remove('active');
+            }, 2000);
+        }
+
+        function clearGithubToken() {
+            if (confirm('Remove GitHub token? Sync will be disabled.')) {
+                localStorage.removeItem('githubToken');
+                localStorage.removeItem('githubFileSha');
+                document.getElementById('tokenInput').value = '';
+                updateTokenStatus();
+                const statusDiv = document.getElementById('tokenStatus');
+                statusDiv.style.display = 'block';
+                statusDiv.style.background = '#fee2e2';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.textContent = '✓ Token cleared';
+            }
+        }
+
+        function updateTokenStatus() {
+            const token = localStorage.getItem('githubToken');
+            const statusText = document.getElementById('syncStatusText');
+            if (!statusText) return;
+            
+            if (token) {
+                const masked = token.substring(0, 10) + '...' + token.substring(token.length - 4);
+                statusText.textContent = `✓ Configured (${masked})`;
+                statusText.parentElement.style.background = '#dcfce7';
+                statusText.parentElement.style.color = '#166534';
+            } else {
+                statusText.textContent = '⚠️ Not configured - tasks will sync locally only';
+                statusText.parentElement.style.background = '#fef3c7';
+                statusText.parentElement.style.color = '#92400e';
+            }
+        }
+
+        // Initialize token status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(updateTokenStatus, 1000);
+        });
+
+        // ===== TASK PERSISTENCE TO LOCALSTORAGE + GITHUB =====
+        function saveTasks() {
+            localStorage.setItem('timeProjectTasks', JSON.stringify(tasks));
+            console.log('✓ Tasks saved to localStorage');
+            
+            // Push to GitHub asynchronously
+            pushToGitHub(tasks).catch(e => console.log('Background GitHub push failed:', e));
+        }
+
+        async function loadTasks() {
+            // Try GitHub first
+            const githubData = await fetchFromGitHub();
+            if (githubData && githubData.tasks) {
+                tasks = githubData.tasks;
+                localStorage.setItem('githubFileSha', githubData.sha);
+                localStorage.setItem('timeProjectTasks', JSON.stringify(tasks));
+                console.log('✓ Tasks loaded from GitHub:', tasks.length);
+                const deduped = dedupeTasksById(tasks);
+                if (deduped.length !== tasks.length) {
+                    tasks = deduped;
+                    saveTasks();
+                }
+                mergeMissingTasks();
+                return true;
+            }
+
+            // Fallback to localStorage
+            const saved = localStorage.getItem('timeProjectTasks');
+            if (saved) {
+                try {
+                    tasks = JSON.parse(saved);
+                    console.log('✓ Tasks loaded from localStorage:', tasks.length);
+                    const deduped = dedupeTasksById(tasks);
+                    if (deduped.length !== tasks.length) {
+                        tasks = deduped;
+                        saveTasks();
+                    }
+                    mergeMissingTasks();
+                    return true;
+                } catch (e) {
+                    console.log('Failed to load tasks:', e);
+                    localStorage.removeItem('timeProjectTasks');
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        async function manualSync() {
+            updateSyncStatus('syncing');
+            const githubData = await fetchFromGitHub();
+            if (githubData && githubData.tasks) {
+                tasks = githubData.tasks;
+                localStorage.setItem('githubFileSha', githubData.sha);
+                localStorage.setItem('timeProjectTasks', JSON.stringify(tasks));
+                renderAllColumns();
+                updateSyncStatus('synced');
+                console.log('✓ Manual sync complete');
+            } else {
+                updateSyncStatus('error');
+            }
+        }
+
+        function getStatusIcon(status) {
+            return status === 'Not Started' ? '⬜' : status === 'Executing' ? '⚙️' : status === 'Progressing' ? '⏳' : '✅';
+        }
+
+        // Drag and Drop Handlers
+        function handleDragStart(e) {
+            draggedTaskId = e.target.dataset.taskId;
+            e.target.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/html', e.target.innerHTML);
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+            document.querySelectorAll('.column-content').forEach(col => {
+                col.classList.remove('drag-over');
+            });
+        }
+
+        function handleDragOver(e) {
+            if (e.preventDefault) e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+            return false;
+        }
+
+        function handleDragEnter(e) {
+            if (e.target.classList.contains('column-content')) {
+                e.target.classList.add('drag-over');
+            }
+        }
+
+        function handleDragLeave(e) {
+            if (e.target.classList.contains('column-content')) {
+                e.target.classList.remove('drag-over');
+            }
+        }
+
+        function handleDrop(e) {
+            if (e.stopPropagation) e.stopPropagation();
+            e.preventDefault();
+            
+            const targetColumn = e.target.closest('.kanban-column');
+            if (targetColumn && draggedTaskId) {
+                const newColumn = parseInt(targetColumn.dataset.column);
+                const task = tasks.find(t => t.id === draggedTaskId);
+                if (task && task.column !== newColumn) {
+                    moveTask(draggedTaskId, newColumn);
+                }
+            }
+            
+            e.target.classList.remove('drag-over');
+            draggedTaskId = null;
+            return false;
+        }
+
+        function attachDragListeners() {
+            document.querySelectorAll('.column-content').forEach(col => {
+                col.addEventListener('dragover', handleDragOver);
+                col.addEventListener('dragenter', handleDragEnter);
+                col.addEventListener('dragleave', handleDragLeave);
+                col.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function renderTaskCard(task) {
+            const creator = task.id.startsWith('HJ') ? 'HJ' : 'AI';
+            const projectName = getProjectName(task.projectId);
+            const idParts = task.id.includes('-') ? task.id.split('-', 2) : [task.id, ''];
+            const idDisplay = idParts[1]
+                ? `<span class="task-id-line">${idParts[0]}-</span><span class="task-id-line">${task.id.substring(idParts[0].length + 1)}</span>`
+                : `<span class="task-id-line">${task.id}</span>`;
+            
+            // Assignee display (Step 4)
+            const assigneeDisplay = task.assignee 
+                ? `<div class="task-assignee" style="font-size: 11px; color: #666; margin-top: 4px; padding: 2px 4px; background: #f0f0f0; border-radius: 3px; display: inline-block;">👤 ${task.assignee}</div>` 
+                : '';
+            
+            // Description visibility toggle
+            const showDescription = descriptionVisibility[task.id] !== false; // default: true
+            const hasDescription = task.whatDescription && task.whatDescription.trim() !== '';
+            
+            return `
+                <div class="task-card" data-task-id="${task.id}" data-creator="${creator}" draggable="${deviceInfo.isDesktop || deviceInfo.isTablet}" ondragstart="handleDragStart(event)" ondragend="handleDragEnd(event)">
+                    <div class="task-row1">
+                        <div class="task-info-left">
+                            <span class="task-id">${idDisplay}</span>
+                            <span class="project-tag">${projectName}</span>
+                        </div>
+                        <div class="navigation-group">
+                            <button class="priority-btn priority-${task.priority}" onclick="togglePriority('${task.id}')"></button>
+                            <span class="status-icon" onclick="toggleStatus('${task.id}')">${getStatusIcon(task.status)}</span>
+                            <div class="action-buttons">
+                                ${hasDescription ? `<button class="icon-btn" onclick="toggleDescriptionVisibility('${task.id}')" title="Toggle description">${showDescription ? '🔽' : '🔼'}</button>` : ''}
+                                <button class="icon-btn" onclick="viewTask('${task.id}')">👁️</button>
+                                <button class="icon-btn" onclick="editTask('${task.id}')">📝</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="task-row2" onclick="viewTask('${task.id}')">${task.what}</div>
+                    ${hasDescription && showDescription ? `<div class="task-description">${task.whatDescription}</div>` : ''}
+                    ${assigneeDisplay}
+                    <div class="task-row3">
+                        <select class="move-select" onchange="moveTask('${task.id}', this.value)">
+                            <option value="">Move to...</option>
+                            ${[1,2,3,4,5,6,7].map(i => `<option value="${i}" ${task.column===i?'selected':''}>${i}-${['Idea','Todo','Plan','Design','Test','Done','Cancel'][i-1]}</option>`).join('')}
+                        </select>
+                        <button class="delete-btn" onclick="deleteTask('${task.id}')">🗑️</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderColumn(columnNum) {
+            const columnFilter = columnProjectFilters[columnNum] || 'all';
+            const activeFilter = columnFilter !== 'all' ? columnFilter : globalProjectFilter;
+            const columnTasks = tasks
+                .filter(t => t.column === columnNum)
+                .filter(t => activeFilter === 'all' || t.projectId === activeFilter)
+                .filter(t => {
+                    // Step 5: Assignee filter
+                    if (globalAssigneeFilter === 'all') return true;
+                    if (globalAssigneeFilter === 'my') return t.assignee === currentUser?.username;
+                    if (globalAssigneeFilter === 'unassigned') return !t.assignee;
+                    return t.assignee === globalAssigneeFilter;
+                })
+                .sort((a, b) => {
+                    const projectDelta = getProjectPriority(a.projectId) - getProjectPriority(b.projectId);
+                    if (projectDelta !== 0) return projectDelta;
+                    return a.priority - b.priority;
+                });
+            const columnEl = document.getElementById(`column-${columnNum}`);
+            columnEl.innerHTML = columnTasks.length === 0 ? '<div style="text-align:center;color:#999;padding:20px;font-size:12px;">No tasks</div>' : columnTasks.map(renderTaskCard).join('');
+        }
+
+        function renderAllColumns() {
+            for (let i = 1; i <= 7; i++) renderColumn(i);
+            updateDragDropState();
+            autoCollapseByDevice();  // Set device-specific collapse state first
+            applyAllColumnCollapseStates();  // Then apply it to the UI
+        }
+
+        function autoCollapseByDevice() {
+            // Auto-collapse based on device type (runs every time to handle device changes)
+            const savedState = localStorage.getItem('collapsedColumns');
+            
+            console.log('autoCollapseByDevice called:', { 
+                savedState, 
+                isTablet: deviceInfo.isTablet, 
+                isMobile: deviceInfo.isMobile,
+                width: window.innerWidth 
+            });
+            
+            // Clear any existing saved state and apply device-specific defaults
+            collapsedColumns = {};
+            
+            // Tablet: collapse last 3 columns (5-Test, 6-Done, 7-Cancelled)
+            if (deviceInfo.isTablet) {
+                console.log('Tablet detected (1024-1366px) - collapsing columns 5, 6, 7');
+                for (let i = 5; i <= 7; i++) {
+                    collapsedColumns[i] = true;
+                }
+            }
+            // Mobile (<1024px, phones): collapse last 6 columns (2-Todo through 7-Cancelled) - only Idea visible
+            else if (deviceInfo.isMobile) {
+                console.log('Mobile detected (<1024px) - collapsing columns 2-7');
+                for (let i = 2; i <= 7; i++) {
+                    collapsedColumns[i] = true;
+                }
+            }
+            
+            // Save to localStorage (but don't apply yet - renderAllColumns will call applyAllColumnCollapseStates)
+            localStorage.setItem('collapsedColumns', JSON.stringify(collapsedColumns));
+        }
+
+        function exportAll() {
+            let output = 'TIME PROJECT - KANBAN EXPORT\\n================================\\nDate: ' + new Date().toLocaleDateString() + '\\n\\n';
+            const cols = ['Idea', 'Todo', 'Planning', 'Design', 'Test', 'Done', 'Cancelled'];
+            for (let i = 1; i <= 7; i++) {
+                const columnTasks = tasks.filter(t => t.column === i).sort((a, b) => a.priority - b.priority);
+                output += `\\n${i}. ${cols[i-1].toUpperCase()}\\n` + '-'.repeat(50) + '\\n';
+                if (columnTasks.length === 0) {
+                    output += 'No tasks\\n';
+                } else {
+                    columnTasks.forEach(task => {
+                        output += `${task.id} | ${task.what} | P:${task.priority} | ${task.status}\\n`;
+                        if (task.why) output += `  Why: ${task.why}\\n`;
+                        if (task.how) output += `  How: ${task.how}\\n`;
+                        if (task.who) output += `  Who: ${task.who}\\n`;
+                        if (task.when) output += `  When: ${task.when}\\n`;
+                        if (task.where) output += `  Where: ${task.where}\\n`;
+                        output += '\\n';
+                    });
+                }
+            }
+            navigator.clipboard.writeText(output).then(() => alert('✅ Copied to clipboard!'));
+        }
+
+        function updateTimestamp() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = now.toLocaleString('en-US', { year:'numeric', month:'short', day:'numeric', hour:'2-digit', minute:'2-digit', second:'2-digit' });
+        }
+
+        function refreshTimestamp() { updateTimestamp(); }
+
+        function scrollToColumn(columnNum) {
+            const parsed = parseInt(columnNum, 10);
+            if (!parsed) return;
+            currentColumn = parsed;
+            const target = document.querySelector(`.kanban-column[data-column="${parsed}"]`);
+            const container = document.querySelector('.kanban-container');
+            if (target && container) {
+                // Scroll only horizontally within the container, don't use scrollIntoView
+                const scrollLeft = target.offsetLeft - container.offsetLeft - 10;
+                container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            }
+        }
+
+        function scrollToTop() {
+            const container = document.querySelector('.kanban-container');
+            if (container) container.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // toggleCompactMode removed - using consistent card layout
+
+        function initMobileEnhancements() {
+            const container = document.querySelector('.kanban-container');
+            const backToTop = document.getElementById('backToTop');
+            if (!container || !backToTop) return;
+
+            const updateBackToTop = () => {
+                if (container.scrollTop > 200) {
+                    backToTop.classList.add('show');
+                } else {
+                    backToTop.classList.remove('show');
+                }
+            };
+
+            container.addEventListener('scroll', updateBackToTop, { passive: true });
+            updateBackToTop();
+
+            const compactEnabled = localStorage.getItem('compactMode') === 'true';
+            document.body.classList.toggle('compact-mode', compactEnabled);
+        }
+
+        function syncHeaderOffset() {
+            const header = document.querySelector('.header');
+            const container = document.querySelector('.kanban-container');
+            const toolbar = document.querySelector('.mobile-toolbar');
+            if (!header || !container) return;
+            const headerHeight = header.offsetHeight || 60;
+            const desiredGap = 0;
+            const newOffset = headerHeight + desiredGap;
+            container.style.marginTop = `${newOffset}px`;
+            container.style.height = `calc(100vh - ${newOffset}px)`;
+            if (toolbar) {
+                toolbar.style.top = `${newOffset}px`;
+            }
+        }
+        
+        // RESTORE SESSION FROM LOCALSTORAGE ON PAGE LOAD
+        async function restoreSession() {
+            const savedSession = localStorage.getItem('timeProjectSession');
+            if (savedSession) {
+                try {
+                    const session = JSON.parse(savedSession);
+                    const user = validUsers.find(u => u.username === session.username);
+                    if (user) {
+                        currentUser = user;
+                        document.getElementById('loginModal').classList.remove('active');
+                        await loadTasks();
+                        renderAllColumns();
+                        attachDragListeners();
+                        
+                        // Force header update with delay
+                        setTimeout(() => {
+                            updateHeader();
+                            console.log('✓ Session restored for:', session.username);
+                        }, 100);
+                        
+                        return true;
+                    } else {
+                        console.log('User not found in validUsers, clearing corrupted session');
+                        localStorage.removeItem('timeProjectSession');
+                    }
+                } catch (e) {
+                    console.log('Session restore failed:', e);
+                    localStorage.removeItem('timeProjectSession');
+                }
+            }
+            return false;
+        }
+        
+        // RESET LOCKOUT STATE AND CHECK FOR EXISTING SESSION
+        async function initializeLoginState() {
+            // CLEAR ALL LOCKOUTS ON PAGE RELOAD - Fresh start for every user
+            loginAttemptsByUser = {};
+            console.log('✓ Page loaded: All user lockouts cleared');
+            
+            // Try to restore session
+            if (!await restoreSession()) {
+                // No session, show login modal
+                document.getElementById('loginModal').classList.add('active');
+            }
+        }
+        
+        // Check for existing session before showing login
+        document.addEventListener('DOMContentLoaded', initializeLoginState);
+        document.addEventListener('DOMContentLoaded', initMobileEnhancements);
+        document.addEventListener('DOMContentLoaded', syncHeaderOffset);
+        document.addEventListener('DOMContentLoaded', loadProjects); // PA-005: Load projects from localStorage
+        
+        // Initialize
+        detectDevice();
+        window.addEventListener('resize', () => {
+            clearTimeout(window.resizeTimer);
+            window.resizeTimer = setTimeout(detectDevice, 250);
+        });
+        window.addEventListener('resize', syncHeaderOffset);
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        renderProjectDropdowns();
+        // Don't render board until logged in (security)
+        // renderAllColumns() and attachDragListeners() called in verifyLogin() after success
+    </script>
+</body>
+</html>

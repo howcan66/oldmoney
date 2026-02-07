@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="sv">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Save Money by Ommiting Out of Paying Church Tax - Are tou a strong believer Keep on Paying!</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/calculator.css">
+</head>
+
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="title">Save Money by Ommiting Out of Paying Church Tax - Are tou a strong believer Keep on Paying!
+        </div>
+        <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" onclick="switchLanguage('sv')" title="Byt till Svenska"
+                    aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" onclick="switchLanguage('en')" title="Switch to English"
+                    aria-pressed="false">EN</button>
+            </div>
+            <button class="refresh-btn" onclick="refreshPage()" title="Refresh page">Refresh</button>
+            <button class="close-btn" onclick="closePage()" title="Close window">Close</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <p class="description"
+            data-lang-sv="Räkna ut inkomst- och sparbesparingsprognos över 40 år med löneökningar och sparande i procent. * Det här är en glad beräkning :-) - Se"
+            data-lang-en="Calculate income and savings projection over 40 years with salary increases and savings percentage. * This is a happy calculation :-) - See">
+            <a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank" rel="noopener"
+                data-lang-sv="Kyrkoskatt SE" data-lang-en="Church Tax SE">Kyrkoskatt SE</a>
+        </p>
+        <p class="description"><a href="https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift" target="_blank"
+                rel="noopener" data-lang-sv="Lämna kyrkan SE" data-lang-en="Exit Church SE">Exit Church SE</a></p>
+
+        <!-- Calculator Inputs Section -->
+        <div class="calculator-inputs">
+            <div class="input-group">
+                <label for="annualIncome" data-lang-sv="Årsinkomst (kr)" data-lang-en="Annual Income (kr)">Årsinkomst
+                    (kr) <span class="required">*</span></label>
+                <input type="number" id="annualIncome" value="300000" placeholder="e.g., 300000" min="0" max="999999999"
+                    step="0.01" aria-required="true">
+                <span class="error-message" id="annualIncomeError"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="salaryIncrease" data-lang-sv="Förväntad Löneökning (%) per år"
+                    data-lang-en="Expected Salary Increase (%) per year">Förväntad Löneökning (%) per år <span
+                        class="required">*</span></label>
+                <input type="number" id="salaryIncrease" value="2" placeholder="e.g., 2" min="0" max="100" step="0.01"
+                    aria-required="true">
+                <span class="error-message" id="salaryIncreaseError"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="savingsPercent" data-lang-sv="Avgift / Besparingsprocent (%)"
+                    data-lang-en="Fee / Savings Percentage (%)">Avgift / Besparingsprocent (%) <span
+                        class="required">*</span></label>
+                <input type="number" id="savingsPercent" value="1.2" placeholder="e.g., 1.2" min="0" max="100"
+                    step="0.01" aria-required="true">
+                <span class="error-message" id="savingsPercentError"></span>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="calculateSavings()" title="Calculate savings projection">
+                    <span id="calculateBtnText" data-lang-sv="Räkna" data-lang-en="Calculate">Calculate</span>
+                </button>
+                <button class="btn-secondary" onclick="clearChurchTaxInputs()" title="Clear all inputs"
+                    data-lang-sv="Rensa" data-lang-en="Clear">Clear</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <!-- Alert for results section display -->
+            <script>
+                const resultsSection = document.getElementById('resultsSection');
+                const observer = new MutationObserver(function (mutations) {
+                    mutations.forEach(function (mutation) {
+                        if (resultsSection.style.display === 'block') {
+                            alert('Results section is now visible. Report should be listed here.');
+                        }
+                    });
+                });
+                observer.observe(resultsSection, { attributes: true, attributeFilter: ['style'] });
+            </script>
+            <!-- Summary -->
+            <div class="summary-box">
+                <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Summary</h3>
+                <div class="summary-row">
+                    <span class="summary-label" data-lang-sv="Total sparande efter 10 år:"
+                        data-lang-en="Total Savings after 10 years:">Total Savings after 10 years:</span>
+                    <span class="summary-value" id="summary10">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label" data-lang-sv="Total sparande efter 30 år:"
+                        data-lang-en="Total Savings after 30 years:">Total Savings after 30 years:</span>
+                    <span class="summary-value" id="summary30">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label" data-lang-sv="Total sparande efter 40 år:"
+                        data-lang-en="Total Savings after 40 years:">Total Savings after 40 years:</span>
+                    <span class="summary-value" id="summary40">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label" data-lang-sv="Total löneökning över 40 år:"
+                        data-lang-en="Total Salary Increase over 40 years:">Total Salary Increase over 40 years:</span>
+                    <span class="summary-value" id="summaryIncreaseTotal">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label" data-lang-sv="Slutlig årsinkomst efter 40 år:"
+                        data-lang-en="Final Annual Income after 40 years:">Final Annual Income after 40 years:</span>
+                    <span class="summary-value" id="summaryFinalIncome">0.00</span>
+                </div>
+            </div>
+
+            <!-- Email Export Section -->
+            <div class="email-export">
+                <label for="emailRecipient" data-lang-sv="Email-resultat" data-lang-en="Email Results">Email
+                    Results</label>
+                <div class="email-export-controls">
+                    <input type="email" id="emailRecipient" placeholder="recipient@example.com"
+                        title="Enter recipient email address">
+                    <button class="btn-export" onclick="sendChurchTaxByEmail()" title="Send results by email"
+                        data-lang-sv="Skicka email" data-lang-en="Send Email">Send Email</button>
+                </div>
+                <span class="error-message" id="emailError"></span>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="export-buttons">
+                <button class="btn-export" onclick="exportChurchTaxToCSV()" title="Export table to CSV file"
+                    data-lang-sv="Exportera till CSV" data-lang-en="Export to CSV">Export to CSV</button>
+                <button class="btn-export" onclick="copyChurchTaxToClipboard()" title="Copy table data to clipboard"
+                    data-lang-sv="Kopiera till urklipp" data-lang-en="Copy to Clipboard">Copy to Clipboard</button>
+            </div>
+
+            <!-- Collapsible Table Groups -->
+            <div class="table-groups">
+                <!-- Group 1: Years 1-10 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('ctGroup1')" title="Click to expand/collapse">
+                        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">Years 1-10</h3>
+                        <span class="toggle-icon" id="ctGroup1Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="ctGroup1Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th data-lang-sv="År" data-lang-en="Year">Year</th>
+                                        <th data-lang-sv="Inkomst" data-lang-en="Income">Income</th>
+                                        <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Salary Increase
+                                        </th>
+                                        <th data-lang-sv="Årlig besparing" data-lang-en="Annual Savings">Annual Savings
+                                        </th>
+                                        <th data-lang-sv="Månatlig besparing" data-lang-en="Monthly Savings">Monthly
+                                            Savings</th>
+                                        <th data-lang-sv="Total ackumulerad" data-lang-en="Total Accumulated">Total
+                                            Accumulated</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ctTableBody1"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Years 11-30 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('ctGroup2')" title="Click to expand/collapse">
+                        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">Years 11-30</h3>
+                        <span class="toggle-icon" id="ctGroup2Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="ctGroup2Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th data-lang-sv="År" data-lang-en="Year">Year</th>
+                                        <th data-lang-sv="Inkomst" data-lang-en="Income">Income</th>
+                                        <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Salary Increase
+                                        </th>
+                                        <th data-lang-sv="Årlig besparing" data-lang-en="Annual Savings">Annual Savings
+                                        </th>
+                                        <th data-lang-sv="Månatlig besparing" data-lang-en="Monthly Savings">Monthly
+                                            Savings</th>
+                                        <th data-lang-sv="Total ackumulerad" data-lang-en="Total Accumulated">Total
+                                            Accumulated</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ctTableBody2"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Years 31-40 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('ctGroup3')" title="Click to expand/collapse">
+                        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">Years 31-40</h3>
+                        <span class="toggle-icon" id="ctGroup3Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="ctGroup3Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th data-lang-sv="År" data-lang-en="Year">Year</th>
+                                        <th data-lang-sv="Inkomst" data-lang-en="Income">Income</th>
+                                        <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Salary Increase
+                                        </th>
+                                        <th data-lang-sv="Årlig besparing" data-lang-en="Annual Savings">Annual Savings
+                                        </th>
+                                        <th data-lang-sv="Månatlig besparing" data-lang-en="Monthly Savings">Monthly
+                                            Savings</th>
+                                        <th data-lang-sv="Total ackumulerad" data-lang-en="Total Accumulated">Total
+                                            Accumulated</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ctTableBody3"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p data-lang-sv="Räknar..." data-lang-en="Calculating...">Calculating...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>&copy; CoolPortals |
+            <span id="footer-filename">kyrkoskatt.html</span> |
+            <span id="footer-timestamp"></span></span>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/churchtax.js"></script>
+    <script>
+        document.getElementById('footer-timestamp').textContent = generateTimestamp();
+    </script>
+</body>
+
+</html>

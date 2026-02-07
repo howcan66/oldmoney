@@ -1,0 +1,1954 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Data Inputs</title>
+    <style>
+        body {
+            margin: 0;
+            padding-top: 56px;
+            padding-bottom: 80px;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #283046;
+            border-bottom: 1px solid #C8C8C8;
+            padding: 8px 12px;
+            padding-left: 20px;
+            height: 48px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .header-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: #FFFFFF;
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 6px;
+        }
+
+        .header button {
+            padding: 6px 12px;
+            background-color: #F5F5FA;
+            border: 1px solid #C8C8C8;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #283046;
+            border-top: 1px solid #C8C8C8;
+            padding: 8px 12px;
+            padding-left: 20px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            text-align: left;
+            justify-content: flex-start;
+            z-index: 999;
+            font-size: 0.875rem;
+            color: #FFFFFF;
+        }
+
+        .content {
+            padding-left: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 4px;
+            min-width: 250px;
+        }
+
+        input[type="number"],
+        input[type="text"] {
+            padding: 6px 8px;
+            border: 1px solid #C8C8C8;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            max-width: 300px;
+        }
+
+        span[id$="Error"] {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 2px;
+        }
+
+        .button-group {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button[type="button"] {
+            padding: 8px 16px;
+            background-color: #283046;
+            color: #FFFFFF;
+            border: 1px solid #C8C8C8;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        button[type="button"]:hover {
+            background-color: #1a1f2e;
+            border-color: #999;
+        }
+
+        button[id$="CollapseBtn"] {
+            background-color: #4CAF50;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        button[id$="CollapseBtn"]:hover {
+            background-color: #45a049;
+        }
+
+        /* Toggle buttons - same width as Beräkna alla + Rensa combined */
+        button[id$="ToggleBtn"],
+        button[id$="CollapseBtn"] {
+            width: 100%;
+            max-width: 550px;
+        }
+
+        /* Calculate and Clear buttons - each is half of toggle button width */
+        button[onclick="calculateBoth()"],
+        button[onclick="clearAllInputs()"] {
+            width: calc(50% - 5px);
+            max-width: 270px;
+        }
+
+        @media print {
+            body {
+                margin: 2mm; /* Even tighter margins */
+                font-size: 8px; /* Smaller base font for more content per page */
+            }
+            .header, .footer {
+                display: none; /* Hide for more space */
+            }
+            table {
+                font-size: 6px; /* Even smaller for tables to fit more */
+                width: 100%;
+                border-collapse: collapse;
+                page-break-inside: avoid;
+                /* Removed table-layout: fixed to allow natural column widths */
+            }
+            th, td {
+                padding: 0px 1px; /* Ultra-minimal padding */
+                border: 0.5px solid #000; /* Thinner borders */
+                word-wrap: break-word; /* Break long words if needed */
+                overflow: visible; /* Allow content to show */
+            }
+            th {
+                font-weight: bold;
+                font-size: 5px; /* Very small headers */
+                white-space: normal; /* Allow line breaks in headers */
+            }
+            .content {
+                padding: 0;
+            }
+            h1, h2, h3 {
+                font-size: 10px;
+                margin: 3px 0;
+                page-break-after: avoid;
+            }
+            button, input, .input-group {
+                display: none; /* Hide forms in print */
+            }
+            table th:nth-child(10), table td:nth-child(10) {
+                display: none;
+            }
+            /* Prevent table rows from breaking across pages */
+            tr {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-title" data-lang-sv="Spara långsamt och inkludera vinsten med att inte betala kyrko skatt" data-lang-en="Save slowly and include the gain from not paying church tax">Spara långsamt och inkludera vinsten med att inte betala kyrko skatt</div>
+        <div class="header-controls">
+            <button type="button" onclick="switchLanguage('sv')">SV</button>
+            <button type="button" onclick="switchLanguage('en')">EN</button>
+            <button type="button" data-lang-sv="Uppdatera" data-lang-en="Refresh" onclick="window.location.reload()">Uppdatera</button>
+            <button type="button" data-lang-sv="Stäng" data-lang-en="Close" onclick="window.close()">Stäng</button>
+        </div>
+    </header>
+    <div class="content">
+    <h1 data-lang-sv="Finans Data Inmatning" data-lang-en="Finance Data Inputs">Finans Data Inmatning</h1>
+
+    <div class="input-group">
+        <label for="startAmount" data-lang-sv="Startbelopp sparande *" data-lang-en="Saving Start Amount *">Startbelopp sparande *</label>
+        <input type="text" id="startAmount" placeholder="e.g., 1000" step="0.01">
+        <span id="startAmountError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="interestRate" data-lang-sv="Årlig genomsnittsränta (%) *" data-lang-en="Yearly Average Interest (%) *">Årlig genomsnittsränta (%) *</label>
+        <input type="text" id="interestRate" placeholder="e.g., 3" step="0.01">
+        <span id="interestRateError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="monthlySavings" data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</label>
+        <input type="text" id="monthlySavings" placeholder="e.g., 100" step="0.01">
+        <span id="monthlySavingsError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="monthlyLoanCost" data-lang-sv="Månatlig lånekostnad" data-lang-en="Monthly Loan Cost">Månatlig lånekostnad</label>
+        <input type="text" id="monthlyLoanCost" placeholder="0.00" readonly>
+    </div>
+
+    <div class="input-group">
+        <label for="grossMonthlySavings" data-lang-sv="Månatligt sparande brutto" data-lang-en="Monthly Gross Savings">Månatligt sparande brutto</label>
+        <input type="text" id="grossMonthlySavings" placeholder="0.00" readonly>
+        <span id="grossMonthlySavingsError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="yearlyDeposit" data-lang-sv="Årlig insättning" data-lang-en="Yearly Deposit">Årlig insättning</label>
+        <input type="text" id="yearlyDeposit" placeholder="e.g., 1000" step="0.01">
+        <span id="yearlyDepositError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="annualIncome" data-lang-sv="Årsinkomst (kr) *" data-lang-en="Annual Income (kr) *">Årsinkomst (kr) *</label>
+        <input type="text" id="annualIncome" placeholder="e.g., 300000" step="0.01">
+        <span id="annualIncomeError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="salaryIncrease" data-lang-sv="Förväntad löneökning (%) per år *" data-lang-en="Expected Salary Increase (%) per year *">Förväntad löneökning (%) per år *</label>
+        <input type="text" id="salaryIncrease" value="2" placeholder="e.g., 2">
+        <span id="salaryIncreaseError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="savingsPercent" data-lang-sv="Kyrkoskatt / Sparprocent (%) *" data-lang-en="Church TaxFee / Savings Percentage (%) *">Kyrkoskatt / Sparprocent (%) *</label>
+        <input type="text" id="savingsPercent" value="1.2" placeholder="e.g., 1.2">
+        <span id="savingsPercentError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="loanAmount" data-lang-sv="Lånebelopp" data-lang-en="Loan Amount">Lånebelopp</label>
+        <input type="text" id="loanAmount" value="2500000" placeholder="e.g., 2500000">
+        <span id="loanAmountError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="loanAmortization" data-lang-sv="Låneamortering kr/mån" data-lang-en="Loan Amortization kr/month">Låneamortering kr/mån</label>
+        <input type="text" id="loanAmortization" placeholder="e.g., 1000" value="1000">
+        <span id="loanAmortizationError"></span>
+    </div>
+
+    <div class="input-group">
+        <label for="loanInterestRate" data-lang-sv="Låneränta (%)" data-lang-en="Loan Interest Rate (%)">Låneränta (%)</label>
+        <input type="text" id="loanInterestRate" value="2.8" placeholder="e.g., 2.8">
+        <span id="loanInterestRateError"></span>
+    </div>
+
+    <div class="input-group">
+        <span data-lang-sv="Beräkningen antar att sparad årlig kyrkoskatt läggs till den årliga insättningen" data-lang-en="Calculation assumes that saved yearly chorch tax is added to the yearly deposit">Beräkningen antar att sparad årlig kyrkoskatt läggs till den årliga insättningen</span>
+    </div>
+
+    <button type="button" data-lang-sv="Beräkna alla" data-lang-en="Calculate All" onclick="calculateBoth()">Beräkna alla</button>
+    <button type="button" data-lang-sv="Rensa" data-lang-en="Clear" onclick="clearAllInputs()">Rensa</button>
+    <br><br>
+
+    <button type="button" id="allResultsToggleBtn" data-collapse-sv="Toggle alla resultat" data-collapse-en="Toggle All Results" data-expand-sv="Toggle alla resultat" data-expand-en="Toggle All Results" onclick="toggleAllResults()" style="display:block; background-color: #FF9800;">Toggle alla resultat</button>
+    <br><br>
+
+    <button type="button" id="depositsWithdrawalsToggleBtn" data-target="depositsWithdrawalsSection" data-collapse-sv="Toggle Insättningar och uttag" data-collapse-en="Toggle Deposits and Withdrawals" data-expand-sv="Toggle Insättningar och uttag" data-expand-en="Toggle Deposits and Withdrawals" onclick="toggleDepositsWithdrawals()" style="display:block;">Toggle Insättningar och uttag</button>
+
+    <button type="button" id="loanToggleBtn" data-target="loanResults" data-collapse-sv="Toggle Låneschema" data-collapse-en="Toggle Loan Schedule" data-expand-sv="Toggle Låneschema" data-expand-en="Toggle Loan Schedule" onclick="toggleLoanSection()" style="display:block; background-color: #2196F3;">Toggle Låneschema</button>
+
+    <button type="button" id="ioiResultsToggleBtn" data-target="interestResults" data-collapse-sv="Toggle Ränta på ränta - resultat" data-collapse-en="Toggle Interest on Interest Results" data-expand-sv="Toggle Ränta på ränta - resultat" data-expand-en="Toggle Interest on Interest Results" onclick="toggleInterestSection()" style="display:block; background-color: #4CAF50;">Toggle Ränta på ränta - resultat</button>
+
+    <button type="button" id="churchInterestCollapseBtn" data-target="churchInterestResults" data-collapse-sv="Toggle IoI (Besparing inkl. kyrkoskattbesparing)" data-collapse-en="Toggle IoI (Church Tax Savings incl.)" data-expand-sv="Toggle IoI (Besparing inkl. kyrkoskattbesparing)" data-expand-en="Toggle IoI (Church Tax Savings incl.)" onclick="toggleChurchInterestSection()" style="display:block;">Toggle IoI (Besparing inkl. kyrkoskattbesparing)</button>
+
+    <button type="button" id="churchSavingsToggleBtn" data-target="churchResults" data-collapse-sv="Toggle Kyrkoskattbesparing - resultat" data-collapse-en="Toggle Church Tax Savings Results" data-expand-sv="Toggle Kyrkoskattbesparing - resultat" data-expand-en="Toggle Church Tax Savings Results" onclick="toggleChurchSavingsSection()" style="display:block;">Toggle Kyrkoskattbesparing - resultat</button>
+
+    <div id="depositsWithdrawalsSection" style="display:none;">
+        <h2 data-lang-sv="Insättningar och uttag över 40 år" data-lang-en="Deposits and Withdrawals over 40 Years">Insättningar och uttag över 40 år</h2>
+        <p data-lang-sv="Ange årliga insättningar (+) eller uttag (-) för varje år" data-lang-en="Enter annual deposits (+) or withdrawals (-) for each year">Ange årliga insättningar (+) eller uttag (-) för varje år</p>
+        <div id="depositsWithdrawalsInputs" style="display:flex; flex-direction:column; gap: 8px; padding: 10px;">
+            <!-- Generated dynamically -->
+        </div>
+        <br>
+        <button type="button" data-lang-sv="Spara insättningar/uttag" data-lang-en="Save Deposits/Withdrawals" onclick="saveDepositsWithdrawals()">Spara insättningar/uttag</button>
+        <button type="button" data-lang-sv="Rensa all data" data-lang-en="Clear All Data" onclick="clearDepositsWithdrawals()">Rensa all data</button>
+        <br><br>
+        <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Sammanfattning</h3>
+        <p data-lang-sv="Total insättningar: " data-lang-en="Total Deposits: "><span id="depositsWithdrawalsTotalDeposits">0.00</span> kr</p>
+        <p data-lang-sv="Total uttag: " data-lang-en="Total Withdrawals: "><span id="depositsWithdrawalsTotalWithdrawals">0.00</span> kr</p>
+        <p data-lang-sv="Netto efter 40 år: " data-lang-en="Net after 40 Years: "><span id="depositsWithdrawalsNetResult">0.00</span> kr</p>
+        <br>
+        <button type="button" id="depositsWithdrawalsToggleBtnBottom" data-target="depositsWithdrawalsSection" data-collapse-sv="Toggle Insättningar och uttag" data-collapse-en="Toggle Deposits and Withdrawals" data-expand-sv="Toggle Insättningar och uttag" data-expand-en="Toggle Deposits and Withdrawals" onclick="toggleDepositsWithdrawals()" style="display:block;">Toggle Insättningar och uttag</button>
+    </div>
+
+    <div id="loanResults" style="display:none;">
+        <h2 data-lang-sv="Låneschema" data-lang-en="Loan Schedule">Låneschema</h2>
+        <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Sammanfattning</h3>
+        <p data-lang-sv="Lånebelopp: " data-lang-en="Loan Amount: "><span id="loanSummaryAmount">0.00</span> kr</p>
+        <p data-lang-sv="Månatlig betalning: " data-lang-en="Monthly Payment: "><span id="loanSummaryPayment">0.00</span> kr</p>
+        <p data-lang-sv="Låneränta: " data-lang-en="Loan Interest Rate: "><span id="loanSummaryRate">0%</span></p>
+        <p data-lang-sv="Total ränta betald (40 år): " data-lang-en="Total Interest Paid (40 years): "><span id="loanSummaryTotalInterest">0.00</span> kr</p>
+
+        <h3 data-lang-sv="Årlig översikt (40 år)" data-lang-en="Yearly Overview (40 years)">Årlig översikt (40 år)</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Ingående saldo" data-lang-en="Beginning Balance">Ingående saldo</th>
+                    <th data-lang-sv="Årlig amortering" data-lang-en="Yearly Principal">Årlig amortering</th>
+                    <th data-lang-sv="Utgående saldo" data-lang-en="Ending Balance">Utgående saldo</th>
+                    <th data-lang-sv="Årsränta" data-lang-en="Loan Interest/Year">Årsränta</th>
+                    <th data-lang-sv="Snitt månadskostnad" data-lang-en="Avg Monthly Cost">Snitt månadskostnad</th>
+                </tr>
+            </thead>
+            <tbody id="loanYearlySummaryBody"></tbody>
+        </table>
+
+        <h3 data-lang-sv="Detaljerat månadsschema" data-lang-en="Detailed Monthly Schedule">Detaljerat månadsschema</h3>
+
+        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">År 1-10</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Månad" data-lang-en="Month">Månad</th>
+                    <th data-lang-sv="Betalning" data-lang-en="Payment">Betalning</th>
+                    <th data-lang-sv="Ränta" data-lang-en="Interest">Ränta</th>
+                    <th data-lang-sv="Amortering" data-lang-en="Principal">Amortering</th>
+                    <th data-lang-sv="Återstående saldo" data-lang-en="Remaining Balance">Återstående saldo</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody1"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">År 11-30</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Månad" data-lang-en="Month">Månad</th>
+                    <th data-lang-sv="Betalning" data-lang-en="Payment">Betalning</th>
+                    <th data-lang-sv="Ränta" data-lang-en="Interest">Ränta</th>
+                    <th data-lang-sv="Amortering" data-lang-en="Principal">Amortering</th>
+                    <th data-lang-sv="Återstående saldo" data-lang-en="Remaining Balance">Återstående saldo</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody2"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Månad" data-lang-en="Month">Månad</th>
+                    <th data-lang-sv="Betalning" data-lang-en="Payment">Betalning</th>
+                    <th data-lang-sv="Ränta" data-lang-en="Interest">Ränta</th>
+                    <th data-lang-sv="Amortering" data-lang-en="Principal">Amortering</th>
+                    <th data-lang-sv="Återstående saldo" data-lang-en="Remaining Balance">Återstående saldo</th>
+                </tr>
+            </thead>
+            <tbody id="loanTableBody3"></tbody>
+        </table>
+        
+        <br>
+        <button type="button" id="loanToggleBtnBottom" data-target="loanResults" data-collapse-sv="Toggle Låneschema" data-collapse-en="Toggle Loan Schedule" data-expand-sv="Toggle Låneschema" data-expand-en="Toggle Loan Schedule" onclick="toggleLoanSection()" style="display:block; background-color: #2196F3;">Toggle Låneschema</button>
+    </div>
+
+    <div id="churchInterestResults" style="display:none;">
+        <h2 data-lang-sv="Ränta på ränta inkl. kyrkoskattbesparing" data-lang-en="Interest on Interest incl. Church Tax Savings">Ränta på ränta inkl. kyrkoskattbesparing</h2>
+        <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Sammanfattning</h3>
+        <p>Initial Amount: <span id="ctIoiSummaryInitial">0.00</span></p>
+        <p>Est. Yearly Average Interest (%): <span id="ctIoiSummaryRate">0%</span></p>
+        <p>Year 1 Church Tax Savings Deposit: <span id="ctIoiSummaryDeposit">0.00</span></p>
+        <p>After 5 Years: <span id="ctIoiSummary5">0.00</span> (<span id="ctIoiSummary5Pct">0%</span>)</p>
+        <p>After 10 Years: <span id="ctIoiSummary10">0.00</span> (<span id="ctIoiSummary10Pct">0%</span>)</p>
+        <p>After 15 Years: <span id="ctIoiSummary15">0.00</span> (<span id="ctIoiSummary15Pct">0%</span>)</p>
+        <p>After 20 Years: <span id="ctIoiSummary20">0.00</span> (<span id="ctIoiSummary20Pct">0%</span>)</p>
+        <p>After 25 Years: <span id="ctIoiSummary25">0.00</span> (<span id="ctIoiSummary25Pct">0%</span>)</p>
+        <p>After 30 Years: <span id="ctIoiSummary30">0.00</span> (<span id="ctIoiSummary30Pct">0%</span>)</p>
+        <p>After 35 Years: <span id="ctIoiSummary35">0.00</span> (<span id="ctIoiSummary35Pct">0%</span>)</p>
+        <p>After 40 Years: <span id="ctIoiSummaryFinal">0.00</span> (<span id="ctIoiSummary40Pct">0%</span>)</p>
+        <p>Total Growth: <span id="ctIoiSummaryGrowth">0.00</span></p>
+        <p>Growth Percentage: <span id="ctIoiSummaryPercent">0%</span></p>
+
+        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">År 1-10</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>IoI<br>Year</th>
+                    <th>IoI Start<br>Amount</th>
+                    <th>Monthly<br>Savings</th>
+                    <th>Accumulated<br>Value</th>
+                    <th>IoI<br>Interest</th>
+                    <th>IoI End<br>Amount</th>
+                    <th>CT Yearly<br>Deposit</th>
+                    <th>IoI Monthly<br>Equiv.</th>
+                    <th>IoI Yearly<br>Increase</th>
+                    <th>Deposit/<br>Withdrawal</th>
+                    <th>Description</th>
+                    <th>Loan Beginning<br>Balance</th>
+                    <th>Loan Cost/<br>mo (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="ctIoiTableBody1"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">År 11-30</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>IoI<br>Year</th>
+                    <th>IoI Start<br>Amount</th>
+                    <th>Monthly<br>Savings</th>
+                    <th>Accumulated<br>Value</th>
+                    <th>IoI<br>Interest</th>
+                    <th>IoI End<br>Amount</th>
+                    <th>CT Yearly<br>Deposit</th>
+                    <th>IoI Monthly<br>Equiv.</th>
+                    <th>IoI Yearly<br>Increase</th>
+                    <th>Deposit/<br>Withdrawal</th>
+                    <th>Description</th>
+                    <th>Loan Beginning<br>Balance</th>
+                    <th>Loan Cost/<br>mo (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="ctIoiTableBody2"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>IoI<br>Year</th>
+                    <th>IoI Start<br>Amount</th>
+                    <th>Monthly<br>Savings</th>
+                    <th>Accumulated<br>Value</th>
+                    <th>IoI<br>Interest</th>
+                    <th>IoI End<br>Amount</th>
+                    <th>CT Yearly<br>Deposit</th>
+                    <th>IoI Monthly<br>Equiv.</th>
+                    <th>IoI Yearly<br>Increase</th>
+                    <th>Deposit/<br>Withdrawal</th>
+                    <th>Description</th>
+                    <th>Loan Beginning<br>Balance</th>
+                    <th>Loan Cost/<br>mo (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="ctIoiTableBody3"></tbody>
+        </table>
+    </div>
+
+    <button type="button" id="interestCollapseBtn" data-target="interestResults" data-collapse-sv="Toggle IoI" data-collapse-en="Toggle IoI" data-expand-sv="Toggle IoI" data-expand-en="Toggle IoI" onclick="toggleInterestSection()" style="display:block;">Toggle IoI</button>
+    <div id="interestResults" style="display:none;">
+        <h2 data-lang-sv="Ränta på ränta - resultat" data-lang-en="Interest on Interest Results">Ränta på ränta - resultat</h2>
+        <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Sammanfattning</h3>
+        <p>Initial Amount: <span id="summaryInitial">0.00</span></p>
+        <p>Est. Yearly Average Interest (%): <span id="summaryRate">0%</span></p>
+        <p>Est. Monthly Savings: <span id="summaryMonthly">0.00</span></p>
+        <p>Est. Yearly Deposit: <span id="summaryYearlyDeposit">0.00</span></p>
+        <p>After 40 Years: <span id="summaryFinal">0.00</span></p>
+        <p>Total Growth: <span id="summaryGrowth">0.00</span></p>
+        <p>Growth Percentage: <span id="summaryPercent">0%</span></p>
+
+        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">År 1-10</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>IoI<br>Year</th>
+                    <th>IoI Start<br>Amount</th>
+                    <th>Monthly<br>Savings</th>
+                    <th>Accumulated<br>Value</th>
+                    <th>IoI<br>Interest</th>
+                    <th>IoI End<br>Amount</th>
+                    <th>IoI Monthly<br>Equiv.</th>
+                    <th>IoI Yearly<br>Increase</th>
+                    <th>Deposit/<br>Withdrawal</th>
+                    <th>Description</th>
+                    <th>Loan Beginning<br>Balance</th>
+                    <th>Loan Cost/<br>mo (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody1"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">År 11-30</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>IoI<br>Year</th>
+                    <th>IoI Start<br>Amount</th>
+                    <th>Monthly<br>Savings</th>
+                    <th>Accumulated<br>Value</th>
+                    <th>IoI<br>Interest</th>
+                    <th>IoI End<br>Amount</th>
+                    <th>IoI Monthly<br>Equiv.</th>
+                    <th>IoI Yearly<br>Increase</th>
+                    <th>Deposit/<br>Withdrawal</th>
+                    <th>Description</th>
+                    <th>Loan Beginning<br>Balance</th>
+                    <th>Loan Cost/<br>mo (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody2"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>IoI<br>Year</th>
+                    <th>IoI Start<br>Amount</th>
+                    <th>Monthly<br>Savings</th>
+                    <th>Accumulated<br>Value</th>
+                    <th>IoI<br>Interest</th>
+                    <th>IoI End<br>Amount</th>
+                    <th>IoI Monthly<br>Equiv.</th>
+                    <th>IoI Yearly<br>Increase</th>
+                    <th>Deposit/<br>Withdrawal</th>
+                    <th>Description</th>
+                    <th>Loan Beginning<br>Balance</th>
+                    <th>Loan Cost/<br>mo (avg)</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody3"></tbody>
+        </table>
+    </div>
+
+    <button type="button" id="churchCollapseBtn" data-target="churchResults" data-collapse-sv="Toggle Kyrkoskatt" data-collapse-en="Toggle Church Tax" data-expand-sv="Toggle Kyrkoskatt" data-expand-en="Toggle Church Tax" onclick="toggleChurchSection()" style="display:block;">Toggle Kyrkoskatt</button>
+    <div id="churchResults" style="display:block;">
+        <h2 data-lang-sv="Kyrkoskattbesparing - resultat" data-lang-en="Church Tax Savings Results">Kyrkoskattbesparing - resultat</h2>
+        <h3 data-lang-sv="Sammanfattning" data-lang-en="Summary">Sammanfattning</h3>
+        <p>Total Savings after 10 years: <span id="summary10">0.00</span></p>
+        <p>Total Savings after 30 years: <span id="summary30">0.00</span></p>
+        <p>Total Savings after 40 years: <span id="summary40">0.00</span></p>
+        <p>Total Salary Increase over 40 years: <span id="summaryIncreaseTotal">0.00</span></p>
+        <p>Final Annual Income after 40 years: <span id="summaryFinalIncome">0.00</span></p>
+
+        <h3 data-lang-sv="År 1-10" data-lang-en="Years 1-10">År 1-10</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Inkomst" data-lang-en="Income">Inkomst</th>
+                    <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Löneökning</th>
+                    <th data-lang-sv="Årligt sparande" data-lang-en="Annual Savings">Årligt sparande</th>
+                    <th data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</th>
+                    <th data-lang-sv="Totalt samlat" data-lang-en="Total Accumulated">Totalt samlat</th>
+                </tr>
+            </thead>
+            <tbody id="ctTableBody1"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 11-30" data-lang-en="Years 11-30">År 11-30</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Inkomst" data-lang-en="Income">Inkomst</th>
+                    <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Löneökning</th>
+                    <th data-lang-sv="Årligt sparande" data-lang-en="Annual Savings">Årligt sparande</th>
+                    <th data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</th>
+                    <th data-lang-sv="Totalt samlat" data-lang-en="Total Accumulated">Totalt samlat</th>
+                </tr>
+            </thead>
+            <tbody id="ctTableBody2"></tbody>
+        </table>
+
+        <h3 data-lang-sv="År 31-40" data-lang-en="Years 31-40">År 31-40</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th data-lang-sv="År" data-lang-en="Year">År</th>
+                    <th data-lang-sv="Inkomst" data-lang-en="Income">Inkomst</th>
+                    <th data-lang-sv="Löneökning" data-lang-en="Salary Increase">Löneökning</th>
+                    <th data-lang-sv="Årligt sparande" data-lang-en="Annual Savings">Årligt sparande</th>
+                    <th data-lang-sv="Månatligt sparande" data-lang-en="Monthly Savings">Månatligt sparande</th>
+                    <th data-lang-sv="Totalt samlat" data-lang-en="Total Accumulated">Totalt samlat</th>
+                </tr>
+            </thead>
+            <tbody id="ctTableBody3"></tbody>
+        </table>
+    </div>
+
+    <hr>
+    <h2 data-lang-sv="Export / Dela" data-lang-en="Export / Share">Export / Dela</h2>
+    <button type="button" data-lang-sv="Exportera CSV" data-lang-en="Export CSV" onclick="exportAllToCSV()">Exportera CSV</button>
+    <button type="button" data-lang-sv="Exportera PDF" data-lang-en="Export PDF" onclick="exportToPDF()">Exportera PDF</button>
+    <button type="button" data-lang-sv="E-posta resultat" data-lang-en="Email Results" onclick="emailResults()">E-posta resultat</button>
+    <button type="button" data-lang-sv="Kopiera till urklipp" data-lang-en="Copy to Clipboard" onclick="copyResultsToClipboard()">Kopiera till urklipp</button>
+
+    <script>
+        let currentLang = 'sv';
+
+        function applyLanguage(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+
+            document.querySelectorAll('[data-lang-sv][data-lang-en]').forEach(el => {
+                const value = lang === 'sv' ? el.getAttribute('data-lang-sv') : el.getAttribute('data-lang-en');
+                if (value !== null) {
+                    el.textContent = value;
+                }
+            });
+
+            document.querySelectorAll('[data-collapse-sv][data-collapse-en][data-expand-sv][data-expand-en][data-target]').forEach(btn => {
+                const targetId = btn.getAttribute('data-target');
+                const target = targetId ? document.getElementById(targetId) : null;
+                const isCollapsed = target ? target.classList.contains('collapsed') : false;
+                const label = isCollapsed
+                    ? (lang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en'))
+                    : (lang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en'));
+                if (label) {
+                    btn.textContent = label;
+                }
+            });
+
+            localStorage.setItem('lang', lang);
+        }
+
+        function switchLanguage(lang) {
+            applyLanguage(lang);
+        }
+
+        function calculateBoth() {
+            saveFinanceData();
+            calculateInterest();
+            calculateSavings();
+            calculateChurchInterest();
+            const loanData = calculateLoanAmortization();
+            displayLoanAmortization(loanData);
+        }
+
+        function toggleInterestSection() {
+            const section = document.getElementById('interestResults');
+            const btn = document.getElementById('interestCollapseBtn');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+        }
+
+        function toggleChurchSection() {
+            const section = document.getElementById('churchResults');
+            const btn = document.getElementById('churchCollapseBtn');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+        }
+
+        function toggleChurchInterestSection() {
+            const section = document.getElementById('churchInterestResults');
+            const btn = document.getElementById('churchInterestCollapseBtn');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+        }
+
+        function toggleChurchSavingsSection() {
+            const section = document.getElementById('churchResults');
+            const btn = document.getElementById('churchSavingsToggleBtn');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+        }
+
+        function toggleDepositsWithdrawals() {
+            const section = document.getElementById('depositsWithdrawalsSection');
+            const btn = document.getElementById('depositsWithdrawalsToggleBtn');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+            
+            if (!isHidden) {
+                generateDepositsWithdrawalsInputs();
+                loadDepositsWithdrawals();
+            }
+        }
+
+        function generateDepositsWithdrawalsInputs() {
+            const container = document.getElementById('depositsWithdrawalsInputs');
+            container.innerHTML = '';
+            for (let year = 1; year <= 40; year++) {
+                const row = document.createElement('div');
+                row.style.display = 'flex';
+                row.style.flexDirection = 'row';
+                row.style.alignItems = 'center';
+                row.style.gap = '10px';
+                row.style.marginBottom = '8px';
+
+                const label = document.createElement('label');
+                label.textContent = `${currentLang === 'sv' ? 'År' : 'Year'} ${year}`;
+                label.htmlFor = `depositYear${year}`;
+                label.style.minWidth = '60px';
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.id = `depositYear${year}`;
+                input.placeholder = `${currentLang === 'sv' ? 'År' : 'Year'} ${year}`;
+                const savedValue = localStorage.getItem(`deposit_year_${year}`) || '0';
+                input.value = formatNumber(savedValue);
+                input.style.width = '120px';
+                input.style.height = '30px';
+                input.style.fontSize = '14px';
+                input.style.padding = '4px 8px';
+                
+                // Add formatting on blur/focus
+                input.addEventListener('blur', function() {
+                    if (this.value) {
+                        this.value = formatNumber(this.value);
+                    }
+                });
+                input.addEventListener('focus', function() {
+                    if (this.value) {
+                        this.value = unformatNumber(this.value);
+                    }
+                });
+
+                const textInput = document.createElement('input');
+                textInput.type = 'text';
+                textInput.id = `depositText${year}`;
+                textInput.placeholder = 'add text deposit or withdrawal';
+                textInput.value = localStorage.getItem(`deposit_text_${year}`) || '';
+                textInput.style.width = '360px';
+                textInput.style.height = '30px';
+                textInput.style.fontSize = '14px';
+                textInput.style.padding = '4px 8px';
+
+                row.appendChild(label);
+                row.appendChild(input);
+                row.appendChild(textInput);
+                container.appendChild(row);
+            }
+        }
+
+        function saveDepositsWithdrawals() {
+            let totalDeposits = 0;
+            let totalWithdrawals = 0;
+            
+            for (let year = 1; year <= 40; year++) {
+                const rawValue = unformatNumber(document.getElementById(`depositYear${year}`).value);
+                const value = parseFloat(rawValue) || 0;
+                const textValue = document.getElementById(`depositText${year}`).value || '';
+                localStorage.setItem(`deposit_year_${year}`, value);
+                localStorage.setItem(`deposit_text_${year}`, textValue);
+                if (value > 0) totalDeposits += value;
+                else totalWithdrawals += Math.abs(value);
+            }
+            
+            const totalDepositsEl = document.getElementById('depositsWithdrawalsTotalDeposits');
+            const totalWithdrawalsEl = document.getElementById('depositsWithdrawalsTotalWithdrawals');
+            const netResultEl = document.getElementById('depositsWithdrawalsNetResult');
+            if (totalDepositsEl) totalDepositsEl.textContent = formatCurrency(totalDeposits);
+            if (totalWithdrawalsEl) totalWithdrawalsEl.textContent = formatCurrency(totalWithdrawals);
+            if (netResultEl) netResultEl.textContent = formatCurrency(totalDeposits - totalWithdrawals);
+            
+            alert(currentLang === 'sv' ? 'Data sparad!' : 'Data saved!');
+        }
+
+        function loadDepositsWithdrawals() {
+            let totalDeposits = 0;
+            let totalWithdrawals = 0;
+            
+            for (let year = 1; year <= 40; year++) {
+                const value = parseFloat(localStorage.getItem(`deposit_year_${year}`)) || 0;
+                const textValue = localStorage.getItem(`deposit_text_${year}`) || '';
+                const valueInput = document.getElementById(`depositYear${year}`);
+                const textInput = document.getElementById(`depositText${year}`);
+                if (valueInput) valueInput.value = formatNumber(value);
+                if (textInput) textInput.value = textValue;
+                if (value > 0) totalDeposits += value;
+                else totalWithdrawals += Math.abs(value);
+            }
+            
+            document.getElementById('depositsWithdrawalsTotalDeposits').textContent = formatCurrency(totalDeposits);
+            document.getElementById('depositsWithdrawalsTotalWithdrawals').textContent = formatCurrency(totalWithdrawals);
+            document.getElementById('depositsWithdrawalsNetResult').textContent = formatCurrency(totalDeposits - totalWithdrawals);
+        }
+
+        function clearDepositsWithdrawals() {
+            if (confirm(currentLang === 'sv' ? 'Är du säker?' : 'Are you sure?')) {
+                for (let year = 1; year <= 40; year++) {
+                    localStorage.removeItem(`deposit_year_${year}`);
+                    localStorage.removeItem(`deposit_text_${year}`);
+                    document.getElementById(`depositYear${year}`).value = '0';
+                    document.getElementById(`depositText${year}`).value = '';
+                }
+                loadDepositsWithdrawals();
+            }
+        }
+
+        function toggleAllResults() {
+            const interestResults = document.getElementById('interestResults');
+            const churchInterestResults = document.getElementById('churchInterestResults');
+            const churchResults = document.getElementById('churchResults');
+            const depositsWithdrawalsSection = document.getElementById('depositsWithdrawalsSection');
+            const loanResults = document.getElementById('loanResults');
+            const btn = document.getElementById('allResultsToggleBtn');
+            
+            if (!interestResults || !churchInterestResults || !churchResults || !depositsWithdrawalsSection || !loanResults || !btn) return;
+            
+            const allHidden = interestResults.style.display === 'none' && churchInterestResults.style.display === 'none' && churchResults.style.display === 'none' && depositsWithdrawalsSection.style.display === 'none' && loanResults.style.display === 'none';
+            
+            interestResults.style.display = allHidden ? 'block' : 'none';
+            churchInterestResults.style.display = allHidden ? 'block' : 'none';
+            churchResults.style.display = allHidden ? 'block' : 'none';
+            depositsWithdrawalsSection.style.display = allHidden ? 'block' : 'none';
+            loanResults.style.display = allHidden ? 'block' : 'none';
+            
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = allHidden ? collapseLabel : expandLabel;
+        }
+
+        function calculateInterest() {
+            // Button 2 Calculation Instructions:
+            // When Button 2 ("Dra av låneavdrag") is selected:
+            // Monthly Savings = baseMonthlySavings - (yearlyLoanInterest[year-1] / 12)
+            // Example: 2,000 kr - 5,805 kr/month = -3,805 kr (Year 1)
+            // Loan data defaults: 2,500,000 kr @ 3%, 1,000 kr/month payment
+            
+            const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
+            const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
+            let baseMonthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            console.log('RAW monthlySavings field value:', document.getElementById('monthlySavings').value);
+            console.log('baseMonthlySavings parsed:', baseMonthlySavings, typeof baseMonthlySavings);
+            let yearlyDeposit = parseFloat(unformatNumber(document.getElementById('yearlyDeposit').value));
+
+            // Get loan data for monthly loan cost calculation (average)
+            const loanData = calculateLoanAmortization();
+            const yearlyLoanInterest = loanData.yearlyInterest || [];
+            const monthlyLoanCostAvg = yearlyLoanInterest.length > 0 ? (yearlyLoanInterest[0] / 12) : 0;
+            console.log('monthlyLoanCostAvg:', monthlyLoanCostAvg);
+
+            if (isNaN(baseMonthlySavings)) {
+                baseMonthlySavings = 0;
+            }
+            if (isNaN(yearlyDeposit)) {
+                yearlyDeposit = 0;
+            }
+
+            clearErrors();
+
+            if (!validateInterestInputs(startAmount, interestRate, baseMonthlySavings, yearlyDeposit)) {
+                return;
+            }
+
+            const results = [];
+            let currentAmount = startAmount;
+            const monthlyRate = (interestRate / 100) / 12;
+
+            for (let year = 1; year <= 40; year++) {
+                // Monthly Savings = baseMonthlySavings - Monthly Loan Cost (average)
+                const monthlySavings = baseMonthlySavings - monthlyLoanCostAvg;
+                if (year <= 10) {
+                    console.log('IoI calc inputs', {
+                        year,
+                        baseMonthlySavings,
+                        monthlyLoanCostAvg,
+                        monthlySavings
+                    });
+                }
+                const startBalance = currentAmount;
+                let totalInterest = 0;
+                let balance = startBalance + yearlyDeposit;
+                let monthlyAccumulated = 0;
+
+                for (let month = 1; month <= 12; month++) {
+                    balance += monthlySavings;
+                    monthlyAccumulated += monthlySavings;
+                    const interest = balance * monthlyRate;
+                    totalInterest += interest;
+                    balance += interest;
+                }
+
+                const endBalance = balance;
+                
+                // Get deposit/withdrawal for this year from localStorage
+                const depositWithdrawal = parseFloat(localStorage.getItem(`deposit_year_${year}`)) || 0;
+                const depositText = localStorage.getItem(`deposit_text_${year}`) || '';
+                
+                // Apply deposit/withdrawal after interest calculation
+                const finalBalance = endBalance + depositWithdrawal;
+                
+                const monthlyEquiv = finalBalance / 12;
+                const yearlyIncrease = finalBalance - startBalance;
+
+                results.push({
+                    year: year,
+                    startAmount: startBalance,
+                    monthlySavings: monthlySavings,
+                    accumulatedValue: monthlyAccumulated + yearlyDeposit,
+                    interest: totalInterest,
+                    endAmount: finalBalance,
+                    monthlyEquiv: monthlyEquiv,
+                    yearlyIncrease: yearlyIncrease,
+                    depositWithdrawal: depositWithdrawal,
+                    depositText: depositText
+                });
+                if (year <= 10) {
+                    console.log('IoI year result', {
+                        year,
+                        startAmount: startBalance,
+                        monthlySavings,
+                        accumulatedValue: monthlyAccumulated + yearlyDeposit,
+                        interest: totalInterest,
+                        endAmount: finalBalance,
+                        monthlyEquiv,
+                        yearlyIncrease,
+                        depositWithdrawal,
+                        depositText
+                    });
+                }
+
+                currentAmount = finalBalance;
+            }
+
+            // Get loan yearly interest data
+            if (yearlyLoanInterest.length === 0) {
+                yearlyLoanInterest = loanData.yearlyInterest || [];
+            }
+            const yearlyBeginningBalance = loanData.yearlyBeginningBalance || [];
+            populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
+            
+            // Populate Monthly Loan Cost field with Year 1 loan cost
+            if (yearlyLoanInterest.length > 0 && yearlyLoanInterest[0]) {
+                document.getElementById('monthlyLoanCost').value = formatCurrency(monthlyLoanCostAvg);
+            } else {
+                document.getElementById('monthlyLoanCost').value = '0 kr';
+            }
+            
+            // Populate Monthly Gross Savings field (Monthly Savings - Monthly Loan Cost)
+            const monthlySavingsValue = baseMonthlySavings - monthlyLoanCostAvg;
+            document.getElementById('grossMonthlySavings').value = formatCurrency(monthlySavingsValue);
+            
+            updateInterestSummary(
+                startAmount,
+                results[39].endAmount,
+                results[39].endAmount - startAmount,
+                interestRate,
+                monthlySavings,
+                yearlyDeposit
+            );
+
+            document.getElementById('interestResults').style.display = 'block';
+        }
+
+        function validateInterestInputs(startAmount, interestRate, monthlySavings, yearlyDeposit) {
+            let isValid = true;
+
+            const startAmountInput = document.getElementById('startAmount');
+            const interestRateInput = document.getElementById('interestRate');
+            const monthlySavingsInput = document.getElementById('monthlySavings');
+            const yearlyDepositInput = document.getElementById('yearlyDeposit');
+            const startAmountError = document.getElementById('startAmountError');
+            const interestRateError = document.getElementById('interestRateError');
+            const monthlySavingsError = document.getElementById('monthlySavingsError');
+            const yearlyDepositError = document.getElementById('yearlyDepositError');
+
+            if (isNaN(startAmount) || startAmount < 0 || startAmount > 999999999) {
+                startAmountError.textContent = 'Please enter a valid amount (0-999,999,999)';
+                startAmountInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            if (isNaN(interestRate) || interestRate < 0 || interestRate > 100) {
+                interestRateError.textContent = 'Please enter a valid interest rate (0-100%)';
+                interestRateInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            if (isNaN(monthlySavings) || monthlySavings < 0 || monthlySavings > 999999999) {
+                monthlySavingsError.textContent = 'Please enter a valid monthly savings amount (0-999,999,999)';
+                monthlySavingsInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            if (isNaN(yearlyDeposit) || yearlyDeposit < 0 || yearlyDeposit > 999999999) {
+                yearlyDepositError.textContent = 'Please enter a valid yearly deposit amount (0-999,999,999)';
+                yearlyDepositInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function clearErrors() {
+            const errorElements = document.querySelectorAll('#startAmountError, #interestRateError, #monthlySavingsError, #yearlyDepositError, #annualIncomeError, #salaryIncreaseError, #savingsPercentError');
+            const inputs = document.querySelectorAll('input');
+
+            errorElements.forEach(el => {
+                el.textContent = '';
+            });
+
+            inputs.forEach(input => {
+                input.style.borderColor = '';
+            });
+        }
+
+        function populateInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance) {
+            const groups = [
+                { id: 'tableBody1', start: 0, end: 10 },
+                { id: 'tableBody2', start: 10, end: 30 },
+                { id: 'tableBody3', start: 30, end: 40 }
+            ];
+
+            groups.forEach(group => {
+                const tbody = document.getElementById(group.id);
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    for (let i = group.start; i < group.end; i++) {
+                        if (results[i]) {
+                            const row = document.createElement('tr');
+                            let loanBeginning = '0.00 kr';
+                            let loanCostMonthly = '0.00 kr';
+                            if (yearlyBeginningBalance && yearlyBeginningBalance.length > 0 && yearlyBeginningBalance[i] !== undefined && yearlyBeginningBalance[i] > 0) {
+                                loanBeginning = formatCurrency(yearlyBeginningBalance[i]);
+                            }
+                            if (yearlyLoanInterest && yearlyLoanInterest.length > 0 && yearlyLoanInterest[i] !== undefined && yearlyLoanInterest[i] > 0) {
+                                const monthlyAverage = yearlyLoanInterest[i] / 12;
+                                loanCostMonthly = formatCurrency(monthlyAverage);
+                            }
+                            row.innerHTML = `
+                                <td>${results[i].year}</td>
+                                <td>${formatCurrency(results[i].startAmount)}</td>
+                                <td>${formatCurrency(results[i].monthlySavings)}</td>
+                                <td>${formatCurrency(results[i].accumulatedValue)}</td>
+                                <td>${formatCurrency(results[i].interest)}</td>
+                                <td>${formatCurrency(results[i].endAmount)}</td>
+                                <td>${formatCurrency(results[i].monthlyEquiv)}</td>
+                                <td>${formatCurrency(results[i].yearlyIncrease)}</td>
+                                <td>${formatCurrency(results[i].depositWithdrawal)}</td>
+                                <td>${results[i].depositText || ''}</td>
+                                <td>${loanBeginning}</td>
+                                <td>${loanCostMonthly}</td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateInterestSummary(initial, final, growth, interestRate, monthlySavings, yearlyDeposit) {
+            document.getElementById('summaryInitial').textContent = formatCurrency(initial);
+            document.getElementById('summaryFinal').textContent = formatCurrency(final);
+            document.getElementById('summaryRate').textContent = `${interestRate}%`;
+            document.getElementById('summaryMonthly').textContent = formatCurrency(monthlySavings);
+            document.getElementById('summaryYearlyDeposit').textContent = formatCurrency(yearlyDeposit);
+            document.getElementById('summaryGrowth').textContent = formatCurrency(growth);
+            const growthPercent = initial > 0 ? ((growth / initial) * 100).toFixed(2) : '0.00';
+            document.getElementById('summaryPercent').textContent = growthPercent + '%';
+        }
+
+        function calculateSavings() {
+            if (!validateChurchInputs()) {
+                return;
+            }
+
+            const annualIncome = parseFloat(unformatNumber(document.getElementById('annualIncome').value));
+            const salaryIncrease = parseFloat(unformatNumber(document.getElementById('salaryIncrease').value));
+            const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
+
+            const results = [];
+            let totalAccumulated = 0;
+            let totalSalaryIncrease = 0;
+
+            for (let year = 1; year <= 40; year++) {
+                let yearIncome;
+                if (year === 1) {
+                    yearIncome = annualIncome;
+                } else {
+                    yearIncome = results[year - 2].income * (1 + salaryIncrease / 100);
+                }
+
+                const salaryIncreaseAmount = yearIncome - (year === 1 ? annualIncome : results[year - 2].income);
+                const annualSavings = yearIncome * (savingsPercent / 100);
+                const monthlySavings = annualSavings / 12;
+
+                totalAccumulated += annualSavings;
+                totalSalaryIncrease += salaryIncreaseAmount;
+
+                results.push({
+                    year: year,
+                    income: yearIncome,
+                    salaryIncrease: salaryIncreaseAmount,
+                    annualSavings: annualSavings,
+                    monthlySavings: monthlySavings,
+                    totalAccumulated: totalAccumulated
+                });
+            }
+
+            populateChurchTables(results);
+            updateChurchSummary(results, totalSalaryIncrease);
+            document.getElementById('churchResults').style.display = 'block';
+        }
+
+        function calculateChurchInterest() {
+            const startAmount = parseFloat(unformatNumber(document.getElementById('startAmount').value));
+            const interestRate = parseFloat(unformatNumber(document.getElementById('interestRate').value));
+            let monthlySavings = parseFloat(unformatNumber(document.getElementById('monthlySavings').value));
+            const annualIncome = parseFloat(unformatNumber(document.getElementById('annualIncome').value));
+            const salaryIncrease = parseFloat(unformatNumber(document.getElementById('salaryIncrease').value));
+            const savingsPercent = parseFloat(unformatNumber(document.getElementById('savingsPercent').value));
+
+            // Get loan data for monthly loan cost calculation (average)
+            const loanData = calculateLoanAmortization();
+            const yearlyLoanInterest = loanData.yearlyInterest || [];
+            const monthlyLoanCostAvg = yearlyLoanInterest.length > 0 ? (yearlyLoanInterest[0] / 12) : 0;
+            console.log('monthlyLoanCostAvg:', monthlyLoanCostAvg);
+
+            if (isNaN(monthlySavings)) {
+                monthlySavings = 0;
+            }
+
+            clearErrors();
+
+            if (!validateInterestInputs(startAmount, interestRate, 0, 0) || !validateChurchInputs()) {
+                return;
+            }
+
+            const results = [];
+            let currentAmount = startAmount;
+            let currentIncome = annualIncome;
+            const monthlyRate = (interestRate / 100) / 12;
+
+            for (let year = 1; year <= 40; year++) {
+                // Monthly Savings = baseMonthlySavings - Monthly Loan Cost (average)
+                const yearMonthlySavings = monthlySavings - monthlyLoanCostAvg;
+                if (year > 1) {
+                    currentIncome = currentIncome * (1 + salaryIncrease / 100);
+                }
+
+                const yearlyDeposit = currentIncome * (savingsPercent / 100);
+                const monthlyDeposit = yearlyDeposit / 12;
+                const startBalance = currentAmount;
+                let totalInterest = 0;
+                let balance = startBalance + yearlyDeposit;
+
+                for (let month = 1; month <= 12; month++) {
+                    balance += yearMonthlySavings;
+                    const interest = balance * monthlyRate;
+                    totalInterest += interest;
+                    balance += interest;
+                }
+
+                const endBalance = balance;
+                
+                // Get deposit/withdrawal for this year from localStorage
+                const depositWithdrawal = parseFloat(localStorage.getItem(`deposit_year_${year}`)) || 0;
+                const depositText = localStorage.getItem(`deposit_text_${year}`) || '';
+                
+                // Apply deposit/withdrawal after interest calculation
+                const finalBalance = endBalance + depositWithdrawal;
+                
+                const monthlyEquiv = finalBalance / 12;
+                const yearlyIncrease = finalBalance - startBalance;
+
+                results.push({
+                    year: year,
+                    startAmount: startBalance,
+                    monthlySavings: monthlyDeposit,
+                    accumulatedValue: yearlyDeposit,
+                    interest: totalInterest,
+                    endAmount: finalBalance,
+                    monthlyEquiv: monthlyEquiv,
+                    yearlyIncrease: yearlyIncrease,
+                    yearlyDeposit: yearlyDeposit,
+                    depositWithdrawal: depositWithdrawal,
+                    depositText: depositText
+                });
+
+                currentAmount = finalBalance;
+            }
+
+            // Get loan yearly interest data
+            const loanDataChurch = calculateLoanAmortization();
+            if (yearlyLoanInterest.length === 0) {
+                yearlyLoanInterest = loanDataChurch.yearlyInterest || [];
+            }
+            const yearlyBeginningBalance = loanDataChurch.yearlyBeginningBalance || [];
+
+            populateChurchInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance);
+            updateChurchInterestSummary(
+                startAmount,
+                results[0].yearlyDeposit,
+                results[39].endAmount,
+                results[39].endAmount - startAmount,
+                interestRate,
+                results
+            );
+
+            document.getElementById('churchInterestResults').style.display = 'block';
+        }
+
+        function validateChurchInputs() {
+            let isValid = true;
+
+            const annualIncomeInput = document.getElementById('annualIncome');
+            const salaryIncreaseInput = document.getElementById('salaryIncrease');
+            const savingsPercentInput = document.getElementById('savingsPercent');
+            const annualIncomeError = document.getElementById('annualIncomeError');
+            const salaryIncreaseError = document.getElementById('salaryIncreaseError');
+            const savingsPercentError = document.getElementById('savingsPercentError');
+
+            const annualIncome = parseFloat(annualIncomeInput.value);
+            const salaryIncrease = parseFloat(salaryIncreaseInput.value);
+            const savingsPercent = parseFloat(savingsPercentInput.value);
+
+            if (isNaN(annualIncome) || annualIncome <= 0 || annualIncome > 999999999) {
+                annualIncomeError.textContent = 'Please enter a valid income (0 - 999,999,999)';
+                annualIncomeInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            if (isNaN(salaryIncrease) || salaryIncrease < 0 || salaryIncrease > 100) {
+                salaryIncreaseError.textContent = 'Please enter a valid percentage (0 - 100)';
+                salaryIncreaseInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            if (isNaN(savingsPercent) || savingsPercent < 0 || savingsPercent > 100) {
+                savingsPercentError.textContent = 'Please enter a valid percentage (0 - 100)';
+                savingsPercentInput.style.borderColor = '#e74c3c';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function populateChurchTables(results) {
+            const groupMap = [
+                { id: 'ctTableBody1', start: 0, end: 10 },
+                { id: 'ctTableBody2', start: 10, end: 30 },
+                { id: 'ctTableBody3', start: 30, end: 40 }
+            ];
+
+            groupMap.forEach(group => {
+                const tbody = document.getElementById(group.id);
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    for (let i = group.start; i < group.end; i++) {
+                        if (results[i]) {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${results[i].year}</td>
+                                <td>${formatCurrency(results[i].income)}</td>
+                                <td>${formatCurrency(results[i].salaryIncrease)}</td>
+                                <td>${formatCurrency(results[i].annualSavings)}</td>
+                                <td>${formatCurrency(results[i].monthlySavings)}</td>
+                                <td><strong>${formatCurrency(results[i].totalAccumulated)}</strong></td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    }
+                }
+            });
+        }
+
+        function populateChurchInterestTables(results, yearlyLoanInterest, yearlyBeginningBalance) {
+            const groupMap = [
+                { id: 'ctIoiTableBody1', start: 0, end: 10 },
+                { id: 'ctIoiTableBody2', start: 10, end: 30 },
+                { id: 'ctIoiTableBody3', start: 30, end: 40 }
+            ];
+
+            groupMap.forEach(group => {
+                const tbody = document.getElementById(group.id);
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    for (let i = group.start; i < group.end; i++) {
+                        if (results[i]) {
+                            const row = document.createElement('tr');
+                            let loanBeginning = '0.00 kr';
+                            let loanCostMonthly = '0.00 kr';
+                            if (yearlyBeginningBalance && yearlyBeginningBalance.length > 0 && yearlyBeginningBalance[i] !== undefined && yearlyBeginningBalance[i] > 0) {
+                                loanBeginning = formatCurrency(yearlyBeginningBalance[i]);
+                            }
+                            if (yearlyLoanInterest && yearlyLoanInterest.length > 0 && yearlyLoanInterest[i] !== undefined && yearlyLoanInterest[i] > 0) {
+                                const monthlyAverage = yearlyLoanInterest[i] / 12;
+                                loanCostMonthly = formatCurrency(monthlyAverage);
+                            }
+                            row.innerHTML = `
+                                <td>${results[i].year}</td>
+                                <td>${formatCurrency(results[i].startAmount)}</td>
+                                <td>${formatCurrency(results[i].monthlySavings)}</td>
+                                <td>${formatCurrency(results[i].accumulatedValue)}</td>
+                                <td>${formatCurrency(results[i].interest)}</td>
+                                <td>${formatCurrency(results[i].endAmount)}</td>
+                                <td>${formatCurrency(results[i].yearlyDeposit)}</td>
+                                <td>${formatCurrency(results[i].monthlyEquiv)}</td>
+                                <td>${formatCurrency(results[i].yearlyIncrease)}</td>
+                                <td>${formatCurrency(results[i].depositWithdrawal)}</td>
+                                <td>${results[i].depositText || ''}</td>
+                                <td>${loanBeginning}</td>
+                                <td>${loanCostMonthly}</td>
+                            `;
+                            tbody.appendChild(row);
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChurchInterestSummary(initial, yearOneDeposit, final, growth, interestRate, results) {
+            document.getElementById('ctIoiSummaryInitial').textContent = formatCurrency(initial);
+            document.getElementById('ctIoiSummaryRate').textContent = `${interestRate}%`;
+            document.getElementById('ctIoiSummaryDeposit').textContent = formatCurrency(yearOneDeposit);
+            
+            // Add 5-year checkpoints with percentage growth
+            if (results && results.length > 0) {
+                const calcPct = (value) => initial > 0 ? (((value - initial) / initial) * 100).toFixed(2) : '0.00';
+                
+                if (results[4]) {
+                    document.getElementById('ctIoiSummary5').textContent = formatCurrency(results[4].endAmount);
+                    document.getElementById('ctIoiSummary5Pct').textContent = calcPct(results[4].endAmount) + '%';
+                }
+                if (results[9]) {
+                    document.getElementById('ctIoiSummary10').textContent = formatCurrency(results[9].endAmount);
+                    document.getElementById('ctIoiSummary10Pct').textContent = calcPct(results[9].endAmount) + '%';
+                }
+                if (results[14]) {
+                    document.getElementById('ctIoiSummary15').textContent = formatCurrency(results[14].endAmount);
+                    document.getElementById('ctIoiSummary15Pct').textContent = calcPct(results[14].endAmount) + '%';
+                }
+                if (results[19]) {
+                    document.getElementById('ctIoiSummary20').textContent = formatCurrency(results[19].endAmount);
+                    document.getElementById('ctIoiSummary20Pct').textContent = calcPct(results[19].endAmount) + '%';
+                }
+                if (results[24]) {
+                    document.getElementById('ctIoiSummary25').textContent = formatCurrency(results[24].endAmount);
+                    document.getElementById('ctIoiSummary25Pct').textContent = calcPct(results[24].endAmount) + '%';
+                }
+                if (results[29]) {
+                    document.getElementById('ctIoiSummary30').textContent = formatCurrency(results[29].endAmount);
+                    document.getElementById('ctIoiSummary30Pct').textContent = calcPct(results[29].endAmount) + '%';
+                }
+                if (results[34]) {
+                    document.getElementById('ctIoiSummary35').textContent = formatCurrency(results[34].endAmount);
+                    document.getElementById('ctIoiSummary35Pct').textContent = calcPct(results[34].endAmount) + '%';
+                }
+            }
+            
+            document.getElementById('ctIoiSummaryFinal').textContent = formatCurrency(final);
+            document.getElementById('ctIoiSummary40Pct').textContent = initial > 0 ? (((final - initial) / initial) * 100).toFixed(2) + '%' : '0%';
+            document.getElementById('ctIoiSummaryGrowth').textContent = formatCurrency(growth);
+            const growthPercent = initial > 0 ? ((growth / initial) * 100).toFixed(2) : '0.00';
+            document.getElementById('ctIoiSummaryPercent').textContent = growthPercent + '%';
+        }
+
+        function updateChurchSummary(results, totalSalaryIncrease) {
+            document.getElementById('summary10').textContent = formatCurrency(results[9].totalAccumulated);
+            document.getElementById('summary30').textContent = formatCurrency(results[29].totalAccumulated);
+            document.getElementById('summary40').textContent = formatCurrency(results[39].totalAccumulated);
+            document.getElementById('summaryIncreaseTotal').textContent = formatCurrency(totalSalaryIncrease);
+            document.getElementById('summaryFinalIncome').textContent = formatCurrency(results[39].income);
+        }
+
+        function formatCurrency(value) {
+            const isNegative = value < 0;
+            const absValue = Math.abs(value);
+            const formatted = new Intl.NumberFormat('sv-SE', {
+                style: 'currency',
+                currency: 'SEK',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(absValue);
+            return isNegative ? '-' + formatted : formatted;
+        }
+
+        function formatNumber(value) {
+            if (!value || value === '') return '';
+            const num = parseFloat(String(value).replace(/\s/g, '').replace(',', '.'));
+            if (isNaN(num)) return value;
+            return new Intl.NumberFormat('sv-SE', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+            }).format(num);
+        }
+
+        function unformatNumber(value) {
+            if (!value) return '';
+            return String(value).replace(/\s/g, '').replace(',', '.');
+        }
+
+        function addNumberFormatting(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            
+            input.addEventListener('blur', function() {
+                if (this.value) {
+                    const formatted = formatNumber(this.value);
+                    this.value = formatted;
+                }
+            });
+            
+            input.addEventListener('focus', function() {
+                if (this.value) {
+                    const unformatted = unformatNumber(this.value);
+                    this.value = unformatted;
+                }
+            });
+        }
+
+        function exportAllToCSV() {
+            const interestRows = collectTableRows(['tableBody1', 'tableBody2', 'tableBody3']);
+            const churchRows = collectTableRows(['ctTableBody1', 'ctTableBody2', 'ctTableBody3']);
+
+            if (interestRows.length === 0 && churchRows.length === 0) {
+                alert('Please calculate results before exporting.');
+                return;
+            }
+
+            let csv = '\ufeff'; // UTF-8 BOM for proper character encoding
+            csv += 'Interest on Interest Results\n';
+            csv += 'Year,Start Amount,Interest,End Amount,Monthly Equiv.,Yearly Increase\n';
+            interestRows.forEach(row => {
+                csv += row.join(',') + '\n';
+            });
+
+            csv += '\nChurch Tax Savings Results\n';
+            csv += 'Year,Income,Salary Increase,Annual Savings,Monthly Savings,Total Accumulated\n';
+            churchRows.forEach(row => {
+                csv += row.join(',') + '\n';
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const date = new Date().toISOString().split('T')[0];
+
+            link.setAttribute('href', url);
+            link.setAttribute('download', `sparakyrkoskatten_${date}.csv`);
+            link.style.display = 'none';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportToPDF() {
+            window.print();
+        }
+
+        function emailResults() {
+            const interestSummary = [
+                `Initial Amount: ${document.getElementById('summaryInitial').textContent}`,
+                `Yearly Interest: ${document.getElementById('summaryRate').textContent}`,
+                `Monthly Savings: ${document.getElementById('summaryMonthly').textContent}`,
+                `Yearly Deposit: ${document.getElementById('summaryYearlyDeposit').textContent}`,
+                `After 40 Years: ${document.getElementById('summaryFinal').textContent}`,
+                `Total Growth: ${document.getElementById('summaryGrowth').textContent}`,
+                `Growth Percentage: ${document.getElementById('summaryPercent').textContent}`
+            ].join('\n');
+
+            const churchSummary = [
+                `Savings after 10 years: ${document.getElementById('summary10').textContent}`,
+                `Savings after 30 years: ${document.getElementById('summary30').textContent}`,
+                `Savings after 40 years: ${document.getElementById('summary40').textContent}`,
+                `Total Salary Increase: ${document.getElementById('summaryIncreaseTotal').textContent}`,
+                `Final Annual Income: ${document.getElementById('summaryFinalIncome').textContent}`
+            ].join('\n');
+
+            const subject = encodeURIComponent('Spara Kyrkoskatten Results');
+            const body = encodeURIComponent(
+                'Interest on Interest Results\n' + interestSummary + '\n\n' +
+                'Church Tax Savings Results\n' + churchSummary
+            );
+
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        function copyResultsToClipboard() {
+            const interestSummary = [
+                `Initial Amount: ${document.getElementById('summaryInitial').textContent}`,
+                `Yearly Interest: ${document.getElementById('summaryRate').textContent}`,
+                `Monthly Savings: ${document.getElementById('summaryMonthly').textContent}`,
+                `Yearly Deposit: ${document.getElementById('summaryYearlyDeposit').textContent}`,
+                `After 40 Years: ${document.getElementById('summaryFinal').textContent}`,
+                `Total Growth: ${document.getElementById('summaryGrowth').textContent}`,
+                `Growth Percentage: ${document.getElementById('summaryPercent').textContent}`
+            ].join('\n');
+
+            const churchSummary = [
+                `Savings after 10 years: ${document.getElementById('summary10').textContent}`,
+                `Savings after 30 years: ${document.getElementById('summary30').textContent}`,
+                `Savings after 40 years: ${document.getElementById('summary40').textContent}`,
+                `Total Salary Increase: ${document.getElementById('summaryIncreaseTotal').textContent}`,
+                `Final Annual Income: ${document.getElementById('summaryFinalIncome').textContent}`
+            ].join('\n');
+
+            const text = 'Interest on Interest Results\n' + interestSummary + '\n\n' +
+                'Church Tax Savings Results\n' + churchSummary;
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Results copied to clipboard.');
+                }).catch(() => {
+                    alert('Unable to copy to clipboard.');
+                });
+            } else {
+                alert('Clipboard API not supported in this browser.');
+            }
+        }
+
+        function collectTableRows(bodyIds) {
+            const rows = [];
+            bodyIds.forEach(id => {
+                const tbody = document.getElementById(id);
+                if (!tbody) return;
+                const trList = tbody.querySelectorAll('tr');
+                trList.forEach(tr => {
+                    const cells = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+                    if (cells.length) {
+                        rows.push(cells);
+                    }
+                });
+            });
+            return rows;
+        }
+
+        // Section-specific export for Interest on Interest
+        function exportIoIToCSV() {
+            const interestRows = collectTableRows(['tableBody1', 'tableBody2', 'tableBody3']);
+            let csv = '\ufeffInterest on Interest Results\n';
+            csv += 'Year,Start Amount,Interest,End Amount,Monthly Equiv.,Yearly Increase\n';
+            interestRows.forEach(row => { csv += row.join(',') + '\n'; });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const date = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `IoI_Results_${date}.csv`);
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportIoIToPDF() {
+            const originalContent = document.body.innerHTML;
+            const interestSection = document.getElementById('interestResults');
+            if (interestSection) {
+                document.body.innerHTML = '<h2>Interest on Interest Results</h2>' + interestSection.innerHTML;
+                window.print();
+                document.body.innerHTML = originalContent;
+            }
+        }
+
+        function emailIoIResults() {
+            const interestRows = collectTableRows(['tableBody1', 'tableBody2', 'tableBody3']);
+            const interestSummary = [
+                'INTEREST ON INTEREST REPORT',
+                'Year,Start Amount,Interest,End Amount,Monthly Equiv.,Yearly Increase'
+            ];
+            interestRows.forEach(row => {
+                interestSummary.push(row.join(','));
+            });
+            const body = encodeURIComponent(interestSummary.join('\n'));
+            window.location.href = `mailto:?subject=Interest on Interest Results&body=${body}`;
+        }
+
+        function copyIoIToClipboard() {
+            const interestRows = collectTableRows(['tableBody1', 'tableBody2', 'tableBody3']);
+            let text = 'INTEREST ON INTEREST RESULTS\n';
+            text += 'Year,Start Amount,Interest,End Amount,Monthly Equiv.,Yearly Increase\n';
+            interestRows.forEach(row => { text += row.join(',') + '\n'; });
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('IoI Results copied to clipboard.');
+                }).catch(() => {
+                    alert('Failed to copy to clipboard.');
+                });
+            } else {
+                alert('Clipboard not supported in this browser.');
+            }
+        }
+
+        // Section-specific export for Church Tax
+        function exportChurchToCSV() {
+            const churchRows = collectTableRows(['ctTableBody1', 'ctTableBody2', 'ctTableBody3']);
+            let csv = 'Church Tax Savings Results\n';
+            csv += 'Year,Income,Salary Increase,Annual Savings,Monthly Savings,Total Accumulated\n';
+            churchRows.forEach(row => { csv += row.join(',') + '\n'; });
+            
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            const date = new Date().toISOString().split('T')[0];
+            link.setAttribute('href', url);
+            link.setAttribute('download', `Church_Tax_Results_${date}.csv`);
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function exportChurchToPDF() {
+            const originalContent = document.body.innerHTML;
+            const churchSection = document.getElementById('churchResults');
+            if (churchSection) {
+                document.body.innerHTML = '<h2>Church Tax Savings Results</h2>' + churchSection.innerHTML;
+                window.print();
+                document.body.innerHTML = originalContent;
+            }
+        }
+
+        function emailChurchResults() {
+            const churchRows = collectTableRows(['ctTableBody1', 'ctTableBody2', 'ctTableBody3']);
+            const churchSummary = [
+                'CHURCH TAX SAVINGS REPORT',
+                'Year,Income,Salary Increase,Annual Savings,Monthly Savings,Total Accumulated'
+            ];
+            churchRows.forEach(row => {
+                churchSummary.push(row.join(','));
+            });
+            const body = encodeURIComponent(churchSummary.join('\n'));
+            window.location.href = `mailto:?subject=Church Tax Savings Results&body=${body}`;
+        }
+
+        function copyChurchToClipboard() {
+            const churchRows = collectTableRows(['ctTableBody1', 'ctTableBody2', 'ctTableBody3']);
+            let text = 'CHURCH TAX SAVINGS RESULTS\n';
+            text += 'Year,Income,Salary Increase,Annual Savings,Monthly Savings,Total Accumulated\n';
+            churchRows.forEach(row => { text += row.join(',') + '\n'; });
+            
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Church Tax Results copied to clipboard.');
+                }).catch(() => {
+                    alert('Failed to copy to clipboard.');
+                });
+            } else {
+                alert('Clipboard not supported in this browser.');
+            }
+        }
+
+        // Finance Data Input Defaults and Local Storage Instruction:
+        // All fields have default values and use localStorage
+        // Priority: localStorage value (if exists) > default value
+        // 
+        // Defaults:
+        // - Startbelopp sparande: 50,000 kr
+        // - Årlig genomsnittsränta (%): 3%
+        // - Månatligt sparande: 2,000 kr
+        // - Årlig insättning: 0 kr
+        // - Årsinkomst (kr): 300,000 kr
+        // - Löneökning: 2%
+        // - Sparprocent: 1.2%
+        // - Lånbelopp: 2,500,000 kr
+        // - Låneavbetalning: 1,000 kr
+        // - Låneränta: 3%
+        
+        function loadFinanceData() {
+            console.log(' Page loaded, loadFinanceData() executing');
+            // FORCE CLEAR old monthlySavings to use new default of 0
+            if (localStorage.getItem('monthlySavings') && localStorage.getItem('monthlySavings') !== '0') {
+                localStorage.setItem('monthlySavings', '0');
+            }
+            
+            const startAmount = localStorage.getItem('startAmount') || '50000';
+            const interestRate = localStorage.getItem('interestRate') || '3';
+            const monthlySavings = localStorage.getItem('monthlySavings') || '0';
+            console.log('monthlySavings default:', monthlySavings, '(expected: 0)');
+            const yearlyDeposit = localStorage.getItem('yearlyDeposit') || '0';
+            const annualIncome = localStorage.getItem('annualIncome') || '300000';
+            const salaryIncrease = localStorage.getItem('salaryIncrease') || '2';
+            const savingsPercent = localStorage.getItem('savingsPercent') || '1.2';
+            const loanAmount = localStorage.getItem('loanAmount') || '2500000';
+            const loanAmortization = localStorage.getItem('loanAmortization') || '1000';
+            const loanInterestRate = localStorage.getItem('loanInterestRate') || '3';
+
+            document.getElementById('startAmount').value = formatNumber(startAmount);
+            document.getElementById('interestRate').value = formatNumber(interestRate);
+            document.getElementById('monthlySavings').value = formatNumber(monthlySavings);
+            document.getElementById('yearlyDeposit').value = formatNumber(yearlyDeposit);
+            document.getElementById('annualIncome').value = formatNumber(annualIncome);
+            document.getElementById('salaryIncrease').value = formatNumber(salaryIncrease);
+            document.getElementById('savingsPercent').value = formatNumber(savingsPercent);
+            document.getElementById('loanAmount').value = formatNumber(loanAmount);
+            document.getElementById('loanAmortization').value = formatNumber(loanAmortization);
+            document.getElementById('loanInterestRate').value = formatNumber(loanInterestRate);
+        }
+
+        function saveFinanceData() {
+            localStorage.setItem('startAmount', unformatNumber(document.getElementById('startAmount').value));
+            localStorage.setItem('interestRate', unformatNumber(document.getElementById('interestRate').value));
+            localStorage.setItem('monthlySavings', unformatNumber(document.getElementById('monthlySavings').value));
+            localStorage.setItem('yearlyDeposit', unformatNumber(document.getElementById('yearlyDeposit').value));
+            localStorage.setItem('annualIncome', unformatNumber(document.getElementById('annualIncome').value));
+            localStorage.setItem('salaryIncrease', unformatNumber(document.getElementById('salaryIncrease').value));
+            localStorage.setItem('savingsPercent', unformatNumber(document.getElementById('savingsPercent').value));
+            localStorage.setItem('loanAmount', unformatNumber(document.getElementById('loanAmount').value));
+            localStorage.setItem('loanAmortization', unformatNumber(document.getElementById('loanAmortization').value));
+            localStorage.setItem('loanInterestRate', unformatNumber(document.getElementById('loanInterestRate').value));
+        }
+
+        function clearAllInputs() {
+            document.getElementById('salaryIncrease').value = '2';
+            document.getElementById('savingsPercent').value = '1.2';
+
+            clearErrors();
+
+            document.getElementById('interestResults').style.display = 'none';
+            document.getElementById('churchResults').style.display = 'none';
+            document.getElementById('churchInterestResults').style.display = 'none';
+            document.getElementById('loanResults').style.display = 'none';
+        }
+
+        function toggleLoanSection() {
+            const section = document.getElementById('loanResults');
+            const btn = document.getElementById('loanToggleBtn');
+            const btnBottom = document.getElementById('loanToggleBtnBottom');
+            if (!section || !btn) return;
+            const isHidden = section.classList.toggle('collapsed');
+            section.style.display = isHidden ? 'none' : 'block';
+            const collapseLabel = currentLang === 'sv' ? btn.getAttribute('data-collapse-sv') : btn.getAttribute('data-collapse-en');
+            const expandLabel = currentLang === 'sv' ? btn.getAttribute('data-expand-sv') : btn.getAttribute('data-expand-en');
+            btn.textContent = isHidden ? expandLabel : collapseLabel;
+            if (btnBottom) btnBottom.textContent = isHidden ? expandLabel : collapseLabel;
+        }
+
+        function calculateLoanAmortization() {
+            const loanAmount = parseFloat(unformatNumber(document.getElementById('loanAmount').value)) || 0;
+            const loanAmortization = parseFloat(unformatNumber(document.getElementById('loanAmortization').value)) || 0;
+            const loanInterestRate = parseFloat(unformatNumber(document.getElementById('loanInterestRate').value)) || 0;
+
+            if (loanAmount <= 0 || loanAmortization <= 0) {
+                return { schedule: [], yearlyInterest: [], yearlyBeginningBalance: [] };
+            }
+
+            const schedule = [];
+            const yearlyInterest = [];
+            const yearlyBeginningBalance = [];
+            const monthlyRate = loanInterestRate / 12 / 100;
+            let balance = loanAmount;
+            let totalInterest = 0;
+            let totalPrincipal = 0;
+
+            // Create 40 years × 12 months = 480 rows
+            for (let year = 1; year <= 40; year++) {
+                const yearBeginning = balance;
+                yearlyBeginningBalance.push(yearBeginning);
+                let yearInterest = 0;
+                for (let month = 1; month <= 12; month++) {
+                    if (balance <= 0) {
+                        schedule.push({
+                            year: year,
+                            month: month,
+                            payment: 0,
+                            interest: 0,
+                            principal: 0,
+                            balance: 0
+                        });
+                    } else {
+                        // Calculate interest on current balance
+                        const interestPayment = balance * monthlyRate;
+                        // Amortization reduces the principal directly
+                        const principalPayment = Math.min(loanAmortization, balance);
+                        balance = Math.max(0, balance - principalPayment);
+
+                        yearInterest += interestPayment;
+                        totalInterest += interestPayment;
+                        totalPrincipal += principalPayment;
+
+                        schedule.push({
+                            year: year,
+                            month: month,
+                            payment: loanAmortization,
+                            interest: interestPayment,
+                            principal: principalPayment,
+                            balance: balance
+                        });
+                    }
+                }
+                yearlyInterest.push(yearInterest);
+            }
+
+            return { schedule: schedule, yearlyInterest: yearlyInterest, yearlyBeginningBalance: yearlyBeginningBalance, totalInterest: totalInterest, totalPrincipal: totalPrincipal, finalBalance: balance };
+        }
+
+        function displayLoanAmortization(loanData) {
+            // Safety check - if elements don't exist, skip
+            if (!document.getElementById('loanSummaryAmount')) {
+                return;
+            }
+
+            const { schedule, yearlyInterest, totalInterest, totalPrincipal } = loanData;
+
+            // Update summary
+            const loanAmount = parseFloat(unformatNumber(document.getElementById('loanAmount').value)) || 0;
+            const loanAmortization = parseFloat(unformatNumber(document.getElementById('loanAmortization').value)) || 0;
+            const loanInterestRate = parseFloat(unformatNumber(document.getElementById('loanInterestRate').value)) || 0;
+
+            document.getElementById('loanSummaryAmount').textContent = formatCurrency(loanAmount);
+            document.getElementById('loanSummaryPayment').textContent = formatCurrency(loanAmortization);
+            document.getElementById('loanSummaryRate').textContent = loanInterestRate.toFixed(1) + '%';
+            document.getElementById('loanSummaryTotalInterest').textContent = formatCurrency(totalInterest);
+
+            // Populate yearly summary table
+            const yearlySummaryBody = document.getElementById('loanYearlySummaryBody');
+            if (yearlySummaryBody) {
+                yearlySummaryBody.innerHTML = '';
+                for (let year = 1; year <= 40; year++) {
+                    // Get the first month of this year to find beginning balance
+                    const monthIndex = (year - 1) * 12;
+                    if (monthIndex >= schedule.length) break;
+                    
+                    const firstMonth = schedule[monthIndex];
+                    const lastMonthIndex = Math.min(monthIndex + 11, schedule.length - 1);
+                    const lastMonth = schedule[lastMonthIndex];
+                    
+                    // Calculate beginning balance (before first payment of the year)
+                    const beginningBalance = monthIndex === 0 ? loanAmount : schedule[monthIndex - 1].balance;
+                    const endingBalance = lastMonth.balance;
+                    const yearlyPrincipal = loanAmortization * 12;
+                    const yearInterest = yearlyInterest[year - 1] || 0;
+                    const monthlyAvgCost = yearInterest / 12;
+                    
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${year}</td>
+                        <td>${formatCurrency(beginningBalance)}</td>
+                        <td>${formatCurrency(yearlyPrincipal)}</td>
+                        <td>${formatCurrency(endingBalance)}</td>
+                        <td>${formatCurrency(yearInterest)}</td>
+                        <td>${formatCurrency(monthlyAvgCost)}</td>
+                    `;
+                    yearlySummaryBody.appendChild(tr);
+                }
+            }
+
+            // Define table bodies
+            const tables = [
+                { id: 'loanTableBody1', start: 0, end: 120 },   // Years 1-10: 12 months × 10 = 120 rows
+                { id: 'loanTableBody2', start: 120, end: 360 }, // Years 11-30: 12 months × 20 = 240 rows
+                { id: 'loanTableBody3', start: 360, end: 480 }  // Years 31-40: 12 months × 10 = 120 rows
+            ];
+
+            tables.forEach(table => {
+                const tbody = document.getElementById(table.id);
+                if (!tbody) return;
+                tbody.innerHTML = '';
+
+                for (let i = table.start; i < Math.min(table.end, schedule.length); i++) {
+                    const row = schedule[i];
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${row.year}</td>
+                        <td>${row.month}</td>
+                        <td>${formatCurrency(row.payment)}</td>
+                        <td>${formatCurrency(row.interest)}</td>
+                        <td>${formatCurrency(row.principal)}</td>
+                        <td>${formatCurrency(row.balance)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+            });
+        }
+
+        function clearAllInputs() {
+            document.getElementById('salaryIncrease').value = '2';
+            document.getElementById('savingsPercent').value = '1.2';
+            document.getElementById('loanAmortization').value = '1000';
+
+            clearErrors();
+
+            document.getElementById('interestResults').style.display = 'none';
+            document.getElementById('churchResults').style.display = 'none';
+            document.getElementById('churchInterestResults').style.display = 'none';
+            document.getElementById('loanResults').style.display = 'none';
+        }
+
+        window.addEventListener('load', function() {
+            const savedLang = localStorage.getItem('lang') || 'sv';
+            applyLanguage(savedLang);
+            loadFinanceData();
+            
+            // Add thousand delimiter formatting to all number inputs
+            addNumberFormatting('startAmount');
+            addNumberFormatting('interestRate');
+            addNumberFormatting('monthlySavings');
+            addNumberFormatting('yearlyDeposit');
+            addNumberFormatting('annualIncome');
+            addNumberFormatting('salaryIncrease');
+            addNumberFormatting('savingsPercent');
+            addNumberFormatting('loanAmount');
+            addNumberFormatting('loanAmortization');
+            addNumberFormatting('loanInterestRate');
+            
+            const footerTimestamp = document.getElementById('footer-timestamp');
+            if (footerTimestamp) {
+                footerTimestamp.textContent = new Date().toLocaleString('sv-SE');
+            }
+            calculateBoth();
+        });
+    </script>
+    </div>
+    <footer class="footer">
+        <span>&copy; CoolPortals | 
+              <span id="footer-filename">sparakyrkoskatten_1.html</span> | 
+              <span id="footer-timestamp"></span></span>
+    </footer>
+</body>
+</html>
+
+
+
+
+
+
+

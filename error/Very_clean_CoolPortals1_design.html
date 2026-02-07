@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Clean CoolPortals Design</title>
+    <style>
+        :root {
+            /* Colors */
+            --bg: #f5f7fb;
+            --card: #ffffff;
+            --border: #e5e7eb;
+            --text: #0f172a;
+            --muted: #64748b;
+            --accent: #2563eb;
+            
+            /* Layout */
+            --collapsed-size: 48px;
+            --main-max-width: 1600px;
+            --main-max-width-large: 1800px;
+            
+            /* Breakpoints (for documentation) */
+            --breakpoint-mobile: 768px;
+            --breakpoint-tablet: 1024px;
+            --breakpoint-laptop: 1280px;
+            --breakpoint-desktop: 1920px;
+            
+            /* Touch targets (WCAG compliant) */
+            --touch-target-min: 44px;
+            --touch-target-touch: 48px;
+        }
+        
+        /* ========================================
+           TYPOGRAPHY REFERENCE MATRIX
+           ┌─────────────┬──────────┬─────────┬─────────┬──────────┐
+           │ Element     │ Mobile   │ Tablet  │ Laptop  │ Desktop  │
+           │             │ <768px   │ 768-    │ 1280-   │ 1920px+  │
+           │             │          │ 1279px  │ 1919px  │          │
+           ├─────────────┼──────────┼─────────┼─────────┼──────────┤
+           │ Body        │ 14px     │ 15px    │ 16px    │ 16px     │
+           │ H1          │ 24px     │ 32px    │ 40px    │ 48px     │
+           │ H2          │ 20px     │ 24px    │ 28px    │ 32px     │
+           │ Button      │ 16px     │ 18px    │ 20px    │ 22px     │
+           │ Label       │ 12px     │ 13px    │ 14px    │ 14px     │
+           │ Caption     │ 11px     │ 12px    │ 12px    │ 13px     │
+           └─────────────┴──────────┴─────────┴─────────┴──────────┘
+           Note: Actual implementation uses fluid clamp() for smooth
+           scaling instead of discrete breakpoints.
+           ======================================== */
+        
+        * { box-sizing: border-box; }
+        html { 
+            font-size: 16px;
+            margin: 0;
+        }
+        body {
+            margin: 0;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            font-size: clamp(0.875rem, 1.5vw, 1rem);
+        }
+        header, footer {
+            background: var(--card);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 0;
+        }
+        footer { 
+            border-top: 1px solid var(--border); 
+            border-bottom: none;
+            text-align: left;
+            padding-left: 12px;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+            position: relative;
+        }
+        header h1 { margin: 0; padding-left: 12px; font-size: clamp(1rem, 2.5vw, 1.25rem); position: absolute; left: 0; }
+        header p { margin: 0; color: var(--muted); font-size: clamp(0.7rem, 1.2vw, 0.8rem); position: absolute; right: 12px; }
+        .coexist-toggle {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--accent);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.125rem;
+            font-weight: bold;
+            min-height: 44px;
+            min-width: 44px;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(37, 99, 235, 0.2);
+        }
+        .coexist-toggle:hover {
+            background: var(--accent);
+            color: #ffffff;
+        }
+        .coexist-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        body.coexist-mode .swimlane.collapsed {
+            min-width: auto;
+            max-width: none;
+            width: auto;
+            flex: 1 1 0;
+        }
+        body.coexist-mode .swimlane.collapsed .swimlane-content { display: block; }
+        body.coexist-mode .swimlane.collapsed .swimlane-header {
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0;
+            padding: 4px 8px;
+            border-bottom: 1px solid var(--border);
+        }
+        body.coexist-mode .swimlane.collapsed .swimlane-title {
+            writing-mode: horizontal-tb;
+            transform: none;
+            text-align: left;
+        }
+        body.coexist-mode .swimlane.collapsed .swimlane-toggle {
+            padding: 10px 16px;
+            font-size: clamp(1.25rem, 1.5vw, 1.375rem);
+        }
+
+        main {
+            padding: 0;
+            display: flex;
+            gap: clamp(12px, 1vw, 16px);
+            align-items: stretch;
+            flex: 1;
+            min-height: 0;
+            max-width: 100vw;
+            margin: 0;
+            width: 100%;
+        }
+
+        .swimlane {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 260px;
+            transition: width 0.3s ease, min-width 0.3s ease, max-width 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1 1 0;
+        }
+        #swimlane-idea {
+            border-radius: 0 10px 0 0;
+        }
+        #swimlane-build {
+            border-radius: 10px 0 0 0;
+        }
+        .swimlane-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 8px;
+            background: #f8fafc;
+            border-bottom: 1px solid var(--border);
+        }
+        .swimlane-title { 
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        .swimlane-toggle {
+            border: 1px solid var(--border);
+            background: #ffffff;
+            color: var(--accent);
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: clamp(1.25rem, 1.5vw, 1.375rem);
+            font-weight: bold;
+            min-height: var(--touch-target-min);
+            min-width: var(--touch-target-min);
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: rgba(37, 99, 235, 0.2);
+        }
+        .swimlane-toggle:hover {
+            background: var(--accent);
+            color: #ffffff;
+        }
+        .swimlane-content {
+            padding: 16px;
+            display: block;
+            min-height: 120px;
+            flex: 1;
+            overflow-y: auto;
+        }
+        .swimlane-content-title {
+            font-weight: 600;
+            font-size: var(--text-card-title);
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        .swimlane-caption {
+            font-size: var(--text-caption);
+            color: var(--muted);
+            font-style: italic;
+            padding: 8px 0;
+        }
+        .swimlane-content:empty::before {
+            content: 'No data yet';
+            display: block;
+            text-align: center;
+            color: var(--muted);
+            font-style: italic;
+            padding: 40px 20px;
+        }
+        .swimlane.collapsed {
+            min-width: var(--collapsed-size);
+            max-width: var(--collapsed-size);
+            width: var(--collapsed-size);
+            flex: 0 0 var(--collapsed-size);
+        }
+        .swimlane.collapsed .swimlane-content { display: none; }
+        .swimlane.collapsed .swimlane-header {
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 10px 6px;
+            border-bottom: none;
+        }
+        .swimlane.collapsed .swimlane-title {
+            writing-mode: vertical-rl;
+            transform: rotate(180deg);
+            text-align: center;
+        }
+        .swimlane.collapsed .swimlane-toggle {
+            padding: 4px 6px;
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        /* ========================================
+           RESPONSIVE BREAKPOINTS
+           Mobile:     < 768px
+           Tablet:     768px - 1280px
+           Desktop:    > 1280px
+           ======================================== */
+
+        /* ========================================
+           ACCESSIBILITY & DEVICE OPTIMIZATION
+           ======================================== */
+
+        /* Touch device optimization (any screen size) */
+        @media (pointer: coarse) {
+            .swimlane-toggle {
+                padding: 12px 20px;
+                min-height: var(--touch-target-touch);
+                min-width: var(--touch-target-touch);
+                font-size: 1rem;
+            }
+            .swimlane-header {
+                padding: 8px 10px;
+            }
+            main {
+                gap: 20px;
+            }
+        }
+
+        /* Reduced motion for accessibility (WCAG) */
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* ========================================
+           MOBILE: < 768px
+           ======================================== */
+
+        @media (max-width: 767px) {
+            main {
+                flex-direction: column;
+                padding: 0;
+                gap: 12px;
+            }
+            .swimlane {
+                min-width: 100%;
+            }
+            .swimlane.collapsed {
+                height: var(--collapsed-size);
+                min-width: 100%;
+                max-width: 100%;
+                width: 100%;
+            }
+            .swimlane.collapsed .swimlane-title {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
+        }
+
+        /* Mobile landscape: reduce height for better usability */
+        @media (max-width: 767px) and (orientation: landscape) {
+            .swimlane {
+                height: 40vh;
+            }
+        }
+
+        /* ========================================
+           TABLET: 768px - 1280px
+           ======================================== */
+
+        @media (min-width: 768px) and (max-width: 1279px) {
+            .swimlane-toggle {
+                padding: 12px 18px;
+                min-height: var(--touch-target-touch);
+            }
+            .swimlane-header {
+                padding: 6px 10px;
+            }
+            main {
+                gap: 18px;
+            }
+        }
+
+        /* ========================================
+           PRINT STYLES
+           ======================================== */
+
+        @media print {
+            header p, footer, .swimlane-toggle {
+                display: none;
+            }
+            .swimlane {
+                border: 1px solid #000;
+                page-break-inside: avoid;
+                height: auto;
+            }
+            .swimlane.collapsed {
+                min-width: 100%;
+                max-width: 100%;
+            }
+            .swimlane.collapsed .swimlane-content {
+                display: block;
+            }
+            .swimlane.collapsed .swimlane-title {
+                writing-mode: horizontal-tb;
+                transform: none;
+            }
+            main {
+                flex-direction: column;
+                gap: 20px;
+            }
+            @page {
+                margin: 2cm;
+            }
+        }
+
+        /* ========================================
+           UTILITY COMPONENTS
+           ======================================== */
+
+        .column {
+            background: #f9fafb;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .column h3 { margin: 0 0 8px 0; font-size: 14px; color: var(--muted); }
+        .card {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .card:last-child { margin-bottom: 0; }
+        
+        /* Focus styles for accessibility */
+        .swimlane-toggle:focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+        .swimlane-toggle:focus:not(:focus-visible) {
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>CoolPortals Design</h1>
+        <button class="coexist-toggle" onclick="toggleCoexistMode()" aria-label="Toggle coexist mode">V</button>
+        <p>Collapsible swimlanes with keyboard shortcuts (1/2)</p>
+    </header>
+
+    <main>
+        <section class="swimlane" id="swimlane-idea" role="region" aria-label="Data lane1" aria-expanded="true">
+            <div class="swimlane-header">
+                <div class="swimlane-title">Data lane1</div>
+                <button class="swimlane-toggle" onclick="toggleLane('swimlane-idea')" aria-controls="swimlane-idea" aria-label="Collapse lane"><<</button>
+            </div>
+            <div class="swimlane-content">
+                <div class="swimlane-content-title">Data Line1 Title</div>
+                <div class="swimlane-caption">Data Lane1 Caption!</div>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 1</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 2</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 3</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 4</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 5</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 6</h2>
+                <p>Additional content for Data Lane1</p>
+                
+                <h2 class="subtitle">Data Line1 Qwerty 7</h2>
+                <p>Additional content for Data Lane1</p>
+
+            </div>
+        </section>
+
+        <section class="swimlane collapsed" id="swimlane-build" role="region" aria-label="Data lane2" aria-expanded="false">
+            <div class="swimlane-header">
+                <div class="swimlane-title">Data lane2</div>
+                <button class="swimlane-toggle" onclick="toggleLane('swimlane-build')" aria-controls="swimlane-build" aria-label="Expand lane"><</button>
+            </div>
+            <div class="swimlane-content">
+                <div class="swimlane-content-title">Data Line2 Title</div>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 1</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 2</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 3</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 4</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 5</h2>
+                <p>Qwerty 1 to 5 - Abcdefh</p>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 6</h2>
+                <p>Additional content for Data Lane2</p>
+                
+                <h2 class="subtitle">Data Line2 Qwerty 7</h2>
+                <p>Additional content for Data Lane2</p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <small>Copyright CoolPortals | clean_CoolPortals1_design.html | <span id="timestamp"></span></small>
+    </footer>
+
+    <script>
+        // ========================================
+        // COEXIST MODE TOGGLE
+        // ========================================
+        
+        function toggleCoexistMode() {
+            const body = document.body;
+            body.classList.toggle('coexist-mode');
+            const newCoexistState = body.classList.contains('coexist-mode');
+            
+            // Store as string: 'true' or 'false'
+            localStorage.setItem('coexistMode', newCoexistState.toString());
+            
+            // When entering coexist mode, expand both lanes
+            if (newCoexistState) {
+                const lane1 = document.getElementById('swimlane-idea');
+                const lane2 = document.getElementById('swimlane-build');
+                
+                if (lane1 && lane1.classList.contains('collapsed')) {
+                    lane1.classList.remove('collapsed');
+                    lane1.setAttribute('aria-expanded', 'true');
+                    const btn1 = lane1.querySelector('.swimlane-toggle');
+                    if (btn1) {
+                        btn1.textContent = '<<';
+                        btn1.setAttribute('aria-label', 'Collapse lane');
+                    }
+                }
+                
+                if (lane2 && lane2.classList.contains('collapsed')) {
+                    lane2.classList.remove('collapsed');
+                    lane2.setAttribute('aria-expanded', 'true');
+                    const btn2 = lane2.querySelector('.swimlane-toggle');
+                    if (btn2) {
+                        btn2.textContent = '>>';
+                        btn2.setAttribute('aria-label', 'Collapse lane');
+                    }
+                }
+            }
+            // When exiting coexist mode, restore the previously expanded lane
+            else {
+                const expandedLane = localStorage.getItem('expandedLane');
+                const lane1 = document.getElementById('swimlane-idea');
+                const lane2 = document.getElementById('swimlane-build');
+                
+                // Collapse both lanes first
+                if (lane1) {
+                    lane1.classList.add('collapsed');
+                    lane1.setAttribute('aria-expanded', 'false');
+                    const btn1 = lane1.querySelector('.swimlane-toggle');
+                    if (btn1) {
+                        btn1.textContent = '>';
+                        btn1.setAttribute('aria-label', 'Expand lane');
+                    }
+                }
+                
+                if (lane2) {
+                    lane2.classList.add('collapsed');
+                    lane2.setAttribute('aria-expanded', 'false');
+                    const btn2 = lane2.querySelector('.swimlane-toggle');
+                    if (btn2) {
+                        btn2.textContent = '<';
+                        btn2.setAttribute('aria-label', 'Expand lane');
+                    }
+                }
+                
+                // Expand the previously saved lane (if exists)
+                if (expandedLane) {
+                    const laneToExpand = document.getElementById(expandedLane);
+                    if (laneToExpand) {
+                        laneToExpand.classList.remove('collapsed');
+                        laneToExpand.setAttribute('aria-expanded', 'true');
+                        const btn = laneToExpand.querySelector('.swimlane-toggle');
+                        if (btn) {
+                            if (expandedLane === 'swimlane-idea') {
+                                btn.textContent = '<<';
+                            } else {
+                                btn.textContent = '>>';
+                            }
+                            btn.setAttribute('aria-label', 'Collapse lane');
+                        }
+                    }
+                }
+            }
+        }
+        
+        // ========================================
+        // SWIMLANE TOGGLE FUNCTIONALITY
+        // ========================================
+        
+        function toggleLane(id) {
+            const coexistMode = document.body.classList.contains('coexist-mode');
+            
+            // Silently prevent lane toggling when in coexist mode
+            if (coexistMode) {
+                return;
+            }
+            
+            const lane = document.getElementById(id);
+            if (!lane) return;
+            
+            lane.classList.toggle('collapsed');
+            const isCollapsed = lane.classList.contains('collapsed');
+            
+            // Update button text and aria-label with lane-specific directional logic
+            const btn = lane.querySelector('.swimlane-toggle');
+            if (btn) {
+                if (id === 'swimlane-idea') {
+                    btn.textContent = isCollapsed ? '>' : '<<';
+                } else if (id === 'swimlane-build') {
+                    btn.textContent = isCollapsed ? '<' : '>>';
+                }
+                btn.setAttribute('aria-label', isCollapsed ? 'Expand lane' : 'Collapse lane');
+            }
+            
+            // Update ARIA attribute for accessibility
+            lane.setAttribute('aria-expanded', !isCollapsed);
+            
+            // Exclusive collapse logic: only apply when NOT in coexist mode
+            if (!coexistMode) {
+                const otherLaneId = id === 'swimlane-idea' ? 'swimlane-build' : 'swimlane-idea';
+                const otherLane = document.getElementById(otherLaneId);
+                if (!otherLane) return;
+                
+                // If current lane is now expanded, collapse the other
+                if (!isCollapsed) {
+                    otherLane.classList.add('collapsed');
+                    otherLane.setAttribute('aria-expanded', 'false');
+                    const otherBtn = otherLane.querySelector('.swimlane-toggle');
+                    if (otherBtn) {
+                        if (otherLaneId === 'swimlane-idea') {
+                            otherBtn.textContent = '>';
+                        } else {
+                            otherBtn.textContent = '<';
+                        }
+                        otherBtn.setAttribute('aria-label', 'Expand lane');
+                    }
+                }
+                // If current lane is now collapsed, expand the other
+                else {
+                    otherLane.classList.remove('collapsed');
+                    otherLane.setAttribute('aria-expanded', 'true');
+                    const otherBtn = otherLane.querySelector('.swimlane-toggle');
+                    if (otherBtn) {
+                        if (otherLaneId === 'swimlane-idea') {
+                            otherBtn.textContent = '<<';
+                        } else {
+                            otherBtn.textContent = '>>';
+                        }
+                        otherBtn.setAttribute('aria-label', 'Collapse lane');
+                    }
+                }
+                
+                // Save state to localStorage for persistence
+                localStorage.setItem('expandedLane', isCollapsed ? otherLaneId : id);
+            }
+        }
+        
+        // ========================================
+        // KEYBOARD SHORTCUTS
+        // ========================================
+        
+        document.addEventListener('keydown', (e) => {
+            // Ignore if user is typing in an input field
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+            
+            if (e.key === '1') toggleLane('swimlane-idea');
+            if (e.key === '2') toggleLane('swimlane-build');
+        });
+        
+        // ========================================
+        // LIVE TIMESTAMP
+        // ========================================
+        
+        function updateTimestamp() {
+            const now = new Date();
+            const formatted = now.toLocaleString('sv-SE', { 
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+            const el = document.getElementById('timestamp');
+            if (el) el.textContent = formatted;
+        }
+        updateTimestamp();
+        setInterval(updateTimestamp, 1000);
+        
+        // ========================================
+        // STATE PERSISTENCE
+        // ========================================
+        
+        window.addEventListener('DOMContentLoaded', () => {
+            // Restore coexist mode if previously enabled
+            const coexistModeEnabled = localStorage.getItem('coexistMode') === 'true';
+            
+            if (coexistModeEnabled) {
+                document.body.classList.add('coexist-mode');
+                // Expand both lanes in coexist mode
+                const lane1 = document.getElementById('swimlane-idea');
+                const lane2 = document.getElementById('swimlane-build');
+                if (lane1) {
+                    lane1.classList.remove('collapsed');
+                    lane1.setAttribute('aria-expanded', 'true');
+                }
+                if (lane2) {
+                    lane2.classList.remove('collapsed');
+                    lane2.setAttribute('aria-expanded', 'true');
+                }
+            } else {
+                // Make sure coexist mode is explicitly OFF
+                document.body.classList.remove('coexist-mode');
+                
+                // Restore expanded lane preference (only in non-coexist mode)
+                const expandedLane = localStorage.getItem('expandedLane');
+                if (expandedLane && expandedLane !== 'swimlane-idea') {
+                    toggleLane('swimlane-idea'); // This will expand swimlane-build
+                }
+            }
+        });
+    </script>
+</body>
+</html>

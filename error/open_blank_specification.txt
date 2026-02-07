@@ -1,0 +1,321 @@
+OPEN BLANK DEMO SPECIFICATION
+FILE: open_blank_demo.html
+PURPOSE: Advanced link navigator with iframe content display
+
+=============================================================
+1. OVERVIEW
+=============================================================
+
+This is an enhanced variant of the standard default pages.
+Features iframe-based content display with header navigation.
+
+Uses 9 items total:
+  Index 0: open_blank_demo.html (self-reference)
+  Index 1-8: External links in list
+
+Content displays in same window within an iframe.
+Navigation controls in header alongside language buttons.
+
+=============================================================
+2. HEADER LAYOUT
+=============================================================
+
+Header contains navigation elements in this order:
+
+[Title: "Open Blank Demo"]
+
+[Navigation Row:]
+  Left side:
+    - [SV] Language button
+    - [EN] Language button
+  
+  Center (NEW):
+    - [«] Previous button
+    - Index display: "X of 9"
+    - [»] Next button
+  
+  Right side:
+    - [Refresh] Button
+    - [Close] Button
+
+STYLING:
+  - All buttons same style as standard pages
+  - Index display: read-only (no button)
+  - Navigation buttons (« »): distinct but matching theme
+  - Responsive: Center nav moves to new row on mobile
+
+=============================================================
+3. CONTENT AREA
+=============================================================
+
+Single iframe element displays current link content.
+  - ID: contentFrame
+  - Width: 100% (full content width)
+  - Height: 600px (adjusts on mobile)
+  - Border: 1px solid #ddd
+  - Border-radius: 4px
+
+CONTENT SOURCE BY INDEX:
+  Index 0: open_blank_demo.html (self/this file)
+  Index 1: https://www.dn.se
+  Index 2: https://www.avanza.com
+  Index 3: https://www.avanza.com
+  Index 4: https://www.lysa.com
+  Index 5: https://www.svenskakyrkan.se/medlem/uttrade_ur_svenska_kyrkan
+  Index 6: https://www.svenskakyrkan.se/medlem/rakna-ut-din-kyrkoavgift
+  Index 7: https://www.dn.se
+  Index 8: index.html
+
+=============================================================
+4. NAVIGATION BEHAVIOR
+=============================================================
+
+INITIAL STATE:
+  - Load with index 0 (open_blank_demo.html)
+  - Display index "0 of 9" in header
+  - Show content in iframe
+
+PREVIOUS BUTTON («):
+  - Decrements currentIndex by 1
+  - Disabled when index = 0
+  - Updates iframe src
+  - Updates header index display
+
+NEXT BUTTON (»):
+  - Increments currentIndex by 1
+  - Disabled when index = 8
+  - Updates iframe src
+  - Updates header index display
+
+CONTENT LOAD FALLBACK (MANDATORY A → B → C):
+  A) Attempt to load external link directly in iframe
+    - If external site allows iframe, content displays
+  B) If A fails or is blocked, show local content without browser UI
+    - Use iframe srcdoc with minimal local HTML (no URL bar, no controls)
+  C) If srcdoc is unsupported, load local fallback file
+    - File: open_blank_local.html
+    - Shows minimal content using title parameter
+
+INDEX WRAPPING:
+  - Previous at 0: Button disabled
+  - Next at 8: Button disabled
+  - No wraparound
+
+=============================================================
+5. JAVASCRIPT IMPLEMENTATION
+=============================================================
+
+GLOBAL VARIABLES:
+  currentIndex = 0
+  contentSources = [
+    'open_blank_demo.html',
+    'https://www.dn.se',
+    'https://www.avanza.com',
+    ...
+  ]
+
+FUNCTIONS:
+
+previousLink():
+  - Decrement currentIndex
+  - If index > 0: proceed
+  - Update iframe and display
+  - Update button states
+
+nextLink():
+  - Increment currentIndex
+  - If index < 8: proceed
+  - Update iframe and display
+  - Update button states
+
+updateContentFrame():
+  - Get src from contentSources[currentIndex]
+  - Set iframe.src = src
+  - Update index display text
+  - Update button disabled states
+
+loadContentWithFallback(item):
+  - Try iframe.src = item.url (A)
+  - If blocked/error or timeout, call fallbackToLocal(item)
+
+fallbackToLocal(item):
+  - If srcdoc supported, set iframe.srcdoc to local HTML (B)
+  - Else load open_blank_local.html?title=... (C)
+
+updateButtonStates():
+  - Previous button: disabled if index === 0
+  - Next button: disabled if index === 8
+
+initializeOnLoad():
+  - Load index 0 on page load
+  - Set initial button states
+  - Generate timestamp in footer
+
+INITIALIZATION:
+  - Must run on DOMContentLoaded
+  - Set contentFrame.src = 'open_blank_demo.html'
+  - Initialize index display to "0 of 9"
+
+=============================================================
+6. STYLING REQUIREMENTS
+=============================================================
+
+HEADER MODIFICATIONS:
+  - Add flex gap between nav sections
+  - Center navigation section responsive
+  - Index display non-selectable (user-select: none)
+  - Navigation buttons same size as SV/EN buttons
+
+CONTENT AREA:
+  - iframe display as block
+  - Margin-top: 20px
+  - Full width responsive
+  - Min-height: 400px
+  - Max-height: 800px (adjustable)
+
+FOOTER:
+  - Standard footer styling
+  - Shows: CoolPortals | open_blank_demo.html | timestamp
+
+RESPONSIVE DESIGN:
+  - Desktop: All header elements inline
+  - Tablet: Nav buttons below language buttons
+  - Mobile: Full column layout with nav buttons stacked
+
+=============================================================
+7. SECURITY & ACCESSIBILITY
+=============================================================
+
+IFRAME SECURITY:
+  - sandbox="allow-same-origin" (limit capabilities)
+  - referrerpolicy="no-referrer" (privacy)
+  - title="Content Frame" (accessibility)
+
+ACCESSIBILITY:
+  - Navigation buttons: aria-label describing action
+  - Index display: aria-live="polite" (screen reader updates)
+  - iframe: proper title attribute
+  - Keyboard navigation: Tab moves through buttons
+
+CROSS-ORIGIN HANDLING:
+  - External links may fail in iframe (CORS restrictions)
+  - Fallback: Display error message or notification
+  - Alternative: Use window.open() for external links (opens new window)
+
+=============================================================
+8. DEPENDENCY REQUIREMENTS
+=============================================================
+
+STYLESHEETS:
+  - css/style.css (standard)
+  - No additional CSS files
+
+JAVASCRIPT:
+  - js/app.js (for standard functions: switchLanguage, refreshPage, closePage, generateTimestamp)
+  - Custom JavaScript for navigation (in HTML file)
+
+NO ADDITIONAL FILES REQUIRED
+
+=============================================================
+9. USE CASES
+=============================================================
+
+1. Testing multiple websites without tab clutter
+2. Guided tour through predefined links
+3. Presentation mode showing sequential content
+4. Accessibility-friendly browsing (single window)
+5. Kiosk mode navigation
+6. Content comparison side-by-side (with multiple frames)
+
+=============================================================
+10. LIMITATIONS & NOTES
+=============================================================
+
+LIMITATION 1: Same-Origin Policy
+  - External URLs may be blocked by CORS
+  - Workaround: Use local copies or proxy
+  - Best practice: Test with actual deployment
+
+LIMITATION 4: Iframe Load Detection
+  - Some browsers do not provide reliable error events
+  - Timeout-based fallback is best-effort
+  - If external content appears, A succeeded
+
+LIMITATION 2: iframe Sandbox
+  - Restricts JavaScript execution in external content
+  - Some interactive elements may not work
+  - Intentional for security
+
+LIMITATION 3: Responsive iframe
+  - Height fixed (600px)
+  - May not adapt to all content
+  - Adjustable via CSS if needed
+
+NOTES:
+  - This file is self-referential (index 0 points to itself)
+  - Prevents infinite loops or circular loading
+  - User can navigate to self via « button from index 1
+  - Refresh and Close buttons work normally
+
+=============================================================
+11. HOW TO CREATE open_blank HTML (STEP-BY-STEP)
+=============================================================
+
+STEP 1: Create the HTML file
+  - File name: open_blank_demo.html (or open_blank.html if explicitly requested)
+  - Use standard template structure (header, main content, footer)
+  - Include css/style.css
+
+STEP 2: Header layout (MANDATORY)
+  - Title text: "Open Blank Demo"
+  - Language buttons: SV / EN (standard behavior)
+  - Add navigation buttons: « and »
+  - Add index display: "X of 9"
+  - Keep Refresh and Close buttons
+  - All header buttons must share same style and bold text
+
+STEP 3: Content area
+  - Add a single iframe inside main content
+  - iframe ID: contentFrame
+  - Must be full width and fixed height (600px default)
+  - Use sandbox="allow-same-origin"
+  - Use referrerpolicy="no-referrer"
+
+STEP 4: Define content source list
+  - Use 9 items total:
+    Index 0: open_blank_demo.html (self)
+    Index 1-8: The 8 external links
+  - Store in array with label + url + local flag
+
+STEP 5: Implement navigation logic
+  - currentIndex starts at 0
+  - « button decrements index (disabled at 0)
+  - » button increments index (disabled at 8)
+  - Index display updates on every change
+
+STEP 6: Implement A→B→C fallback chain (MANDATORY)
+  A) Try direct iframe load (external URL)
+  B) If blocked or timeout, show local content in iframe using srcdoc
+  C) If srcdoc unsupported, load local fallback file
+
+STEP 7: Create local fallback file
+  - File name: open_blank_local.html
+  - Minimal HTML only (no toolbar, no external dependencies)
+  - Accepts query parameter ?title= to set heading
+
+STEP 8: Initialize on page load
+  - On DOMContentLoaded, call updateContentFrame()
+  - Set footer timestamp using generateTimestamp()
+  - Prevent recursive iframe loading when embedded
+
+STEP 9: Verify behavior
+  - Index 0 loads self (embedded view)
+  - External links display if allowed by browser
+  - If external blocked, local fallback shows
+  - Navigation buttons update states correctly
+
+=============================================================
+SPECIFICATION VERSION: 1.0
+CREATED: February 3, 2026
+LAST UPDATED: February 3, 2026
+=============================================================

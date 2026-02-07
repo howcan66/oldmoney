@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Old Money Genarational Money - Interest on Interest Calculator</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/calculator.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="title">Old Money Genarational Money - Interest on Interest Calculator</div>
+        <div class="nav-buttons">
+            <div class="language-switcher">
+                <button class="lang-btn active" data-lang="sv" 
+                        onclick="switchLanguage('sv')" 
+                        title="Byt till Svenska" 
+                        aria-pressed="true">SV</button>
+                <button class="lang-btn" data-lang="en" 
+                        onclick="switchLanguage('en')" 
+                        title="Switch to English" 
+                        aria-pressed="false">EN</button>
+            </div>
+            <button class="refresh-btn" onclick="refreshPage()" 
+                    title="Refresh page">Refresh</button>
+            <button class="close-btn" onclick="closePage()" 
+                    title="Close window">Close</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="content">
+        <!-- Description -->
+        <p class="description">Calculate planned savings using compound interest over time with yearly breakdowns. Enter your starting finance data and projections for up to 40 years.</p>
+
+        <!-- Calculator Inputs Section -->
+        <div class="calculator-inputs">
+            <div class="input-group">
+                <label for="startAmount">Saving Start Amount <span class="required">*</span></label>
+                <input
+                    type="number"
+                    id="startAmount"
+                    value="1000"
+                    placeholder="e.g., 1000"
+                    min="0"
+                    max="999999999"
+                    step="0.01"
+                    aria-required="true">
+                <span class="error-message" id="startAmountError"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="interestRate">Yearly Average Interest (%) <span class="required">*</span></label>
+                <input
+                    type="number"
+                    id="interestRate"
+                    value="3"
+                    placeholder="e.g., 3"
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    aria-required="true">
+                <span class="error-message" id="interestRateError"></span>
+            </div>
+
+            <div class="input-group">
+                <label for="monthlySavings">Monthly Savings</label>
+                <input
+                    type="number"
+                    id="monthlySavings"
+                    value="100"
+                    placeholder="e.g., 1000"
+                    min="0"
+                    max="999999999"
+                    step="0.01"
+                    aria-required="false">
+                <span class="error-message" id="monthlySavingsError"></span>
+            </div>
+            <div class="input-group">
+                <label for="yearlyDeposit">Yearly Deposit</label>
+                <input
+                    type="number"
+                    id="yearlyDeposit"
+                    value="1000"
+                    placeholder="e.g., 1000"
+                    min="0"
+                    max="999999999"
+                    step="0.01"
+                    aria-required="false">
+                <span class="error-message" id="yearlyDepositError"></span>
+              </div>
+            <div class="action-buttons">
+                <button class="btn-primary" onclick="calculateInterest()" title="Calculate compound interest">
+                    <span id="calculateBtnText">Calculate</span>
+                </button>
+                <button class="btn-secondary" onclick="clearInputs()" title="Clear all inputs">Clear</button>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section" id="resultsSection" style="display: none;">
+            <!-- Summary -->
+            <div class="summary-box">
+                <h3>Summary</h3>
+                <div class="summary-row">
+                    <span class="summary-label">Initial Amount:</span>
+                    <span class="summary-value" id="summaryInitial">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Est. Yearly Average Interest (%):</span>
+                    <span class="summary-value" id="summaryRate">0%</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Est. Monthly Savings:</span>
+                    <span class="summary-value" id="summaryMonthly">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Est. Yearly Deposit:</span>
+                    <span class="summary-value" id="summaryYearlyDeposit">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">After 40 Years:</span>
+                    <span class="summary-value" id="summaryFinal">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Total Growth:</span>
+                    <span class="summary-value" id="summaryGrowth">0.00</span>
+                </div>
+                <div class="summary-row">
+                    <span class="summary-label">Growth Percentage:</span>
+                    <span class="summary-value" id="summaryPercent">0%</span>
+                </div>
+            </div>
+
+            <!-- Export Buttons -->
+            <div class="export-buttons">
+                <button class="btn-export" onclick="exportToCSV()" title="Export table to CSV file">
+                    Export to CSV
+                </button>
+                <button class="btn-export" onclick="copyToClipboard()" title="Copy table data to clipboard">
+                    Copy to Clipboard
+                </button>
+            </div>
+
+            <div class="email-export">
+                <label for="emailRecipient">Email Results</label>
+                <div class="email-export-controls">
+                    <input
+                        type="email"
+                        id="emailRecipient"
+                        placeholder="name@example.com"
+                        aria-required="false">
+                    <button class="btn-export" onclick="sendResultsByEmail()" title="Send results by email">
+                        Send Email
+                    </button>
+                </div>
+                <span class="error-message" id="emailError"></span>
+            </div>
+
+            <!-- Collapsible Table Groups -->
+            <div class="table-groups">
+                <!-- Group 1: Years 1-10 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('group1')" title="Click to expand/collapse">
+                        <h3>Years 1-10</h3>
+                        <span class="toggle-icon" id="group1Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="group1Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Start Amount</th>
+                                        <th>Interest</th>
+                                        <th>End Amount</th>
+                                        <th>Monthly Equiv.</th>
+                                        <th>Yearly Increase</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody1"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 2: Years 11-30 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('group2')" title="Click to expand/collapse">
+                        <h3>Years 11-30</h3>
+                        <span class="toggle-icon" id="group2Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="group2Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Start Amount</th>
+                                        <th>Interest</th>
+                                        <th>End Amount</th>
+                                        <th>Monthly Equiv.</th>
+                                        <th>Yearly Increase</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody2"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Group 3: Years 31-40 -->
+                <div class="table-group">
+                    <div class="group-header" onclick="toggleGroup('group3')" title="Click to expand/collapse">
+                        <h3>Years 31-40</h3>
+                        <span class="toggle-icon" id="group3Toggle">▼</span>
+                    </div>
+                    <div class="group-content" id="group3Content">
+                        <div class="table-wrapper">
+                            <table class="results-table">
+                                <thead>
+                                    <tr>
+                                        <th>Year</th>
+                                        <th>Start Amount</th>
+                                        <th>Interest</th>
+                                        <th>End Amount</th>
+                                        <th>Monthly Equiv.</th>
+                                        <th>Yearly Increase</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tableBody3"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <p>Calculating...</p>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <span>&copy; CoolPortals | 
+              <span id="footer-filename">interestoninterest.html</span> | 
+              <span id="footer-timestamp"></span></span>
+    </footer>
+
+    <script src="js/app.js"></script>
+    <script src="js/calculator.js"></script>
+    <script>
+        document.getElementById('footer-timestamp').textContent = generateTimestamp();
+    </script>
+</body>
+</html>
+
+

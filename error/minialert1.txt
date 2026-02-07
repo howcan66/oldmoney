@@ -1,0 +1,219 @@
+MINI ALERT INSTRUCTION - sparakyrkoskatten_3.html
+==================================================
+
+FILE: sparakyrkoskatten_3.html
+CURRENT ALERTS: 2 debugging alerts + 11 system alerts
+
+
+DEBUGGING ALERTS (ACTIVE):
+===========================
+
+Alert 1: VERSION CONFIRMATION
+Line: 1622
+Location: loadFinanceData() function
+Code: alert('VERSION CONFIRMATION: Commit 8f0ed5e - Problem version with alerts');
+Purpose: Confirms page loaded and which version is running
+When: Page load
+Expected: Alert appears immediately when page opens
+Action: Check if this appears when you refresh
+
+Alert 2: MONTHLY SAVINGS DEFAULT
+Line: 1631
+Location: loadFinanceData() function
+Code: alert('A) monthlySavings (default): ' + monthlySavings);
+Purpose: Shows what default value is loaded from localStorage
+When: Page load (after Alert 1)
+Expected: Should show "A) monthlySavings (default): 0"
+Action: Verify it shows 0, not 2000
+
+Alert 3: BASE MONTHLY SAVINGS INPUT
+Line: 815
+Location: calculateInterest() function
+Code: alert('B) baseMonthlySavings (actual input): ' + baseMonthlySavings);
+Purpose: Shows what value was read from the Månatligt sparande field
+When: When calculation runs (button click)
+Expected: Should show the number user typed (e.g., 15000)
+Action: Type a value, click calculate, verify this alert shows your input
+
+
+SYSTEM ALERTS (NON-DEBUGGING):
+===============================
+
+These are normal application alerts, not for debugging:
+
+1. Line 747: "Data sparad!" / "Data saved!" - Save confirmation
+2. Line 1375: "Please calculate results before exporting." - Export validation
+3. Line 1462: "Results copied to clipboard." - Clipboard success
+4. Line 1464: "Unable to copy to clipboard." - Clipboard error
+5. Line 1467: "Clipboard API not supported..." - Browser capability
+6. Line 1537: "IoI Results copied to clipboard." - Clipboard success
+7. Line 1539: "Failed to copy to clipboard." - Clipboard error
+8. Line 1542: "Clipboard not supported..." - Browser capability
+9. Line 1596: "Church Tax Results copied to clipboard." - Clipboard success
+10. Line 1598: "Failed to copy to clipboard." - Clipboard error
+11. Line 1601: "Clipboard not supported..." - Browser capability
+
+
+MISSING CRITICAL ALERTS:
+=========================
+
+According to the full alert_and_calculation_documentation.txt, these alerts are MISSING:
+
+CRITICAL MISSING (needed for debugging):
+----------------------------------------
+
+Alert 1C - Field Display Confirmation
+Location: Should be after line 1642 in loadFinanceData()
+Code: alert('monthlySavings field now displays: ' + document.getElementById('monthlySavings').value);
+Why needed: Confirms field actually shows the default value
+
+Alert 2A - Raw Field Value
+Location: Should be before line 815 in calculateInterest()
+Code: alert('baseMonthlySavings RAW from field: ' + document.getElementById('monthlySavings').value);
+Why needed: Shows value BEFORE unformatNumber (e.g., "15 000" with spaces)
+
+Alert 3A - Loan Data
+Location: Should be after line ~813 in calculateInterest()
+Code: alert('loanData.yearlyInterest[0]: ' + (loanData.yearlyInterest ? loanData.yearlyInterest[0] : 'UNDEFINED'));
+Why needed: Verifies loan calculation is working
+
+Alert 3B - Monthly Loan Cost
+Location: Should be after line ~815 in calculateInterest()
+Code: alert('monthlyLoanCostAvg: ' + monthlyLoanCostAvg);
+Why needed: Shows calculated monthly loan cost
+
+Alert 4A - Formula Inputs (MOST CRITICAL)
+Location: Should be in the loop at line ~835 in calculateInterest()
+Code: alert('Year 1 Calculation: baseMonthlySavings=' + baseMonthlySavings + ', monthlyLoanCostAvg=' + monthlyLoanCostAvg);
+Why needed: Shows both inputs to the gross savings formula
+
+Alert 4B - Formula Result (MOST CRITICAL)
+Location: Should be after line ~835 in calculateInterest()
+Code: alert('Year 1 monthlySavings (GROSS): ' + monthlySavings);
+Why needed: Shows the calculated gross savings result
+
+Alert 5A - Results Array Length
+Location: Should be before populateInterestTables() call
+Code: alert('results array has ' + results.length + ' years of data');
+Why needed: Confirms all 40 years calculated
+
+Alert 5C - Field Update Confirmation
+Location: Should be after line ~905 in calculateInterest()
+Code: alert('grossMonthlySavings field updated to: ' + document.getElementById('grossMonthlySavings').value);
+Why needed: Confirms the grossMonthlySavings field was updated
+
+
+TESTING SEQUENCE WITH CURRENT ALERTS:
+======================================
+
+WHAT YOU CAN TEST NOW (with 3 alerts only):
+
+Step 1: Open file:///C:/Git/oldmoney/sparakyrkoskatten_3.html
+   Expected: Alert 1 appears: "VERSION CONFIRMATION..."
+   Result: ☐ Pass / ☐ Fail
+
+Step 2: Click OK on Alert 1
+   Expected: Alert 2 appears: "A) monthlySavings (default): 0"
+   Result: ☐ Pass / ☐ Fail
+   Value shown: __________
+
+Step 3: Check the Månatligt sparande field
+   Expected: Field shows "0" or "0 kr"
+   Result: ☐ Pass / ☐ Fail
+
+Step 4: Type 15000 in Månatligt sparande field
+   Action: Type and press Tab or click elsewhere
+
+Step 5: Click "Beräkna" (Calculate) button
+   Expected: Alert 3 appears: "B) baseMonthlySavings (actual input): 15000"
+   Result: ☐ Pass / ☐ Fail
+   Value shown: __________
+
+Step 6: Check if reports appear
+   Expected: Tables fill with data after clicking OK on Alert 3
+   Result: ☐ Reports show / ☐ Reports destroyed
+
+
+WHAT YOU CANNOT TEST (missing alerts):
+
+✗ Cannot verify field displays default correctly (Alert 1C missing)
+✗ Cannot see raw field value with formatting (Alert 2A missing)
+✗ Cannot verify loan calculation (Alerts 3A, 3B missing)
+✗ Cannot see gross savings formula inputs (Alert 4A missing)
+✗ Cannot see gross savings formula result (Alert 4B missing)
+✗ Cannot verify 40-year calculation (Alert 5A missing)
+✗ Cannot confirm grossMonthlySavings field update (Alert 5C missing)
+
+
+RECOMMENDED NEXT STEPS:
+=======================
+
+Option 1: ADD MINIMAL CRITICAL ALERTS
+   Add only the 3 most critical:
+   - Alert 4A (formula inputs)
+   - Alert 4B (formula result)
+   - Alert 5C (field update)
+   
+   This will show if the core calculation works
+
+Option 2: ADD ALL MISSING ALERTS
+   Add all 8 missing alerts for complete debugging
+   Follow Section 10 in alert_and_calculation_documentation.txt
+
+Option 3: REPLACE ALERTS WITH CONSOLE.LOG
+   Remove blocking alerts
+   Add console.log statements instead
+   Open browser console (F12) to see output
+   Follow Section 19 in alert_and_calculation_documentation.txt
+
+
+QUICK DIAGNOSIS WITH CURRENT ALERTS:
+=====================================
+
+If Alert 1 doesn't appear:
+→ Page failed to load, JavaScript not executing
+
+If Alert 2 shows "2000" instead of "0":
+→ localStorage not cleared, old default persisting
+→ Fix: Clear localStorage manually (F12 → Application → Clear All)
+
+If Alert 3 shows wrong value (not what you typed):
+→ Wrong field being read OR value not saved to field
+→ Check: Did you actually type in the correct field?
+
+If Alert 3 shows "2000" (default) when you typed "15000":
+→ CORE PROBLEM: User input not being read
+→ Need Alert 2A to see what's in field before parsing
+→ This is exactly the bug you're trying to fix!
+
+If reports don't appear after Alert 3:
+→ Calculation failing after baseMonthlySavings read
+→ Need Alerts 3A, 3B, 4A, 4B to trace where it fails
+
+
+CRITICAL ISSUE DETECTED:
+=========================
+
+Alert 3 (line 815) is ALONE - there are no alerts showing:
+- What happens to the value after it's read
+- If loan cost is calculated
+- If the formula executes
+- What the result is
+
+This means if the calculation fails, you won't know WHERE it fails.
+
+RECOMMENDATION: Add at minimum Alert 4B to see the calculated result.
+
+
+FILE STATUS SUMMARY:
+====================
+
+✓ Has: 3 debugging alerts (version, default, input)
+✓ Has: Månatligt sparande brutto field (grossMonthlySavings)
+✓ Has: Default changed to 0
+✓ Has: localStorage force clear code
+✗ Missing: 8 critical debugging alerts
+✗ Missing: Alerts inside calculation to trace data flow
+
+Current capability: Can verify input is read, cannot verify calculation works
+

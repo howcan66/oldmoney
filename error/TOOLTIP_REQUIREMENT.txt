@@ -1,0 +1,505 @@
+================================================================================
+TOOLTIP REQUIREMENT SPECIFICATION
+Webb Application Standards - Tooltip Implementation Guide
+================================================================================
+PURPOSE: Define tooltip requirements by button type, platform, and context.
+REFERENCE: Extracted from buttons_guide.txt comprehensive button specification.
+APPLIES TO: All buttons with icons, especially icon-only buttons.
+
+Created: 2026-02-04
+Last Updated: 2026-02-04
+
+================================================================================
+OVERVIEW
+================================================================================
+Tooltips are required text that explain button functionality.
+Requirements vary by:
+  • Button type: text-only, icon-only, text+icon
+  • Platform: Desktop (hover), Tablet (tap), Mobile (tap)
+  • Context: Action type (navigation, admin, auth, etc.)
+
+CRITICAL RULE: ALL icon-only buttons MUST have tooltips on all platforms.
+
+================================================================================
+SECTION 1: BUTTON TYPE TOOLTIP REQUIREMENTS
+================================================================================
+
+1. TEXT-BTN (Text Only - No Icon)
+────────────────────────────────────────────────────
+TOOLTIP REQUIRED: Optional
+REASON: Text button label is self-explanatory
+EXCEPTION: If label is ambiguous, add tooltip for clarification
+EXAMPLE BUTTONS:
+  • "Save" - Tooltip optional (text is clear)
+  • "✓" - Tooltip required (see icon-btn rules)
+
+2. ICON-BTN (Icon Only - No Text)
+────────────────────────────────────────────────────
+TOOLTIP REQUIRED: YES - ALL PLATFORMS (CRITICAL)
+REASON: Icon meaning must be explained to all users
+
+MUST INCLUDE:
+  [ ] aria-label attribute (accessibility requirement)
+  [ ] title attribute or tooltip element (visual requirement)
+  [ ] Platform-specific tooltip format (see Section 2)
+
+EXAMPLE BUTTONS:
+  • 🔑 (Login) - Tooltip: "Sign in to account"
+  • × (Close) - Tooltip: "Close this dialog"
+  • ↻ (Refresh) - Tooltip: "Refresh data"
+  • 🔄 (Reset) - Tooltip: "Reset to defaults"
+
+3. BTN TEXT+ICON (Icon + Text Combined)
+────────────────────────────────────────────────────
+TOOLTIP REQUIRED: Conditional
+  • Desktop: Optional (unless action needs more detail)
+  • Tablet: Required (space constraints, shortened text)
+  • Mobile: Optional (if icon clearly visible)
+
+EXAMPLE BUTTONS:
+  • 🔓 Reset Lockout - Tooltip: "Clear user login restrictions"
+  • ✖ Close - Tooltip: "Close and discard changes"
+  • ⬇️ Export - Tooltip: "Download as CSV file"
+
+================================================================================
+SECTION 2: PLATFORM-SPECIFIC TOOLTIP REQUIREMENTS
+================================================================================
+
+DESKTOP (Mouse/Trackpad)
+────────────────────────────────────────────────────
+TRIGGER: Hover (mouseover event)
+DISPLAY: Appear on hover, disappear on mouseout
+TIMING: Instant (no delay)
+FORMAT: "Action description"
+
+EXAMPLES:
+  Button Icon: 🔑
+  Tooltip: "Sign in to account"
+  
+  Button Icon: 👀
+  Tooltip: "View task details"
+  
+  Button Icon: 🗑️
+  Tooltip: "Delete this item"
+
+REQUIREMENTS:
+  [ ] Tooltip appears on hover
+  [ ] Tooltip disappears when cursor leaves button
+  [ ] Tooltip text is concise (max 40 characters)
+  [ ] Positioned near button (not covering button)
+  [ ] Readable color contrast (minimum 4.5:1)
+
+TABLET (Touch)
+────────────────────────────────────────────────────
+TRIGGER: Tap (click event)
+DISPLAY: Appear on first tap, persist until next interaction
+TIMING: Instant on tap
+FORMAT: "Tap: Action description"
+
+EXAMPLES:
+  Button Icon: 🔑
+  Tooltip: "Tap: Sign in to account"
+  
+  Button Icon: 👀
+  Tooltip: "Tap: View task details"
+  
+  Button Icon: 🗑️
+  Tooltip: "Tap: Delete this item"
+
+REQUIREMENTS:
+  [ ] Tooltip appears on tap
+  [ ] Tooltip persists (doesn't disappear immediately)
+  [ ] Tooltip dismissible (tap elsewhere to close)
+  [ ] Tooltip text includes "Tap:" prefix
+  [ ] Large enough tap target (minimum 24×24 px)
+
+MOBILE (Smartphone Touch)
+────────────────────────────────────────────────────
+TRIGGER: Tap (click event)
+DISPLAY: Tap-to-toggle (tap shows, tap again hides)
+TIMING: Instant on tap
+FORMAT: "Tap: Action description" or "Long-press for more"
+NOTE: No hover on mobile devices
+
+EXAMPLES:
+  Button Icon: 🔑
+  Tooltip: "Tap: Sign in to account"
+  
+  Button Icon: 👀
+  Tooltip: "Tap: View task details"
+  
+  Button Icon: 🗑️
+  Tooltip: "Tap: Delete this item"
+
+REQUIREMENTS:
+  [ ] Tooltip appears on tap
+  [ ] Tooltip dismissible (tap elsewhere or second tap)
+  [ ] Tooltip text includes "Tap:" prefix
+  [ ] Extra large touch target (minimum 44×44 px recommended)
+  [ ] Alternative: Long-press for tooltip display
+
+================================================================================
+SECTION 3: TOOLTIP IMPLEMENTATION METHODS
+================================================================================
+
+METHOD 1: HTML title Attribute (Simple)
+────────────────────────────────────────────────────
+<button title="Sign in to account">
+  <span>🔑</span>
+</button>
+
+PROS:
+  • Native browser tooltips
+  • Works without JavaScript
+  • Minimal code
+  
+CONS:
+  • Limited styling options
+  • Not customizable for platform
+  • Browser-dependent appearance
+
+RECOMMENDED FOR: Simple applications where browser tooltips acceptable
+
+METHOD 2: data-tooltip Attribute + JavaScript
+────────────────────────────────────────────────────
+HTML:
+<button class="btn-icon" data-tooltip="Sign in to account">
+  <span>🔑</span>
+</button>
+
+JavaScript (show on hover/tap):
+document.querySelectorAll('[data-tooltip]').forEach(btn => {
+  btn.addEventListener('mouseenter', (e) => {
+    const tooltipText = e.target.dataset.tooltip;
+    showTooltip(tooltipText, e.target);
+  });
+  btn.addEventListener('mouseleave', hideTooltip);
+});
+
+PROS:
+  • Full control over styling
+  • Platform-specific formatting
+  • Better accessibility
+  
+CONS:
+  • Requires JavaScript
+  • More complex code
+
+RECOMMENDED FOR: Complex applications, custom tooltip styling
+
+METHOD 3: aria-label + Visible Tooltip
+────────────────────────────────────────────────────
+HTML:
+<button class="btn-icon" aria-label="Sign in to account">
+  <span class="tooltip-text">Sign in to account</span>
+  <span>🔑</span>
+</button>
+
+CSS:
+.btn-icon {
+  position: relative;
+}
+
+.tooltip-text {
+  visibility: hidden;
+  background: #333;
+  color: white;
+  text-align: center;
+  padding: 5px 8px;
+  border-radius: 4px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.btn-icon:hover .tooltip-text {
+  visibility: visible;
+}
+
+PROS:
+  • Semantic accessibility (aria-label)
+  • Visible tooltip text
+  • Fully customizable styling
+  
+CONS:
+  • More HTML/CSS code
+  • May cause layout issues if not positioned carefully
+
+RECOMMENDED FOR: Professional applications with custom branding
+
+================================================================================
+SECTION 4: ACCESSIBILITY REQUIREMENTS
+================================================================================
+
+ALL tooltips MUST include:
+
+[✓] aria-label attribute
+────────────────────────────────────────────────────
+<button aria-label="Sign in to account">
+
+REASON: Screen readers announce tooltip text for blind/low-vision users
+
+REQUIREMENT: aria-label must match visible tooltip text exactly
+INCORRECT:
+  <button aria-label="Login" title="Sign in to account"> ❌ Mismatch
+
+CORRECT:
+  <button aria-label="Sign in to account" title="Sign in to account"> ✓
+
+[✓] Visible Tooltip Text
+────────────────────────────────────────────────────
+REQUIREMENT: Tooltip must be visible to sighted users
+
+METHODS:
+  • Browser native title attribute
+  • Custom visible tooltip element
+  • Popover element
+
+INCORRECT: aria-label-only without visible tooltip ❌
+CORRECT: Both aria-label and visible tooltip ✓
+
+[✓] High Contrast
+────────────────────────────────────────────────────
+REQUIREMENT: Minimum 4.5:1 contrast ratio
+
+EXAMPLES:
+  GOOD:    White text (#FFFFFF) on dark background (#333333)
+  GOOD:    Dark text (#1A1A1A) on light background (#FFFF99)
+  AVOID:   Gray text (#999999) on white (#FFFFFF) - only 3:1
+
+[✓] Keyboard Accessible
+────────────────────────────────────────────────────
+REQUIREMENT: Tooltip accessible via keyboard navigation
+
+IMPLEMENTATION:
+  <button onfocus="showTooltip()" onblur="hideTooltip()">
+
+REQUIREMENT: User can tab to button, tooltip appears on focus
+
+[✓] Focus Indicator
+────────────────────────────────────────────────────
+REQUIREMENT: Focus state clearly visible (never remove outline)
+
+INCORRECT CSS: ❌
+  button:focus { outline: none; }
+
+CORRECT CSS: ✓
+  button:focus { outline: 2px solid #3b82f6; }
+
+================================================================================
+SECTION 5: TOOLTIP TEXT GUIDELINES
+================================================================================
+
+WRITING GOOD TOOLTIPS:
+
+✓ DO:
+  • Use active verbs: "Save draft", "Delete file", "Sign in"
+  • Be concise: Max 40 characters
+  • Be specific: "Save" → "Save as draft"
+  • Start with action: "Refresh data" not "This refreshes data"
+  • Use platform language: "Tap" on mobile, "Click" on desktop
+  • Use consistent terminology across app
+
+✗ DON'T:
+  • Don't state the obvious: Icon is already clear
+  • Don't use jargon: "Persist to backend" → "Save changes"
+  • Don't write paragraphs: Keep under 50 characters
+  • Don't use negative: "Don't delete" → "This cannot be undone"
+  • Don't repeat button label: Button says "Save", tooltip too
+
+EXAMPLES:
+
+ICON-ONLY BUTTONS:
+
+Icon: 🔑
+POOR:  "This is a login button"
+GOOD:  "Sign in to account"
+BEST:  "Sign in" (concise, action-oriented)
+
+Icon: 🗑️
+POOR:  "Delete functionality"
+GOOD:  "Delete this task"
+BEST:  "Delete" or "Remove task"
+
+Icon: ↻
+POOR:  "Refresh the page"
+GOOD:  "Reload data from server"
+BEST:  "Refresh data"
+
+TEXT+ICON BUTTONS:
+
+Button: ✖ Close
+POOR:   "This button closes the dialog"
+GOOD:   "Close without saving"
+BEST:   "Close and discard changes" (if action clarification needed)
+
+Button: 🔓 Reset Lockout
+POOR:   "Resets lockout"
+GOOD:   "Clear login restrictions for this user"
+BEST:   "Reset user lockout" (matches button text)
+
+================================================================================
+SECTION 6: TOOLTIP ANIMATION & TIMING
+================================================================================
+
+TIMING GUIDELINES:
+
+DELAY (Before appearance):
+  Desktop: 0-500ms delay (prevents flashing)
+  Tablet: 300-500ms (press-and-hold alternative)
+  Mobile: No delay (immediate on tap)
+
+FADE-IN DURATION:
+  Desktop: 200-300ms (smooth appearance)
+  Tablet: 200ms (responsive feel)
+  Mobile: Instant or 100ms (fast feedback)
+
+PERSISTENCE:
+  Desktop: Hide on mouseout
+  Tablet: Persist until next interaction (tap elsewhere)
+  Mobile: Persist until second tap or outside tap
+
+EXAMPLE CSS ANIMATION:
+
+.tooltip {
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+}
+
+.tooltip.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+================================================================================
+SECTION 7: RESPONSIVE TOOLTIP BEHAVIOR
+================================================================================
+
+DESKTOP (1920px+)
+  • Hover trigger
+  • Bottom-right position (if space available)
+  • 200-300ms fade-in
+  • Disappear on mouseout
+
+TABLET (768px - 1024px)
+  • Tap trigger
+  • Persist on screen
+  • Positioned near finger tap point
+  • Disappear on next interaction
+
+MOBILE (375px - 480px)
+  • Tap trigger
+  • Tap-to-toggle display
+  • Positioned centered or bottom (avoid covering input)
+  • Extra large font for readability
+  • Close button to dismiss
+
+================================================================================
+SECTION 8: TESTING CHECKLIST
+================================================================================
+
+For each button with tooltip, verify:
+
+FUNCTIONALITY:
+[ ] Tooltip appears on hover (Desktop)
+[ ] Tooltip appears on tap (Tablet/Mobile)
+[ ] Tooltip disappears correctly
+[ ] Tooltip positioning doesn't cover button
+[ ] Tooltip doesn't interfere with other UI
+
+ACCESSIBILITY:
+[ ] aria-label present and matches tooltip text
+[ ] Keyboard navigation reveals tooltip (Tab + Focus)
+[ ] Screen reader announces tooltip text
+[ ] High contrast (minimum 4.5:1)
+[ ] Focus indicator always visible
+
+CONTENT:
+[ ] Tooltip text is accurate
+[ ] Tooltip text is concise (< 40 chars)
+[ ] Tooltip uses consistent terminology
+[ ] Tooltip matches platform conventions
+
+RESPONSIVENESS:
+[ ] Tooltip works on Desktop (1920px)
+[ ] Tooltip works on Tablet (768px)
+[ ] Tooltip works on Mobile (375px)
+[ ] Text readable at all sizes
+[ ] Touch targets adequate (min 24×24 px)
+
+================================================================================
+SECTION 9: COMMON BUTTON TOOLTIPS (Reference)
+================================================================================
+
+AUTHENTICATION & ACCESS:
+  Icon: 🔑    → Tooltip: "Sign in to account"
+  Icon: 👋    → Tooltip: "Sign out"
+  Icon: 👀    → Tooltip: "Demo Mode"
+  Icon: 🔓    → Tooltip: "Reset user lockout"
+
+NAVIGATION & VIEW:
+  Icon: ☰     → Tooltip: "Open menu"
+  Icon: ⊟     → Tooltip: "Compact mode"
+  Icon: 🔝    → Tooltip: "Back to top"
+  Icon: ►     → Tooltip: "Expand section"
+  Icon: ▼     → Tooltip: "Collapse section"
+
+ACTIONS:
+  Icon: ✏️     → Tooltip: "Edit item"
+  Icon: 🗑️    → Tooltip: "Delete item"
+  Icon: ×     → Tooltip: "Close dialog"
+  Icon: 📝    → Tooltip: "Add new task"
+  Icon: ↻     → Tooltip: "Refresh data"
+  Icon: ⇄     → Tooltip: "Sync data"
+  Icon: ⬇️     → Tooltip: "Export as CSV"
+  Icon: 💌    → Tooltip: "Send invitation"
+
+ADMIN & SETTINGS:
+  Icon: 🛠️     → Tooltip: "Admin panel"
+  Icon: ℹ️     → Tooltip: "Help & documentation"
+  Icon: ⚙️     → Tooltip: "Settings"
+
+================================================================================
+IMPLEMENTATION CHECKLIST
+================================================================================
+
+Project Setup:
+[ ] Decide tooltip implementation method (title, data-tooltip, aria-label)
+[ ] Create CSS/JS for tooltip display
+[ ] Create tooltip animation styles
+
+For Each Icon-Only Button:
+[ ] Write tooltip text (max 40 characters)
+[ ] Add aria-label attribute
+[ ] Add title or data-tooltip attribute
+[ ] Test tooltip on all platforms
+[ ] Verify accessibility
+[ ] Verify contrast ratio
+[ ] Add to buttons_inventory.html
+
+Quality Assurance:
+[ ] All icon buttons have tooltips
+[ ] All tooltips tested on Desktop/Tablet/Mobile
+[ ] All tooltips keyboard accessible
+[ ] All tooltips meet contrast requirements
+[ ] No tooltip blocks button interaction
+[ ] No tooltip breaks responsive layout
+
+================================================================================
+REFERENCE & RELATED FILES
+================================================================================
+
+See also:
+  • buttons_guide.txt - Complete button specifications
+  • buttons_inventory.html - Visual button inventory with all tooltips
+  • color_palette_guide.txt - Color values for tooltip styling
+  • design_style_guide.txt - Typography and spacing guidelines
+  • html_structure_guide.txt - HTML semantic requirements
+  • html_verification_workflow.txt - Verification checklist (Step 5.5)
+
+================================================================================
+END OF TOOLTIP REQUIREMENT SPECIFICATION
+================================================================================

@@ -1,0 +1,10 @@
+{
+    "folders": [
+        {
+            "path": "../Webb Application Standards"
+        }
+    ],
+    "settings": {
+        "debug.confirmOnExit": "always"
+    }
+}

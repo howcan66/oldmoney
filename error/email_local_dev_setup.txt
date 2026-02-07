@@ -1,0 +1,18 @@
+Local Email Function Setup (Netlify)
+
+1) Install Netlify CLI (one-time):
+   npm install -g netlify-cli
+
+2) Copy .env.example to .env and fill in values:
+   - SENDGRID_API_KEY
+   - SENDGRID_FROM
+
+3) Run local dev server in this folder:
+   netlify dev
+
+4) The email endpoint will be:
+   http://localhost:8888/.netlify/functions/send-email
+
+Notes:
+- SENDGRID_FROM must be a verified sender in SendGrid.
+- If you are not using Netlify, you need another serverless host.

@@ -1,0 +1,164 @@
+FINANCE DATA - DEFAULTS AND STORAGE
+===================================
+
+STORAGE METHOD:
+- Browser localStorage (persists between page reloads)
+- Key pattern: variable name (e.g., 'startAmount', 'monthlySavings')
+- Fallback: Default values if localStorage empty
+
+LOAD FUNCTION:
+- loadFinanceData() at line ~1613
+- Called on page load via: window.addEventListener('load')
+- Reads from localStorage, applies defaults if not found
+- Formats values with thousand separators for display
+
+SAVE FUNCTION:
+- saveFinanceData() at line ~1641
+- Stores raw unformatted values in localStorage
+- Triggered on user input/field changes
+
+DEFAULT VALUES:
+================
+
+SAVINGS SECTION:
+1. Startbelopp sparande (Starting Amount for Savings)
+   - Default: 50,000 kr
+   - localStorage key: 'startAmount'
+   - Type: number
+   - HTML element: startAmount
+
+2. Årlig genomsnittsränta (Annual Interest Rate)
+   - Default: 3%
+   - localStorage key: 'interestRate'
+   - Type: percentage
+   - HTML element: interestRate
+
+3. Månatligt sparande (Monthly Savings) *** USER WANTS THIS AS 0 ***
+   - Current Default: 2,000 kr
+   - localStorage key: 'monthlySavings'
+   - Type: number
+   - HTML element: monthlySavings
+   - Line 1616 (loadFinanceData): || '2000'
+   - NEEDS TO CHANGE TO: || '0'
+
+4. Årlig insättning (Yearly Deposit)
+   - Default: 0 kr
+   - localStorage key: 'yearlyDeposit'
+   - Type: number
+   - HTML element: yearlyDeposit
+
+CHURCH/PENSION SECTION:
+5. Årsinkomst (kr) (Annual Income)
+   - Default: 300,000 kr
+   - localStorage key: 'annualIncome'
+   - Type: number
+   - HTML element: annualIncome
+
+6. Löneökning (Salary Increase)
+   - Default: 2%
+   - localStorage key: 'salaryIncrease'
+   - Type: percentage
+   - HTML element: salaryIncrease
+
+7. Sparprocent (Savings Percent)
+   - Default: 1.2%
+   - localStorage key: 'savingsPercent'
+   - Type: percentage
+   - HTML element: savingsPercent
+
+LOAN SECTION:
+8. Lånbelopp (Loan Amount)
+   - Default: 2,500,000 kr
+   - localStorage key: 'loanAmount'
+   - Type: number
+   - HTML element: loanAmount
+
+9. Låneavbetalning (Loan Amortization/Payment)
+   - Default: 1,000 kr
+   - localStorage key: 'loanAmortization'
+   - Type: number
+   - HTML element: loanAmortization
+
+10. Låneränta (Loan Interest Rate)
+    - Default: 3%
+    - localStorage key: 'loanInterestRate'
+    - Type: percentage
+    - HTML element: loanInterestRate
+
+CALCULATED FIELDS (not stored):
+11. Månatlig lånekostnad (Monthly Loan Cost)
+    - Calculated from: yearlyLoanInterest[0] / 12
+    - Default display: 0.00 kr
+    - HTML element: monthlyLoanCost
+    - Read-only field
+
+CODE FLOW:
+==========
+
+ON PAGE LOAD:
+1. window.addEventListener('load', function() {...})
+2. applyLanguage(savedLang) - set language
+3. loadFinanceData() - load all values from localStorage or defaults
+4. formatNumber() applied to each value for display
+5. Page displays with loaded/default values
+
+ON USER INPUT CHANGE:
+1. User types/changes value in field
+2. Triggers change event listener
+3. saveFinanceData() called
+4. unformatNumber() removes formatting
+5. Value stored in localStorage
+6. If calculation field, calculateInterest() or calculateSavings() runs
+
+FORMATTING:
+===========
+
+formatNumber(value):
+- Adds thousand delimiters (spaces in Swedish format)
+- Example: 50000 → "50 000"
+- Used for display in HTML fields
+
+unformatNumber(value):
+- Removes formatting/spaces
+- Example: "50 000" → "50000"
+- Used for calculation and storage
+
+IMPORTANT NOTES:
+================
+
+1. monthlySavings vs baseMonthlySavings:
+   - monthlySavings = default/stored value (shown in field)
+   - baseMonthlySavings = parsed value from field for calculations
+   - Can differ if user changes the field!
+
+2. localStorage Persistence:
+   - Once set, values stay until browser clears cache
+   - User can manually clear: F12 → Application → Clear All
+   - Or programmatically: localStorage.clear()
+
+3. Calculation Variables (not stored):
+   - monthlyLoanCostAvg = calculated from loan
+   - adjustedMonthlySavings = baseMonthlySavings - monthlyLoanCostAvg
+   - yearlyLoanInterest = calculated array
+   - yearlyBeginningBalance = calculated array
+
+4. Default vs Actual:
+   - Defaults are hardcoded in loadFinanceData()
+   - User input overrides defaults and is stored
+   - No manual default reset function exists currently
+   - To reset, user must clear localStorage
+
+PENDING CHANGES NEEDED:
+=======================
+
+1. Change monthlySavings default from 2000 to 0
+   - File: sparakyrkoskatten_1.html
+   - Line: 1616
+   - Change: || '2000' → || '0'
+
+2. Remove debug alerts (currently blocking execution)
+   - Line 1614: alert('VERSION CONFIRMATION:...')
+   - Line 1617: alert('A) monthlySavings...')
+   - Or replace with console.log()
+
+3. Test calculations with new defaults
